@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결혼 마지노선 테스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
 
   :root{
-    --bg:#fffdf9;
+    --bg:#ffffff;
     --card:#ffffff;
-    --ink:#1f1b16;
-    --sub:#8a8378;
-    --line:#ece7df;
-    --pastel:#f3e9e0;
-    --accent:#1f1b16;
+    --ink:#242424;
+    --sub:#8a8a8a;
+    --line:#e4e4e4;
+    --pastel:#f4f4f4;
+    --accent:#1f1f1f;
     --type-a:#c2690b;
     --type-a-bg:#fbe9d5;
     --type-b:#1d7a8c;
@@ -29,15 +31,16 @@
     margin:0;
     background:var(--bg);
     color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    font:400 16px/1.65 "Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    word-break:keep-all;
     display:flex;
     justify-content:center;
     min-height:100vh;
-    padding:24px 16px;
+    padding:28px 20px 64px;
   }
   .wrap{
     width:100%;
-    max-width:480px;
+    max-width:620px;
   }
   .screen{display:none;}
   .screen.active{display:block;}
@@ -45,43 +48,45 @@
   /* intro */
   .logo{
     font-weight:800;
-    font-size:14px;
-    letter-spacing:0.02em;
-    margin-bottom:14px;
+    font-size:1.05rem;
+    letter-spacing:0.04em;
+    margin-bottom:10px;
   }
   .logo-rule{
     width:100%;
     height:2px;
     background:var(--ink);
-    margin-bottom:24px;
+    margin-bottom:18px;
   }
   .hero-img{
     display:block;
     width:100%;
-    border-radius:18px;
-    margin-bottom:24px;
+    border-radius:16px;
+    margin-bottom:16px;
   }
   h1{
-    font-size:26px;
-    line-height:1.4;
-    margin:0 0 12px;
-    font-weight:800;
+    font-size:2rem;
+    line-height:1.25;
+    margin:8px 0 12px;
+    font-weight:900;
+    letter-spacing:-.02em;
   }
   .desc{
-    color:var(--sub);
-    font-size:14.5px;
-    line-height:1.7;
-    margin:0 0 32px;
+    color:var(--ink);
+    font-size:1rem;
+    line-height:1.65;
+    margin:0 0 28px;
   }
   .start-btn, .next-btn, .restart-btn{
     display:block;
     width:100%;
-    padding:16px;
+    padding:12px 16px;
+    min-height:48px;
     border:none;
-    border-radius:14px;
-    background:var(--ink);
+    border-radius:10px;
+    background:var(--accent);
     color:#fff;
-    font-size:16px;
+    font:inherit;
     font-weight:700;
     cursor:pointer;
     transition:transform .08s ease, background .15s ease;
@@ -91,23 +96,23 @@
     background:#000;
   }
   .next-btn:disabled{
-    background:#d8d3c9;
+    background:#cfcfcf;
     cursor:not-allowed;
   }
   .back-btn{
     display:block;
     width:100%;
-    padding:16px;
-    border:1.5px solid var(--line);
-    border-radius:14px;
+    padding:12px 16px;
+    min-height:48px;
+    border:1px solid var(--line);
+    border-radius:10px;
     background:var(--card);
     color:var(--ink);
-    font-size:16px;
-    font-weight:700;
+    font:inherit;
     cursor:pointer;
     transition:transform .08s ease, border-color .15s ease;
   }
-  .back-btn:active{transform:scale(0.98);border-color:#d8d0c4;}
+  .back-btn:active{transform:scale(0.98);border-color:var(--accent);}
   .back-btn:disabled{
     opacity:0.4;
     cursor:not-allowed;
@@ -122,7 +127,7 @@
   }
   .progress-bar{
     flex:1;
-    height:6px;
+    height:8px;
     background:var(--line);
     border-radius:999px;
     overflow:hidden;
@@ -134,65 +139,66 @@
     transition:width .25s ease;
   }
   .progress-label{
-    font-size:13px;
+    font-size:.92rem;
     color:var(--sub);
     white-space:nowrap;
-    font-weight:600;
   }
   .q-text{
-    font-size:20px;
-    font-weight:800;
+    font-size:1.25rem;
+    font-weight:700;
     line-height:1.5;
-    margin:0 0 24px;
+    margin:0 0 16px;
   }
   .option{
     display:block;
     width:100%;
     text-align:left;
-    padding:18px 16px;
-    margin-bottom:12px;
-    border:1.5px solid var(--line);
-    border-radius:14px;
+    padding:12px 16px;
+    min-height:48px;
+    margin-bottom:10px;
+    border:1px solid var(--line);
+    border-radius:10px;
     background:var(--card);
     color:var(--ink);
-    font-size:15px;
-    line-height:1.5;
+    font:inherit;
+    line-height:1.45;
     cursor:pointer;
     transition:all .12s ease;
   }
   .option:hover{
-    border-color:#d8d0c4;
+    border-color:var(--accent);
   }
   .option.selected{
-    background:var(--pastel);
-    border-color:var(--ink);
+    background:var(--card);
+    border-color:var(--accent);
+    box-shadow:inset 0 0 0 2px var(--accent);
     font-weight:700;
   }
 
   /* result */
   .result-badge{
-    font-size:13px;
+    font-size:.92rem;
     color:var(--sub);
-    font-weight:700;
-    margin-bottom:10px;
+    margin-bottom:6px;
   }
   .result-title{
-    font-size:28px;
-    font-weight:800;
-    margin:0 0 16px;
-    line-height:1.4;
+    font-size:2rem;
+    font-weight:900;
+    letter-spacing:-.02em;
+    margin:0 0 12px;
+    line-height:1.25;
   }
   .result-desc{
-    font-size:15px;
-    line-height:1.8;
-    color:#3a3630;
-    margin:0 0 32px;
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--ink);
+    margin:0 0 28px;
   }
   .result-desc p{margin:0 0 14px;}
   .section-label{
-    font-size:15px;
-    font-weight:800;
-    margin:0 0 16px;
+    font-size:1.25rem;
+    font-weight:700;
+    margin:0 0 12px;
   }
   .bars{
     margin-bottom:36px;
@@ -205,7 +211,7 @@
     align-items:baseline;
     justify-content:space-between;
     margin-bottom:8px;
-    font-size:14px;
+    font-size:.92rem;
   }
   .bar-name{
     font-weight:700;
@@ -232,8 +238,7 @@
     margin-bottom:28px;
   }
   .top-card-label{
-    font-size:12.5px;
-    font-weight:700;
+    font-size:.92rem;
     color:var(--sub);
     margin-bottom:10px;
     text-align:center;
@@ -254,9 +259,9 @@
   .discuss-list{
     margin:0 0 32px;
     padding-left:20px;
-    font-size:14.5px;
-    line-height:1.7;
-    color:#3a3630;
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--ink);
   }
   .discuss-list li{margin-bottom:8px;}
 
@@ -273,7 +278,8 @@
     <h1>나의 결혼 마지노선 테스트</h1>
     <p class="desc">
       결혼생활에서 배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?<br><br>
-      10가지 상황에 대한 질문에 답하면, 내가 가장 중요하게 여기는 가치가 안정·자유·가족·성장 중 어디에 가까운지 알려드려요.
+      10가지 상황에 대한 질문에 답하면,<br>
+      내가 가장 중요하게 여기는 가치가 어떤 건지 알려드려요.
     </p>
     <button class="start-btn" onclick="startQuiz()">테스트 시작하기</button>
   </div>
