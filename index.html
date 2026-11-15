@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
-:root{--bg:#F7F2E7;--f:#BD5D77;--fbg:#F4DEE3;--m:#4F7392;--mbg:#DCE6EC;--o:#746B58;--obg:#EAE2D0;--card:#FFFDF8;--ink:#2B2620;--mute:#8C8272;--line:#E6DCC8;--acc:#211D17;--acc-ink:#F7F2E7;--ok:#4F7A5E;--ok-bg:#E1ECE1;--no:#A06A2E;--no-bg:#F3E6D2;
+:root{--bg:#FFFCF5;--f:#BD5D77;--fbg:#F4DEE3;--m:#4F7392;--mbg:#DCE6EC;--o:#746B58;--obg:#F1EADA;--card:#FFFFFF;--ink:#2B2620;--mute:#8C8272;--line:#ECE3D1;--acc:#211D17;--acc-ink:#FFFCF5;--ok:#4F7A5E;--ok-bg:#E1ECE1;--no:#A06A2E;--no-bg:#F3E6D2;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E1A14;--f:#E79BB2;--fbg:#4A2630;--m:#8FB0CE;--mbg:#223344;--o:#C9C0AC;--obg:#352F24;--card:#2A241C;--ink:#F3ECDD;--mute:#B8AD95;--line:#4A4030;--acc:#F3ECDD;--acc-ink:#1E1A14;--ok:#8FC79F;--ok-bg:#1F2E22;--no:#E0A868;--no-bg:#3A2A14;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#1E1A14;--f:#E79BB2;--fbg:#4A2630;--m:#8FB0CE;--mbg:#223344;--o:#C9C0AC;--obg:#352F24;--card:#2A241C;--ink:#F3ECDD;--mute:#B8AD95;--line:#4A4030;--acc:#F3ECDD;--acc-ink:#1E1A14;--ok:#8FC79F;--ok-bg:#1F2E22;--no:#E0A868;--no-bg:#3A2A14;color-scheme:dark}
@@ -279,7 +279,7 @@ function sumTxt(){return "결혼 가치관 맞춰보기 결과: "+LR.pn+" & "+LR
 function act(n){return '<div class="row" style="margin:12px 0"><button id="sv'+n+'">이미지로 저장</button><button id="sh'+n+'">공유하기</button></div><div class="mute" id="pvm'+n+'" role="status"></div><div id="pv'+n+'"></div>'}
 function result(){
  var a=S.other.a,b=S.mine,xa=S.other.x,xb=S.x,m=0,tot=0;
- Q.forEach(function(q,i){if(i===17&&a[17]===undefined&&b[17]===undefined)return;tot++;if(a[i]===b[i])m++});
+ Q.forEach(function(q,i){if(i===17)return;tot++;if(i===16&&a[16]===3&&b[16]===3){if(a[17]===b[17])m++}else if(a[i]===b[i])m++});
  var pct=Math.round(m/tot*100),P=nt(S.pName,xa.g),Me=nt(S.name,xb.g),t=tier(pct),ga=xa.g||"o",gb=xb.g||"o";
  var ma=money(xa),mb=money(xb),tm=(ma.m||0)+(mb.m||0),td=(ma.d||0)+(mb.d||0);
  LR={pct:pct,t:t,pn:S.pName,mn:S.name,ga:ga,gb:gb,g:[]};
