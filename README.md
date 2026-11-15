@@ -4,7 +4,9 @@
 
 ## 안에 들어있는 파일
 
-- `index.html` — 사이트 전체 (질문, 결과 화면, 이미지 저장/공유 기능 포함)
+- `index.html` — Wedding Project 메인 페이지 (테스트 카드 슬라이드)
+- `values/index.html` — 결혼 가치관 맞춰보기 테스트 (질문, 결과 화면, 이미지 저장/공유 기능 포함)
+- `test3/index.html` — 나의 결혼 마지노선 테스트
 - `vercel.json` — Vercel 배포용 설정
 - `netlify.toml` — Netlify 배포용 설정
 - `README.md` — 이 안내문
