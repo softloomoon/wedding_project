@@ -272,8 +272,6 @@
 
   <!-- intro -->
   <div class="screen active" id="screen-intro">
-    <div class="logo">웨딩 프로젝트</div>
-    <div class="logo-rule"></div>
     <img class="hero-img" src="hero.png" alt="">
     <h1>나의 결혼 마지노선 테스트</h1>
     <p class="desc">
@@ -298,7 +296,6 @@
   <!-- result -->
   <div class="screen" id="screen-result">
     <div class="top-card" id="top-card" style="display:none;">
-      <div class="top-card-label" id="top-card-label">이번 결과에서 가장 돋보이는 유형</div>
       <div class="top-card-imgs" id="top-card-imgs"></div>
     </div>
     <div class="result-badge">나의 결혼 마지노선</div>
@@ -540,8 +537,6 @@ function showResult(){
 
   const topCardEl = document.getElementById('top-card');
   topCardEl.style.display = 'block';
-  document.getElementById('top-card-label').textContent =
-    topTypes.length === 1 ? '이번 결과에서 가장 돋보이는 유형' : '이번 결과에서 가장 돋보이는 유형 (동점)';
   const imgsEl = document.getElementById('top-card-imgs');
   imgsEl.innerHTML = '';
   topTypes.forEach(t => {
