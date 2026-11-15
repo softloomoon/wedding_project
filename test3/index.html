@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결혼 마지노선 테스트</title>
+<style>
+
+  :root{
+    --bg:#fffdf9;
+    --card:#ffffff;
+    --ink:#1f1b16;
+    --sub:#8a8378;
+    --line:#ece7df;
+    --pastel:#f3e9e0;
+    --accent:#1f1b16;
+    --type-a:#c2690b;
+    --type-a-bg:#fbe9d5;
+    --type-b:#1d7a8c;
+    --type-b-bg:#dbeff2;
+    --type-c:#c23b5a;
+    --type-c-bg:#fbe0e6;
+    --type-d:#3f8a4e;
+    --type-d-bg:#e2f1e2;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px 16px;
+  }
+  .wrap{
+    width:100%;
+    max-width:480px;
+  }
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  /* intro */
+  .logo{
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:0.02em;
+    margin-bottom:14px;
+  }
+  .logo-rule{
+    width:100%;
+    height:2px;
+    background:var(--ink);
+    margin-bottom:24px;
+  }
+  .hero-img{
+    display:block;
+    width:100%;
+    border-radius:18px;
+    margin-bottom:24px;
+  }
+  h1{
+    font-size:26px;
+    line-height:1.4;
+    margin:0 0 12px;
+    font-weight:800;
+  }
+  .desc{
+    color:var(--sub);
+    font-size:14.5px;
+    line-height:1.7;
+    margin:0 0 32px;
+  }
+  .start-btn, .next-btn, .restart-btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:var(--ink);
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .08s ease, background .15s ease;
+  }
+  .start-btn:active, .next-btn:active, .restart-btn:active{
+    transform:scale(0.98);
+    background:#000;
+  }
+  .next-btn:disabled{
+    background:#d8d3c9;
+    cursor:not-allowed;
+  }
+  .back-btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    background:var(--card);
+    color:var(--ink);
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .08s ease, border-color .15s ease;
+  }
+  .back-btn:active{transform:scale(0.98);border-color:#d8d0c4;}
+  .back-btn:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+
+  /* quiz */
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  .progress-bar{
+    flex:1;
+    height:6px;
+    background:var(--line);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--ink);
+    border-radius:999px;
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-size:13px;
+    color:var(--sub);
+    white-space:nowrap;
+    font-weight:600;
+  }
+  .q-text{
+    font-size:20px;
+    font-weight:800;
+    line-height:1.5;
+    margin:0 0 24px;
+  }
+  .option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:18px 16px;
+    margin-bottom:12px;
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    background:var(--card);
+    color:var(--ink);
+    font-size:15px;
+    line-height:1.5;
+    cursor:pointer;
+    transition:all .12s ease;
+  }
+  .option:hover{
+    border-color:#d8d0c4;
+  }
+  .option.selected{
+    background:var(--pastel);
+    border-color:var(--ink);
+    font-weight:700;
+  }
+
+  /* result */
+  .result-badge{
+    font-size:13px;
+    color:var(--sub);
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .result-title{
+    font-size:28px;
+    font-weight:800;
+    margin:0 0 16px;
+    line-height:1.4;
+  }
+  .result-desc{
+    font-size:15px;
+    line-height:1.8;
+    color:#3a3630;
+    margin:0 0 32px;
+  }
+  .result-desc p{margin:0 0 14px;}
+  .section-label{
+    font-size:15px;
+    font-weight:800;
+    margin:0 0 16px;
+  }
+  .bars{
+    margin-bottom:36px;
+  }
+  .bar-row{
+    margin-bottom:18px;
+  }
+  .bar-row-top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:8px;
+    font-size:14px;
+  }
+  .bar-name{
+    font-weight:700;
+  }
+  .bar-pct{
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+  }
+  .bar-track{
+    height:10px;
+    background:var(--line);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--ink);
+    border-radius:999px;
+    transition:width .4s ease;
+  }
+
+  /* top result card */
+  .top-card{
+    margin-bottom:28px;
+  }
+  .top-card-label{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--sub);
+    margin-bottom:10px;
+    text-align:center;
+  }
+  .top-card-img{
+    display:block;
+    width:100%;
+    border-radius:20px;
+    box-shadow:0 10px 24px -12px rgba(31,27,22,0.35);
+  }
+  .discuss-list{
+    margin:0 0 32px;
+    padding-left:20px;
+    font-size:14.5px;
+    line-height:1.7;
+    color:#3a3630;
+  }
+  .discuss-list li{margin-bottom:8px;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- intro -->
+  <div class="screen active" id="screen-intro">
+    <div class="logo">웨딩 프로젝트</div>
+    <div class="logo-rule"></div>
+    <img class="hero-img" src="hero.png" alt="">
+    <h1>나의 결혼 마지노선 테스트</h1>
+    <p class="desc">
+      결혼생활에서 배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?<br><br>
+      10가지 상황에 대한 질문에 답하면, 내가 가장 중요하게 여기는 가치가 안정·자유·가족·성장 중 어디에 가까운지 알려드려요.
+    </p>
+    <button class="start-btn" onclick="startQuiz()">테스트 시작하기</button>
+  </div>
+
+  <!-- quiz -->
+  <div class="screen" id="screen-quiz">
+    <div class="progress-row">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label" id="progress-label">1 / 10</div>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div id="options"></div>
+    <button class="back-btn" id="back-btn" onclick="prevQuestion()">← 이전 질문</button>
+  </div>
+
+  <!-- result -->
+  <div class="screen" id="screen-result">
+    <div class="top-card" id="top-card" style="display:none;">
+      <div class="top-card-label">이번 결과에서 가장 돋보이는 유형</div>
+      <img class="top-card-img" id="top-card-img" alt="">
+    </div>
+    <div class="result-badge">나의 결혼 마지노선</div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-desc" id="result-desc"></div>
+
+    <div class="section-label">내가 결혼 생활에서 중요하게 생각하는 가치</div>
+    <div class="bars" id="result-bars"></div>
+
+    <div class="section-label">결혼 전에 꼭 이야기해 볼 질문</div>
+    <ol class="discuss-list" id="discuss-list"></ol>
+
+    <button class="restart-btn" onclick="restartQuiz()">다시 해보기</button>
+  </div>
+
+</div>
+<script>
+
+const QUESTIONS = [
+  {
+    q: "결혼생활에서 배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?",
+    options: [
+      { t: "경제적인 문제를 반복해서 숨기거나 약속한 재정 계획을 무너뜨리는 행동", type: "A" },
+      { t: "나의 사생활과 개인적인 시간을 존중하지 않고 지나치게 간섭하는 행동", type: "B" },
+      { t: "나와 양가 가족, 가까운 사람들을 무시하거나 함부로 대하는 행동", type: "C" },
+      { t: "나의 꿈과 커리어를 무시하고 성장을 방해하는 행동", type: "D" }
+    ]
+  },
+  {
+    q: "결혼 후에도 이것만큼은 반드시 지키고 싶은 나만의 기준은?",
+    options: [
+      { t: "미래를 위한 저축과 경제적인 안정", type: "A" },
+      { t: "배우자와 별개로 나만의 시간과 공간을 갖는 것", type: "B" },
+      { t: "가족과 친구들과의 관계를 꾸준히 이어가는 것", type: "C" },
+      { t: "나의 꿈과 커리어를 계속 발전시키는 것", type: "D" }
+    ]
+  },
+  {
+    q: "배우자와 의견이 크게 달라졌을 때 가장 견디기 어려운 모습은?",
+    options: [
+      { t: "현실적인 책임을 회피하고 문제를 해결하려 하지 않는 모습", type: "A" },
+      { t: "내 의견을 듣기보다 자신의 방식대로 통제하려는 모습", type: "B" },
+      { t: "내 감정을 무시하고 관계를 소홀히 대하는 모습", type: "C" },
+      { t: "서로의 발전을 위한 대화조차 거부하는 모습", type: "D" }
+    ]
+  },
+  {
+    q: "결혼 후 배우자가 나와 다른 생활 방식을 고집한다면 가장 받아들이기 어려운 것은?",
+    options: [
+      { t: "미래 계획 없이 현재의 즐거움만을 위해 돈을 사용하는 것", type: "A" },
+      { t: "모든 일정을 함께해야 한다며 혼자만의 시간을 인정하지 않는 것", type: "B" },
+      { t: "가족이나 가까운 사람들과의 만남을 불필요하다고 여기는 것", type: "C" },
+      { t: "새로운 도전이나 자기 계발을 시간 낭비라고 생각하는 것", type: "D" }
+    ]
+  },
+  {
+    q: "결혼생활에서 배우자에게 가장 실망할 것 같은 순간은?",
+    options: [
+      { t: "경제적으로 어려운 상황에서 책임을 회피하는 모습을 보일 때", type: "A" },
+      { t: "나의 선택과 행동을 믿지 못하고 계속 간섭할 때", type: "B" },
+      { t: "내가 힘들거나 아플 때 정서적으로 무관심할 때", type: "C" },
+      { t: "나의 목표와 노력을 별것 아닌 것처럼 취급할 때", type: "D" }
+    ]
+  },
+  {
+    q: "배우자가 다음 중 하나를 요구한다면 가장 받아들이기 어려운 것은?",
+    options: [
+      { t: "앞으로는 저축보다 현재의 소비를 우선하자는 요구", type: "A" },
+      { t: "이성 친구나 혼자만의 외출을 제한하자는 요구", type: "B" },
+      { t: "결혼했으니 양가 가족이나 친구보다 배우자만 우선하자는 요구", type: "C" },
+      { t: "안정적인 결혼생활을 위해 꿈이나 이직 계획을 포기하자는 요구", type: "D" }
+    ]
+  },
+  {
+    q: "결혼 후 예상치 못한 어려움이 생겼을 때 배우자에게 가장 바라는 태도는?",
+    options: [
+      { t: "어려운 상황에서도 경제적 책임을 함께 지려는 태도", type: "A" },
+      { t: "힘든 시기에도 서로의 개인적인 영역을 존중하는 태도", type: "B" },
+      { t: "서로에게 의지하고 따뜻하게 위로해 주는 태도", type: "C" },
+      { t: "문제를 해결하기 위해 함께 배우고 발전하려는 태도", type: "D" }
+    ]
+  },
+  {
+    q: "배우자와 장기적인 미래 계획이 달라졌을 때 가장 걱정되는 상황은?",
+    options: [
+      { t: "노후 준비나 경제적인 목표가 서로 달라지는 상황", type: "A" },
+      { t: "한 사람의 생활 방식에 맞춰 다른 사람의 자유가 사라지는 상황", type: "B" },
+      { t: "가족을 대하는 태도와 관계의 우선순위가 달라지는 상황", type: "C" },
+      { t: "한 사람은 계속 성장하고 싶은데 다른 사람은 변화를 거부하는 상황", type: "D" }
+    ]
+  },
+  {
+    q: "결혼생활에서 배우자가 반복적으로 보여준다면 관계를 다시 생각해 볼 행동은?",
+    options: [
+      { t: "약속한 경제적 책임을 지키지 않고 같은 문제를 반복하는 행동", type: "A" },
+      { t: "나의 사생활과 개인적인 선택을 지속적으로 통제하는 행동", type: "B" },
+      { t: "나와 가까운 사람들에게 무례하거나 상처를 주는 행동", type: "C" },
+      { t: "나의 가능성을 무시하고 발전하려는 의지를 꺾는 행동", type: "D" }
+    ]
+  },
+  {
+    q: "결혼생활에서 단 하나의 원칙만 지킬 수 있다면 무엇을 선택할까?",
+    options: [
+      { t: "어떤 상황에서도 서로에게 경제적 책임을 다할 것", type: "A" },
+      { t: "결혼 후에도 서로의 독립적인 삶을 존중할 것", type: "B" },
+      { t: "어떤 상황에서도 서로를 정서적으로 외롭게 만들지 않을 것", type: "C" },
+      { t: "서로의 꿈과 성장을 응원하며 함께 발전할 것", type: "D" }
+    ]
+  }
+];
+
+const TYPE_COLOR = {
+  A: { fg: "var(--type-a)", bg: "var(--type-a-bg)" },
+  B: { fg: "var(--type-b)", bg: "var(--type-b-bg)" },
+  C: { fg: "var(--type-c)", bg: "var(--type-c-bg)" },
+  D: { fg: "var(--type-d)", bg: "var(--type-d-bg)" }
+};
+
+const TYPE_CARD_IMG = {
+  A: "cards/card-a.png",
+  B: "cards/card-b.png",
+  C: "cards/card-c.png",
+  D: "cards/card-d.png"
+};
+
+const RESULTS = {
+  A: {
+    name: "안정 수호형",
+    desc: "경제적·생활의 안정이 흔들리는 걸 가장 못 견디는 사람이에요. 결혼 생활의 중심에 '안정'을 두고, 그걸 지키기 위해서라면 다른 것들은 유연하게 양보할 수 있어요. 미래를 미리 계획하고 대비하는 데서 안도감을 느끭 타입이에요."
+  },
+  B: {
+    name: "자유 수호형",
+    desc: "나만의 시간과 공간, 그리고 솔직함을 지키는 걸 가장 중요하게 여기는 사람이에요. 누군가에게 통제받거나 간섭받는 상황을 가장 힘들어하고, 서로의 독립성을 존중하는 관계를 이상적으로 생각해요."
+  },
+  C: {
+    name: "관계 수호형",
+    desc: "사랑과 신뢰, 사람들과의 관계가 깨지는 걸 가장 두려워하는 사람이에요. 배우자뿐 아니라 가족, 친구와의 유대까지 소중하게 생각하고, 관계 안에서의 솔직함과 꾸준함을 포기할 수 없어요."
+  },
+  D: {
+    name: "성장 수호형",
+    desc: "서로의 꿈과 노력을 존중받는 것, 함께 나아가는 걸 포기할 수 없는 사람이에요. 정체되어 있는 관계보다는 서로 자극을 주고받으며 발전하는 결혼 생활을 꿈꿔요."
+  }
+};
+
+const TYPE_LABEL = {
+  A: "경제적 안정과 신뢰",
+  B: "개인의 자유와 존중",
+  C: "가족과 정서적 유대",
+  D: "꿈과 커리어의 성장"
+};
+
+const DISCUSS_QUESTIONS = [
+  "서로에게 절대 숨기지 말아야 할 것은 무엇일까?",
+  "결혼 후에도 반드시 존중받고 싶은 나만의 영역은?",
+  "우리가 서로에게 양보할 수 없는 기준은 무엇일까?"
+];
+
+let current = 0;
+let answers = [];
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz(){
+  current = 0;
+  answers = [];
+  show('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress-label').textContent = (current+1) + ' / ' + QUESTIONS.length;
+  document.getElementById('progress-fill').style.width = ((current) / QUESTIONS.length * 100) + '%';
+
+  const prevAnswerType = answers[current];
+
+  const optionsEl = document.getElementById('options');
+  optionsEl.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    if(opt.type === prevAnswerType) btn.classList.add('selected');
+    btn.textContent = opt.t;
+    btn.onclick = () => selectOption(idx);
+    optionsEl.appendChild(btn);
+  });
+
+  document.getElementById('back-btn').disabled = (current === 0);
+}
+
+function selectOption(idx){
+  document.querySelectorAll('.option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  answers[current] = QUESTIONS[current].options[idx].type;
+  setTimeout(nextQuestion, 280);
+}
+
+function nextQuestion(){
+  if(answers[current] === undefined) return;
+  if(current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQuestion(){
+  if(current === 0) return;
+  current--;
+  renderQuestion();
+}
+
+function showResult(){
+  const counts = { A:0, B:0, C:0, D:0 };
+  answers.forEach(a => counts[a]++);
+
+  let max = 0;
+  Object.values(counts).forEach(v => { if(v > max) max = v; });
+  const topTypes = Object.keys(counts).filter(k => counts[k] === max);
+
+  let titleText, descHtml;
+  if(topTypes.length === 1){
+    const t = topTypes[0];
+    titleText = RESULTS[t].name;
+    descHtml = '<p>' + RESULTS[t].desc + '</p>';
+  } else {
+    titleText = topTypes.map(t => RESULTS[t].name.replace('수호형','')).join('·') + ' 혼합형';
+    descHtml = topTypes.map(t => '<p><strong>' + RESULTS[t].name + '</strong> — ' + RESULTS[t].desc + '</p>').join('');
+  }
+
+  document.getElementById('result-title').textContent = titleText;
+  document.getElementById('result-desc').innerHTML = descHtml;
+
+  const topCardEl = document.getElementById('top-card');
+  if(topTypes.length === 1){
+    const t = topTypes[0];
+    topCardEl.style.display = 'block';
+    document.getElementById('top-card-img').src = TYPE_CARD_IMG[t];
+  } else {
+    topCardEl.style.display = 'none';
+  }
+
+  const barsEl = document.getElementById('result-bars');
+  barsEl.innerHTML = '';
+  ['A','B','C','D'].forEach(t => {
+    const pct = Math.round((counts[t] / QUESTIONS.length) * 100);
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML =
+      '<div class="bar-row-top"><span class="bar-name">' + TYPE_LABEL[t] + '</span><span class="bar-pct" style="color:' + TYPE_COLOR[t].fg + '">' + pct + '%</span></div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + TYPE_COLOR[t].fg + '"></div></div>';
+    barsEl.appendChild(row);
+  });
+
+  const discussEl = document.getElementById('discuss-list');
+  discussEl.innerHTML = '';
+  DISCUSS_QUESTIONS.forEach(q => {
+    const li = document.createElement('li');
+    li.textContent = q;
+    discussEl.appendChild(li);
+  });
+
+  document.getElementById('progress-fill').style.width = '100%';
+  show('screen-result');
+}
+
+function restartQuiz(){
+  show('screen-intro');
+}
+
+</script>
+</body>
+</html>
