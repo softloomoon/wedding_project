@@ -238,7 +238,12 @@
     margin-bottom:10px;
     text-align:center;
   }
-  .top-card-img{
+  .top-card-imgs{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .top-card-imgs img{
     display:block;
     width:100%;
     border-radius:20px;
@@ -285,8 +290,8 @@
   <!-- result -->
   <div class="screen" id="screen-result">
     <div class="top-card" id="top-card" style="display:none;">
-      <div class="top-card-label">이번 결과에서 가장 돋보이는 유형</div>
-      <img class="top-card-img" id="top-card-img" alt="">
+      <div class="top-card-label" id="top-card-label">이번 결과에서 가장 돋보이는 유형</div>
+      <div class="top-card-imgs" id="top-card-imgs"></div>
     </div>
     <div class="result-badge">나의 결혼 마지노선</div>
     <div class="result-title" id="result-title"></div>
@@ -526,13 +531,17 @@ function showResult(){
   document.getElementById('result-desc').innerHTML = descHtml;
 
   const topCardEl = document.getElementById('top-card');
-  if(topTypes.length === 1){
-    const t = topTypes[0];
-    topCardEl.style.display = 'block';
-    document.getElementById('top-card-img').src = TYPE_CARD_IMG[t];
-  } else {
-    topCardEl.style.display = 'none';
-  }
+  topCardEl.style.display = 'block';
+  document.getElementById('top-card-label').textContent =
+    topTypes.length === 1 ? '이번 결과에서 가장 돋보이는 유형' : '이번 결과에서 가장 돋보이는 유형 (동점)';
+  const imgsEl = document.getElementById('top-card-imgs');
+  imgsEl.innerHTML = '';
+  topTypes.forEach(t => {
+    const img = document.createElement('img');
+    img.src = TYPE_CARD_IMG[t];
+    img.alt = '';
+    imgsEl.appendChild(img);
+  });
 
   const barsEl = document.getElementById('result-bars');
   barsEl.innerHTML = '';
