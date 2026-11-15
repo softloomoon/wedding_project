@@ -240,13 +240,15 @@
   }
   .top-card-imgs{
     display:flex;
-    flex-direction:column;
-    gap:14px;
+    flex-direction:row;
+    gap:12px;
   }
   .top-card-imgs img{
     display:block;
     width:100%;
-    border-radius:20px;
+    min-width:0;
+    flex:1 1 0;
+    border-radius:16px;
     box-shadow:0 10px 24px -12px rgba(31,27,22,0.35);
   }
   .discuss-list{
