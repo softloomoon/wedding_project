@@ -273,7 +273,11 @@ function fitFrame(){
     if (!d || !d.body) return;
     const top = (d.defaultView && d.defaultView.scrollY) || 0;
     let h = 0;
-    for (const el of d.body.children){ const r = el.getBoundingClientRect(); if (r.height) h = Math.max(h, r.bottom + top); }
+    /* 화면 높이에 맞춰 늘어나는 바깥 상자는 빼고, 실제 내용(가장 안쪽 요소)의 끝만 잽니다 */
+    for (const el of d.body.querySelectorAll("*")){
+      if (el.firstElementChild || /^(SCRIPT|STYLE|TITLE|LINK|META)$/.test(el.tagName)) continue;
+      const r = el.getBoundingClientRect(); if (r.height) h = Math.max(h, r.bottom + top);
+    }
     h = Math.max(420, Math.ceil(h + 40));
     if (Math.abs(h - frame.offsetHeight) > 4) frame.style.height = h + "px";
   } catch (e) {}
