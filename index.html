@@ -309,11 +309,11 @@ function result(){
   distTip='<div class="talk"><b>거리</b>: '+note+'</div>'}
  GR.forEach(function(g){
   var s2=0,gt=0,trs="",tips="";
-  g[1].forEach(function(k){if(k===17&&a[17]===undefined&&b[17]===undefined)return;gt++;if(a[k]===b[k])s2++});
+  g[1].forEach(function(k){if(k===17)return;gt++;if(k===16&&a[16]===3&&b[16]===3){if(a[17]===b[17])s2++}else if(a[k]===b[k])s2++});
   var gp=gt?Math.round(s2/gt*100):0;LR.g.push([g[0],s2,gt,gp]);
   g[1].forEach(function(i){
-   if(i===17&&a[17]===undefined&&b[17]===undefined)return;
-   var same=a[i]===b[i];
+   if(i===17)return;
+   var same=(i===16&&a[16]===3&&b[16]===3)?(a[17]===b[17]):(a[i]===b[i]);
    trs+='<tr><td class="lab">'+SL[i]+'</td><td class="'+(same?'s-ok':'c-'+ga)+'">'+ansTxt(i,a[i])+'</td><td class="'+(same?'s-ok':'c-'+gb)+'">'+ansTxt(i,b[i])+'</td><td><span class="tag '+(same?'ok':'no')+'">'+(same?'같음':'다름')+'</span></td></tr>';
    if(!same)tips+='<div class="talk"><b>'+SL[i]+'</b>: '+esc(Q[i][3])+'</div>'});
   html+='<div class="card"><div class="cat" style="border:0;padding:0 0 8px"><h2 style="margin:0">'+g[0]+'</h2><span class="tag '+(gp>=50?'ok':'no')+'">'+s2+'/'+gt+' 일치 · '+gp+'%</span></div><div class="tw"><table class="cmp"><thead><tr><th>항목</th><th class="c-'+ga+'">'+P+'</th><th class="c-'+gb+'">'+Me+'</th><th></th></tr></thead><tbody>'+trs+'</tbody></table></div>'+(EX[g[0]]||'')+
