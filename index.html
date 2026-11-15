@@ -287,6 +287,13 @@ window.addEventListener("hashchange", route);
 route();
 
 document.getElementById("back").addEventListener("click", () => { location.hash = "home"; });
+/* 상단 이름을 누르면 홈 화면 맨 위로 */
+document.querySelector(".brand").addEventListener("click", e => {
+  e.preventDefault();
+  if (location.hash !== "#home") location.hash = "home";
+  route();
+  window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+});
 document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
   if (viewHome.hidden){ location.hash = "home"; viewHome.hidden = false; viewTest.hidden = true; }
   const el = document.getElementById(b.dataset.go);
