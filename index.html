@@ -107,7 +107,29 @@ button{font:inherit;color:inherit;cursor:pointer}
 .notice{display:inline-block;padding:10px 16px;border-radius:14px;background:var(--pink);border:2px dashed var(--accent);color:var(--ink);font-size:.95rem}
 
 /* 4. 질문하기 */
-.ask-card{max-width:640px;border:2px dashed var(--line);border-radius:22px;background:var(--card-bg);padding:clamp(20px,4vw,32px)}
+#cat-4 .cat-head{max-width:720px}
+.ask-open{border:0;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--display);font-weight:700;font-size:1.2rem;padding:10px 22px;min-height:48px}
+.ask-open[aria-expanded="true"]{background:none;color:var(--accent);border:2px dashed var(--accent)}
+.ask-card{position:relative;max-width:720px;border:2px dashed var(--accent);border-radius:22px;background:var(--card-bg);padding:clamp(20px,4vw,32px);margin:0 0 24px}
+.ask-close{position:absolute;top:12px;right:12px;width:40px;height:40px;border:0;border-radius:50%;background:none;font-size:1.5rem;line-height:1;color:var(--ink-soft)}
+.ask-close:hover{background:var(--pink);color:var(--ink)}
+.ask-done{max-width:720px;margin:0 0 20px;padding:14px 18px;border-radius:16px;background:#e3f0e4;color:var(--green);font-weight:500}
+.board{max-width:720px;border:2px dashed var(--line);border-radius:22px;background:var(--card-bg);overflow:hidden}
+.board-top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:2px dashed var(--line);font-size:.9rem;color:var(--ink-soft)}
+.board-top b{color:var(--ink)}
+.board-row{display:grid;grid-template-columns:3.2em 1fr auto;gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.board-head{padding-top:10px;padding-bottom:10px;font-size:.82rem;font-weight:700;color:var(--ink-soft);background:#fdf3ea}
+.board-list{list-style:none;margin:0;padding:0}
+.board-list .board-row:last-child{border-bottom:0}
+.board-no{color:var(--ink-soft);font-size:.9rem;text-align:center}
+.board-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.board-new{font-family:var(--display);font-weight:700;font-size:.8rem;line-height:1;padding:4px 8px;border-radius:999px;background:var(--red);color:#fff}
+.board-date{color:var(--ink-soft);font-size:.88rem;white-space:nowrap}
+.board-row.is-mine{background:var(--pink)}
+.board-empty{margin:0;padding:28px 20px;text-align:center;color:var(--ink-soft)}
+.board-more{display:block;width:100%;border:0;border-top:2px dashed var(--line);background:none;padding:14px;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--accent)}
+.board-more:hover{background:#fdf3ea}
+@media (max-width:520px){.board-row{grid-template-columns:2.4em 1fr;gap:4px 10px;padding:12px 14px}.board-date{grid-column:2}.board-head .board-date{display:none}.board-top{padding:12px 14px}}
 .ask-card h3{font-family:var(--display);font-weight:700;font-size:1.7rem;line-height:1.25;margin:0 0 6px}
 .ask-card .lead{margin:0 0 20px;color:var(--ink-soft)}
 .ask-card fieldset{border:0;margin:0 0 18px;padding:0}
@@ -195,8 +217,13 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     </section>
 
     <section class="cat" id="cat-4" aria-labelledby="cat-4-title">
-      <div class="cat-head"><div><h2 class="cat-title" id="cat-4-title"><span class="cat-no">4</span>궁금한 점 질문하기</h2></div></div>
-      <form class="ask-card" id="ask-form" novalidate>
+      <div class="cat-head">
+        <div><h2 class="cat-title" id="cat-4-title"><span class="cat-no">4</span>궁금한 점 질문하기</h2><p class="cat-sub">질문 내용은 공개되지 않고, 등록 소식만 게시판에 올라와요.</p></div>
+        <button type="button" class="ask-open" id="ask-open" aria-expanded="false" aria-controls="ask-form">✏️ 질문하기</button>
+      </div>
+      <p class="ask-done" id="ask-done" role="status" hidden></p>
+      <form class="ask-card" id="ask-form" novalidate hidden>
+        <button type="button" class="ask-close" id="ask-close" aria-label="질문 작성 닫기">×</button>
         <h3>무엇이든 물어보세요 💌</h3>
         <p class="lead">결혼 준비를 하면서 궁금했던 점이 있나요?<br>WEDDING PROJECT에 질문을 남겨주세요.</p>
         <fieldset>
@@ -218,10 +245,17 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
         <p class="ask-msg" id="ask-msg" role="status" aria-live="polite"></p>
         <ul class="ask-notes">
           <li>모든 질문에 개별 답변을 드리지는 못할 수 있어요.</li>
-          <li>질문자의 이름이나 개인정보는 공개하지 않아요.</li>
+          <li>질문 내용과 질문자 정보는 게시판에 공개되지 않아요. 게시판에는 '새로운 질문이 등록되었습니다'로만 표시돼요.</li>
           <li>비슷한 질문은 모아서 하나의 콘텐츠로 답변드릴 수 있어요.</li>
         </ul>
       </form>
+      <div class="board" aria-labelledby="board-title">
+        <div class="board-top"><span id="board-title"><b>질문 게시판</b></span><span id="board-total"></span></div>
+        <div class="board-row board-head" aria-hidden="true"><span class="board-no">번호</span><span>제목</span><span class="board-date">등록일</span></div>
+        <ol class="board-list" id="board-list"></ol>
+        <p class="board-empty" id="board-empty">게시판을 불러오는 중이에요…</p>
+        <button type="button" class="board-more" id="board-more" hidden>더 보기</button>
+      </div>
     </section>
   </main>
 
@@ -377,6 +411,47 @@ document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", 
    처음 한 번은 FormSubmit 이 이 주소로 '활성화(Activate)' 메일을 보내니, 메일의 버튼을 눌러야 이후 질문이 들어옵니다.
    활성화 후 받은 랜덤 문자열로 바꾸면 메일 주소가 페이지 소스에 노출되지 않아요. 예: "https://formsubmit.co/ajax/랜덤문자열" */
 const ASK_ENDPOINT = "https://formsubmit.co/ajax/softloomon@gmail.com";
+/* 질문 게시판: 등록 시각만 저장하는 API (worker.js). 질문 내용은 게시판에 저장·공개하지 않습니다. */
+const BOARD_API = "/api/questions";
+const BOARD_PAGE = 10;
+const boardList = document.getElementById("board-list"), boardEmpty = document.getElementById("board-empty");
+const boardMore = document.getElementById("board-more"), boardTotal = document.getElementById("board-total");
+let boardShown = 0, boardCount = 0;
+const kst = ts => {
+  const p = new Intl.DateTimeFormat("ko-KR", { timeZone:"Asia/Seoul", year:"numeric", month:"2-digit", day:"2-digit" }).formatToParts(new Date(ts));
+  const g = t => (p.find(x => x.type === t) || {}).value;
+  return g("year") + "." + g("month") + "." + g("day");
+};
+async function loadBoard(reset, mine){
+  if (reset){ boardShown = 0; }
+  try {
+    const r = await fetch(BOARD_API + "?limit=" + BOARD_PAGE + "&offset=" + boardShown, { headers: { "Accept": "application/json" } });
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    if (reset) boardList.innerHTML = "";
+    boardCount = data.total;
+    data.items.forEach(it => {
+      const li = document.createElement("li");
+      li.className = "board-row" + (it.id === mine ? " is-mine" : "");
+      const isNew = Date.now() - it.created_at < 24 * 60 * 60 * 1000;
+      li.innerHTML = '<span class="board-no"></span><span class="board-title">새로운 질문이 등록되었습니다.' + (isNew ? ' <span class="board-new">NEW</span>' : '') + '</span><span class="board-date"></span>';
+      li.querySelector(".board-no").textContent = it.id;
+      li.querySelector(".board-date").textContent = kst(it.created_at);
+      boardList.appendChild(li);
+    });
+    boardShown += data.items.length;
+    boardTotal.textContent = "전체 " + boardCount.toLocaleString("ko-KR") + "건";
+    boardEmpty.hidden = boardCount > 0;
+    boardEmpty.textContent = "아직 등록된 질문이 없어요. 첫 질문을 남겨 보세요!";
+    boardMore.hidden = boardShown >= boardCount;
+  } catch (e) {
+    if (reset){ boardList.innerHTML = ""; boardMore.hidden = true; boardTotal.textContent = ""; }
+    boardEmpty.hidden = false;
+    boardEmpty.textContent = "게시판을 불러오지 못했어요. 잠시 후 다시 확인해 주세요.";
+  }
+}
+boardMore.addEventListener("click", () => loadBoard(false));
+loadBoard(true);
 (() => {
   const form = document.getElementById("ask-form");
   const q = document.getElementById("ask-q"), email = document.getElementById("ask-email");
@@ -388,6 +463,22 @@ const ASK_ENDPOINT = "https://formsubmit.co/ajax/softloomon@gmail.com";
     send.disabled = !q.value.trim() || !agree.checked;
   };
   q.addEventListener("input", update); agree.addEventListener("change", update); update();
+
+  /* 질문하기 버튼을 눌러야 작성 폼이 열립니다 */
+  const open = document.getElementById("ask-open"), doneBox = document.getElementById("ask-done");
+  const setOpen = on => {
+    form.hidden = !on; open.setAttribute("aria-expanded", on);
+    open.textContent = on ? "작성 닫기" : "✏️ 질문하기";
+    if (on){ doneBox.hidden = true; say(""); q.focus(); }
+  };
+  open.addEventListener("click", () => setOpen(form.hidden));
+  document.getElementById("ask-close").addEventListener("click", () => { setOpen(false); open.focus(); });
+  function done(mine){
+    form.reset(); update(); setOpen(false);
+    doneBox.textContent = "질문이 등록됐어요. 고마워요! 💌 게시판에는 '새로운 질문이 등록되었습니다'로만 표시돼요.";
+    doneBox.hidden = false;
+    loadBoard(true, mine);
+  }
   let sending = false;
   form.addEventListener("submit", async e => {
     e.preventDefault();
@@ -396,7 +487,7 @@ const ASK_ENDPOINT = "https://formsubmit.co/ajax/softloomon@gmail.com";
     if (text.length < 5){ say("질문을 조금만 더 자세히 적어 주세요.", "err"); q.focus(); return; }
     if (mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ say("이메일 주소 형식을 확인해 주세요.", "err"); email.focus(); return; }
     if (!agree.checked){ say("콘텐츠 활용 안내에 동의해 주세요.", "err"); return; }
-    if (document.getElementById("ask-hp").value){ say("질문이 접수됐어요. 고마워요!", "ok"); form.reset(); update(); return; }
+    if (document.getElementById("ask-hp").value){ done(null); return; }
     const topic = form.querySelector('input[name="topic"]:checked').value;
     const data = {
       _subject: "[웨딩 프로젝트 질문] " + topic,
@@ -418,8 +509,12 @@ const ASK_ENDPOINT = "https://formsubmit.co/ajax/softloomon@gmail.com";
       });
       const out = await res.json().catch(() => ({}));
       if (!res.ok || String(out.success) === "false") throw new Error(out.message || res.status);
-      form.reset();
-      say("질문이 접수됐어요. 고마워요! 💌", "ok");
+      let mine = null;
+      try {
+        const r = await fetch(BOARD_API, { method: "POST", headers: { "Accept": "application/json" } });
+        const j = await r.json(); if (j && j.ok) mine = j.item.id;
+      } catch (e) {}
+      done(mine);
     } catch (err) {
       say("질문을 보내지 못했어요. 잠시 후 다시 시도해 주세요.", "err");
     } finally {

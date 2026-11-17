@@ -8,6 +8,7 @@
 - `values/index.html` — 결혼 가치관 맞춰보기 테스트 (질문, 결과 화면, 이미지 저장/공유 기능 포함)
 - `test3/index.html` — 나의 결혼 마지노선 테스트
 - `balance/index.html` — 신혼생활 밸런스 게임 (그림은 `balance/img/`)
+- `worker.js`, `wrangler.jsonc`, `.assetsignore` — Cloudflare Workers 설정 (질문 게시판 API `/api/questions`)
 - `vercel.json` — Vercel 배포용 설정
 - `netlify.toml` — Netlify 배포용 설정
 - `README.md` — 이 안내문
@@ -44,6 +45,13 @@ Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 
 - 질문 폼은 [FormSubmit](https://formsubmit.co)으로 `softloomon@gmail.com`에 메일을 보냅니다. 주소는 `index.html`의 `ASK_ENDPOINT`에서 바꿀 수 있어요.
 - 배포 후 **첫 질문을 한 번 보내면** FormSubmit에서 활성화 메일이 와요. 메일의 Activate 버튼을 눌러야 그 다음 질문부터 들어옵니다. (스팸함도 확인)
 - 활성화 후 받은 랜덤 문자열로 `ASK_ENDPOINT`의 메일 주소를 바꾸면 페이지 소스에 메일 주소가 보이지 않아요.
+
+## 질문 게시판 (4번 카테고리)
+
+- 게시판에는 '새로운 질문이 등록되었습니다'와 등록일만 보여요. 질문 내용·이메일은 메일로만 오고 어디에도 저장하지 않아요.
+- 게시판 기록은 Cloudflare Durable Object(SQLite)에 저장돼요. `wrangler.jsonc`에 적혀 있어서 배포할 때 자동으로 만들어지니 대시보드에서 따로 만들 필요는 없어요.
+- 같은 접속자는 1분에 한 번만 게시판에 등록돼요(도배 방지).
+- 게시판 기능은 Cloudflare Workers에서만 동작해요. Vercel·Netlify에 올리면 게시판은 '불러오지 못했어요'로 보여요.
 
 ## 참고
 
