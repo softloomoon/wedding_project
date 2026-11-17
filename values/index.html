@@ -264,9 +264,9 @@ function mkImg(){
  var BG="#f8efe2",CARD="#fffaf2",INK="#3a2430",MUTE="#9a7d83",LINE="#ecd9ce",ACC="#a3265c",OK="#4a8a5a",NO="#b5651d";
  var col={f:"#c23b5a",m:"#5b6fa0",o:"#8a7a73"},GF='"Gaegu",cursive';
  return Promise.all([ld,loadImg(tImg)]).then(function(res){return new Promise(function(done){
-  var img=res[1],W=1080,H=1640,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  var img=res[1],W=1080,H=1580,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
   c.fillStyle=BG;c.fillRect(0,0,W,H);
-  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1530,30);c.fill();c.restore();
+  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1470,30);c.fill();c.restore();
   var cx=56,cy0=56,cw=W-cx*2,ch=H-cy0*2;
   c.save();c.shadowColor="rgba(58,36,48,.18)";c.shadowBlur=36;c.shadowOffsetY=16;rr(c,cx,cy0,cw,ch,40);c.fillStyle=CARD;c.fill();c.restore();
   c.save();c.setLineDash([12,10]);c.lineWidth=3;c.strokeStyle=ACC;rr(c,cx,cy0,cw,ch,40);c.stroke();c.restore();
@@ -277,11 +277,7 @@ function mkImg(){
   c.save();c.translate(W/2,py+ih/2+16);c.rotate(-0.02);
   c.save();c.shadowColor="rgba(58,36,48,.28)";c.shadowBlur=26;c.shadowOffsetY=10;c.fillStyle="#fffdf8";rr(c,-iw/2-14,-ih/2-14,iw+28,ih+28,18);c.fill();c.restore();
   c.save();rr(c,-iw/2,-ih/2,iw,ih,8);c.clip();c.drawImage(img,-iw/2,-ih/2,iw,ih);c.restore();
-  c.restore();py+=ih+48;
-  c.font="700 50px "+GF;
-  var w1=c.measureText(R.pn).width,w3=c.measureText(" & ").width,w2=c.measureText(R.mn).width,x0=W/2-(w1+w2+w3)/2;
-  c.textAlign="left";c.fillStyle=col[R.ga];c.fillText(R.pn,x0,py);c.fillStyle=INK;c.fillText(" & ",x0+w1,py);c.fillStyle=col[R.gb];c.fillText(R.mn,x0+w1+w3,py);
-  py+=118;
+  c.restore();py+=ih+60;
   /* 퍼센트와 결과 문구를 한 줄에 */
   var pctF="700 96px "+GF,tagF="700 42px "+GF,pctGap=24;
   c.font=pctF;var pctTxt=R.pct+"%",wPct=c.measureText(pctTxt).width;
@@ -292,7 +288,14 @@ function mkImg(){
   py+=70;
   c.save();c.setLineDash([10,8]);c.strokeStyle=LINE;c.lineWidth=3;c.beginPath();c.moveTo(cx+56,py);c.lineTo(cx+cw-56,py);c.stroke();c.restore();
   py+=54;
-  c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("영역별 일치",cx+56,py);py+=48;
+  /* 영역별 일치 제목과 닉네임 & 닉네임을 같은 줄에 */
+  c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("영역별 일치",cx+56,py);
+  c.font="700 34px "+GF;
+  var nw1=c.measureText(R.pn).width,nw3=c.measureText(" & ").width,nw2=c.measureText(R.mn).width,nameX=cx+cw-56-(nw1+nw3+nw2);
+  c.textAlign="left";c.fillStyle=col[R.ga];c.fillText(R.pn,nameX,py);
+  c.fillStyle=INK;c.fillText(" & ",nameX+nw1,py);
+  c.fillStyle=col[R.gb];c.fillText(R.mn,nameX+nw1+nw3,py);
+  py+=72;
   var pctColW=120,pctRight=cx+cw-56,barEnd=pctRight-pctColW,bx0=cx+330,bw0=barEnd-bx0,barH=20;
   R.g.forEach(function(g,k){var y=py+k*78,labelY=y+11;
    c.fillStyle=INK;c.font="700 32px "+GF;c.textAlign="left";c.fillText(g[0],cx+56,labelY);
