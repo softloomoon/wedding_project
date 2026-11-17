@@ -88,12 +88,13 @@ button.ok{background:var(--green)}
   async function show(){
     view.innerHTML = '<p class="mute">불러오는 중…</p>';
     if (tab === "notice"){
-      view.innerHTML = '<label for="nb">공지 내용 (질문방 맨 위에 고정돼요)</label><textarea id="nb" maxlength="2000"></textarea><div style="margin-top:8px"><button id="ns">공지 올리기</button></div><p class="msg" id="nm"></p>';
+      view.innerHTML = '<label for="nt">공지 제목</label><input id="nt" maxlength="60" style="margin:4px 0 10px"><label for="nb">공지 내용 (질문방 맨 위에 고정돼요)</label><textarea id="nb" maxlength="2000"></textarea><div style="margin-top:8px"><button id="ns">공지 올리기</button></div><p class="msg" id="nm"></p>';
       document.getElementById("ns").onclick = async () => {
         const body = document.getElementById("nb").value.trim();
-        const r = await api("notice", { body });
+        const title = document.getElementById("nt").value.trim();
+        const r = await api("notice", { title, body });
         document.getElementById("nm").textContent = r.ok ? "공지를 올렸어요. 공개 중 탭에서 확인·삭제할 수 있어요." : "올리지 못했어요.";
-        if (r.ok) document.getElementById("nb").value = "";
+        if (r.ok){ document.getElementById("nb").value = ""; document.getElementById("nt").value = ""; }
       };
       return;
     }
@@ -118,7 +119,8 @@ button.ok{background:var(--green)}
     r.items.forEach(q => {
       const d = document.createElement("div"); d.className = "item";
       d.innerHTML = '<div class="meta">' + (q.is_notice ? '<span class="pill">공지</span>' : '') + '<span>#' + q.id + '</span><span>' + esc(q.topic) + '</span><span>' + date(q.created_at) + '</span><span>의견 ' + q.comment_count + ' · 조회 ' + q.views + '</span><span>알림 메일 ' + (q.has_email ? "있음" : "없음") + '</span>' + (q.report_count ? '<span class="warn">신고 ' + q.report_count + '</span>' : '') +
-        (q.status === "public" ? '<a href="./?id=' + q.id + '" target="_blank">보기</a>' : '') + '</div><p class="body"></p><div class="acts"></div>';
+        (q.status === "public" ? '<a href="./?id=' + q.id + '" target="_blank">보기</a>' : '') + '</div><p class="ttl" style="margin:6px 0 0;font-weight:700"></p><p class="body"></p><div class="acts"></div>';
+      d.querySelector(".ttl").textContent = q.title;
       d.querySelector(".body").textContent = q.body;
       actions(d.querySelector(".acts"), "q", q.id, q.status);
       view.appendChild(d);
