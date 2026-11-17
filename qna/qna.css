@@ -1,0 +1,77 @@
+/* Wedding Project 익명 질문방 공통 스타일 (메인 페이지 + 질문방 페이지) */
+.qn-card{background:var(--card-bg);border:2px dashed var(--line);border-radius:22px;padding:clamp(18px,4vw,28px)}
+.qn-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 6px}
+.qn-head h3,.qn-head h1{display:flex;align-items:center;gap:8px;margin:0;font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3.4vw,2rem);line-height:1.2}
+.qn-chip{font-size:.8rem;font-weight:700;padding:3px 12px;border-radius:999px;background:#e3f0e4;color:var(--green)}
+.qn-desc{margin:0 0 18px;color:var(--ink-soft)}
+.qn-sub{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 6px;padding:0 4px}
+.qn-sub b{font-size:.98rem}
+.qn-sub span{font-size:.84rem;color:var(--ink-soft)}
+.qn-list{list-style:none;margin:0 0 18px;padding:0}
+.qn-item a{display:block;padding:14px 4px;text-decoration:none;border-bottom:1px solid var(--line)}
+.qn-item:last-child a{border-bottom:0}
+.qn-item a:hover .qn-text{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+.qn-item.is-notice a{background:#fdf3ea;border-radius:12px;padding:14px 12px;margin:0 0 6px;border-bottom:0}
+.qn-q{margin:0 0 4px;font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.qn-mark{color:var(--accent)}
+.qn-badge{display:inline-block;font-size:.76rem;padding:1px 9px;border-radius:999px;background:var(--accent);color:#fff;vertical-align:2px}
+.qn-meta{margin:0;font-size:.82rem;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:4px 12px}
+.qn-empty{margin:0 0 18px;padding:22px 12px;text-align:center;color:var(--ink-soft);border:2px dashed var(--line);border-radius:16px}
+.qn-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:10px 22px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--display);font-weight:700;font-size:1.2rem;text-decoration:none;cursor:pointer}
+.qn-btn:disabled{opacity:.45;cursor:not-allowed}
+.qn-btn.qn-wide{width:100%}
+.qn-ghost{background:none;color:var(--accent);border:2px dashed var(--accent)}
+.qn-ghost[aria-expanded="true"]{background:var(--pink)}
+.qn-more-link{display:inline-block;margin:14px 0 0;font-weight:700;color:var(--accent);text-decoration:none}
+.qn-more-link:hover{text-decoration:underline}
+.qn-public{margin:14px 0 0;padding:12px 16px;border-radius:14px;background:var(--pink);font-size:.86rem;line-height:1.6}
+.qn-public b{color:var(--accent)}
+
+/* 작성 폼 */
+.qn-form{margin:18px 0 0;padding:clamp(18px,4vw,26px);border:2px dashed var(--accent);border-radius:20px;background:#fff}
+.qn-form-title{font-family:var(--display);font-weight:700;font-size:1.6rem;margin:0 0 4px}
+.qn-lead{margin:0 0 16px;color:var(--ink-soft);font-size:.95rem}
+.qn-form fieldset{border:0;margin:0 0 14px;padding:0}
+.qn-form legend,.qn-label{display:block;font-size:.9rem;font-weight:500;color:var(--ink-soft);margin:0 0 6px;padding:0}
+.qn-radio,.qn-check{display:flex;align-items:flex-start;gap:10px;padding:4px 0;cursor:pointer}
+.qn-radio input,.qn-check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+.qn-form textarea,.qn-form input[type=email],.qn-cform textarea,.qn-field{display:block;width:100%;font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 6px}
+.qn-form textarea{min-height:130px;resize:vertical}
+.qn-form input[type=email],.qn-field{border-radius:999px;padding:11px 18px}
+.qn-form textarea:focus,.qn-form input:focus,.qn-cform textarea:focus,.qn-field:focus{border-color:var(--accent);outline:none}
+.qn-hint{display:flex;justify-content:space-between;gap:10px;margin:0 0 12px;font-size:.82rem;color:var(--ink-soft)}
+.qn-count{flex:none}
+.qn-email-box{margin:4px 0 6px 30px}
+.qn-agree{margin:6px 0 16px;font-size:.9rem;line-height:1.55}
+.qn-ts{margin:0 0 12px}
+.qn-ts:empty{display:none}
+.qn-send{width:100%}
+.qn-msg{min-height:1.5em;margin:10px 0 0;font-size:.92rem}
+.qn-msg.err{color:var(--red)}
+.qn-msg.ok{color:var(--green);font-weight:500}
+.qn-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.qn-done{margin:18px 0 0;padding:16px 18px;border-radius:16px;background:#e3f0e4;color:var(--ink)}
+.qn-done p{margin:0 0 8px}
+.qn-done b{color:var(--green)}
+.qn-manage{font-size:.9rem}
+.qn-manage a{word-break:break-all;color:var(--accent)}
+.qn-done .qn-hint{display:block}
+.qn-done-actions{display:flex;gap:8px;flex-wrap:wrap}
+.qn-done-actions .qn-btn{min-height:40px;font-size:1rem;padding:6px 16px}
+
+/* 의견 */
+.qn-comments{list-style:none;margin:0;padding:0}
+.qn-c{padding:16px 0;border-top:1px solid var(--line)}
+.qn-c-head{display:flex;gap:10px;align-items:baseline;font-size:.84rem;color:var(--ink-soft);margin:0 0 4px}
+.qn-c-head b{color:var(--ink)}
+.qn-c-body{margin:0 0 8px;white-space:pre-wrap;word-break:break-word}
+.qn-c-actions{display:flex;gap:8px}
+.qn-mini{display:inline-flex;align-items:center;gap:4px;min-height:34px;padding:4px 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink-soft);font:inherit;font-size:.84rem;cursor:pointer}
+.qn-mini:hover{border-color:var(--accent);color:var(--accent)}
+.qn-mini.on{border-color:var(--accent);background:var(--pink);color:var(--accent);font-weight:700}
+.qn-mini:disabled{cursor:default}
+.qn-report-box{margin:8px 0 0;padding:12px;border-radius:12px;background:#fdf3ea;font-size:.88rem}
+.qn-report-box select{font:inherit;padding:6px 10px;border-radius:10px;border:1.5px solid var(--line);margin:6px 6px 6px 0}
+.qn-cform{margin:20px 0 0;padding:18px;border:2px dashed var(--line);border-radius:18px;background:#fff}
+.qn-cform textarea{min-height:96px;resize:vertical}
+.qn-cform h3{margin:0 0 10px;font-family:var(--display);font-size:1.4rem}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>질문방 관리 · 웨딩 프로젝트</title>
+<style>
+:root{color-scheme:light;--paper:#f8efe2;--ink:#3a2430;--ink-soft:#9a7d83;--red:#c23b5a;--green:#4a8a5a;--pink:#f3d6e2;--line:#ecd9ce;--card-bg:#fffaf2;--accent:#a3265c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px 60px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.mute{color:var(--ink-soft);font-size:.9rem}
+.card{background:var(--card-bg);border:2px dashed var(--line);border-radius:18px;padding:18px;margin:16px 0}
+input,textarea{font:inherit;width:100%;padding:10px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+textarea{min-height:110px;resize:vertical}
+button{font:inherit;cursor:pointer;border:0;border-radius:999px;padding:8px 16px;background:var(--accent);color:#fff;font-weight:700}
+button.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+button.danger{background:var(--red)}
+button.ok{background:var(--green)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 0}
+.tabs button{background:#fff;color:var(--ink-soft);border:2px solid var(--line)}
+.tabs button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.item{padding:14px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item .body{white-space:pre-wrap;word-break:break-word;margin:4px 0 8px}
+.meta{font-size:.84rem;color:var(--ink-soft);display:flex;gap:10px;flex-wrap:wrap}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.acts button{padding:6px 14px;font-size:.88rem}
+.pill{font-size:.78rem;font-weight:700;padding:1px 9px;border-radius:999px;background:#eee}
+.p-public{background:#e3f0e4;color:var(--green)}.p-pending{background:#fdf3ea;color:#b5651d}.p-hidden{background:#eee;color:#666}
+.warn{color:var(--red);font-weight:700}
+.msg{min-height:1.4em;margin:8px 0 0}
+.row{display:flex;gap:8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💌 익명 질문방 관리</h1>
+  <p class="mute">질문 승인·숨기기·삭제, 의견 관리, 공지 작성을 할 수 있어요. <a href="./">질문방 보기</a></p>
+
+  <form class="card" id="login">
+    <label for="key">관리자 비밀번호 (Cloudflare 의 ADMIN_KEY)</label>
+    <div class="row" style="margin-top:6px"><input type="password" id="key" autocomplete="current-password"><button type="submit">들어가기</button></div>
+    <p class="msg warn" id="lmsg"></p>
+  </form>
+
+  <div id="panel" hidden>
+    <div class="tabs" role="group" aria-label="보기">
+      <button type="button" data-tab="pending" aria-pressed="true">검토 대기</button>
+      <button type="button" data-tab="public" aria-pressed="false">공개 중</button>
+      <button type="button" data-tab="hidden" aria-pressed="false">숨김</button>
+      <button type="button" data-tab="comments" aria-pressed="false">최근 의견</button>
+      <button type="button" data-tab="notice" aria-pressed="false">공지 쓰기</button>
+      <button type="button" id="logout" class="ghost" style="margin-left:auto">나가기</button>
+    </div>
+    <div class="card" id="view"></div>
+  </div>
+</div>
+<script>
+(() => {
+  let KEY = "";
+  try { KEY = sessionStorage.getItem("wp-admin-key") || ""; } catch (e) {}
+  const view = document.getElementById("view"), panel = document.getElementById("panel"), login = document.getElementById("login");
+  const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  const date = ts => new Date(ts).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+  async function api(path, body){
+    const init = { method: body ? "POST" : "GET", headers: { "Accept": "application/json", "X-Admin-Key": KEY } };
+    if (body){ init.headers["Content-Type"] = "application/json"; init.body = JSON.stringify(body); }
+    try { const r = await fetch("/api/admin/" + path, init); const d = await r.json().catch(() => ({})); d.status = r.status; return d; }
+    catch (e) { return { ok: false, status: 0 }; }
+  }
+  let tab = "pending";
+  async function enter(){
+    const r = await api("questions?status=pending&limit=1");
+    if (r.status === 401){ document.getElementById("lmsg").textContent = "비밀번호가 맞지 않아요."; return false; }
+    if (r.status === 503){ document.getElementById("lmsg").textContent = "Cloudflare 에 ADMIN_KEY 시크릿이 아직 없어요. README 의 설정 방법을 확인해 주세요."; return false; }
+    if (!r.items){ document.getElementById("lmsg").textContent = "서버에 연결하지 못했어요."; return false; }
+    try { sessionStorage.setItem("wp-admin-key", KEY); } catch (e) {}
+    login.hidden = true; panel.hidden = false; show(); return true;
+  }
+  login.addEventListener("submit", e => { e.preventDefault(); KEY = document.getElementById("key").value; enter(); });
+  document.getElementById("logout").onclick = () => { try { sessionStorage.removeItem("wp-admin-key"); } catch (e) {} KEY = ""; panel.hidden = true; login.hidden = false; };
+  document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { tab = b.dataset.tab; document.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-pressed", x === b)); show(); });
+
+  async function show(){
+    view.innerHTML = '<p class="mute">불러오는 중…</p>';
+    if (tab === "notice"){
+      view.innerHTML = '<label for="nb">공지 내용 (질문방 맨 위에 고정돼요)</label><textarea id="nb" maxlength="2000"></textarea><div style="margin-top:8px"><button id="ns">공지 올리기</button></div><p class="msg" id="nm"></p>';
+      document.getElementById("ns").onclick = async () => {
+        const body = document.getElementById("nb").value.trim();
+        const r = await api("notice", { body });
+        document.getElementById("nm").textContent = r.ok ? "공지를 올렸어요. 공개 중 탭에서 확인·삭제할 수 있어요." : "올리지 못했어요.";
+        if (r.ok) document.getElementById("nb").value = "";
+      };
+      return;
+    }
+    if (tab === "comments"){
+      const r = await api("comments?limit=100");
+      if (!r.items){ view.innerHTML = '<p class="warn">불러오지 못했어요.</p>'; return; }
+      view.innerHTML = r.items.length ? "" : '<p class="mute">아직 의견이 없어요.</p>';
+      r.items.forEach(c => {
+        const d = document.createElement("div"); d.className = "item";
+        d.innerHTML = '<div class="meta"><span class="pill p-' + c.status + '">' + (c.status === "public" ? "공개" : "숨김") + '</span><span>의견 #' + c.id + '</span><a href="./?id=' + c.question_id + '" target="_blank">질문 #' + c.question_id + '</a><span>' + date(c.created_at) + '</span><span>공감 ' + c.likes + '</span>' + (c.report_count ? '<span class="warn">신고 ' + c.report_count + '</span>' : '') + '</div>' +
+          '<p class="body"></p><p class="mute" style="margin:0 0 6px">질문: <span class="qq"></span></p><div class="acts"></div>';
+        d.querySelector(".body").textContent = c.body;
+        d.querySelector(".qq").textContent = c.question.slice(0, 60);
+        actions(d.querySelector(".acts"), "c", c.id, c.status);
+        view.appendChild(d);
+      });
+      return;
+    }
+    const r = await api("questions?status=" + tab + "&limit=100");
+    if (!r.items){ view.innerHTML = '<p class="warn">불러오지 못했어요.</p>'; return; }
+    view.innerHTML = r.items.length ? "" : '<p class="mute">' + ({ pending: "검토를 기다리는 질문이 없어요.", public: "공개 중인 질문이 없어요.", hidden: "숨긴 질문이 없어요." }[tab]) + "</p>";
+    r.items.forEach(q => {
+      const d = document.createElement("div"); d.className = "item";
+      d.innerHTML = '<div class="meta">' + (q.is_notice ? '<span class="pill">공지</span>' : '') + '<span>#' + q.id + '</span><span>' + esc(q.topic) + '</span><span>' + date(q.created_at) + '</span><span>의견 ' + q.comment_count + ' · 조회 ' + q.views + '</span><span>알림 메일 ' + (q.has_email ? "있음" : "없음") + '</span>' + (q.report_count ? '<span class="warn">신고 ' + q.report_count + '</span>' : '') +
+        (q.status === "public" ? '<a href="./?id=' + q.id + '" target="_blank">보기</a>' : '') + '</div><p class="body"></p><div class="acts"></div>';
+      d.querySelector(".body").textContent = q.body;
+      actions(d.querySelector(".acts"), "q", q.id, q.status);
+      view.appendChild(d);
+    });
+  }
+
+  function actions(box, kind, id, status){
+    const add = (label, cls, fn) => { const b = document.createElement("button"); b.textContent = label; if (cls) b.className = cls; b.onclick = fn; box.appendChild(b); };
+    const set = async st => { const r = await api("status", { kind, id, status: st }); if (r.ok) show(); else alert_("처리하지 못했어요."); };
+    if (status === "pending") add("승인하고 공개", "ok", () => set("public"));
+    if (status === "hidden") add("다시 공개", "ok", () => set("public"));
+    if (status !== "hidden") add("숨기기", "ghost", () => set("hidden"));
+    add("삭제", "danger", () => {
+      box.innerHTML = '<span class="warn">완전히 삭제할까요? 되돌릴 수 없어요.</span>';
+      const yes = document.createElement("button"); yes.textContent = "삭제"; yes.className = "danger";
+      const no = document.createElement("button"); no.textContent = "취소"; no.className = "ghost";
+      yes.onclick = async () => { const r = await api("delete", { kind, id }); if (r.ok) show(); else alert_("삭제하지 못했어요."); };
+      no.onclick = () => { box.innerHTML = ""; actions(box, kind, id, status); };
+      box.append(yes, no);
+    });
+    function alert_(t){ const s = document.createElement("span"); s.className = "warn"; s.textContent = t; box.appendChild(s); }
+  }
+  if (KEY) enter();
+})();
+</script>
+</body>
+</html>
