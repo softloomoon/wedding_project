@@ -284,6 +284,9 @@ function encode(ans) {
   for (let k = 0; k < 4; k++) s += AL[(n >> (5 * k)) & 31];
   return s;
 }
+function inviteUrl(code) {
+  return location.origin + location.pathname + "#vs-" + String(code).toLowerCase();
+}
 function decode(raw) {
   const s = String(raw || "").trim().toLowerCase().replace(/o/g, "0").replace(/[il]/g, "1").replace(/u/g, "v");
   if (s.length !== 4) return null;
@@ -406,7 +409,8 @@ function typeBlock(ans, who) {
 
 function viewResult() {
   const sc = score(S.answers), t = TYPES[sc.key], code = encode(S.answers).toUpperCase();
-  const msg = `신혼생활 밸런스 게임 했더니 나는 '${t.name}' 나왔어. 자기는 뭐 고를지 궁금한데, 초대 코드 ${code} 넣고 2분만 해 봐!`;
+  const url = inviteUrl(code);
+  const msg = `신혼생활 밸런스 게임 했더니 나는 '${t.name}' 나왔어. 자기는 뭐 고를지 궁금한데, 아래 링크 눌러서 2분만 해 봐!\n${url}\n(링크가 안 열리면 코드 ${code} 입력)`;
   return `
   <header class="stack">
     <p class="eyebrow">나의 신혼 스타일은</p>
@@ -422,7 +426,8 @@ function viewResult() {
     <h3>예비 배우자와 비교하기</h3>
     <p>상대가 이 코드를 넣고 답하면 일치율이 나옵니다.</p>
     <p class="code" aria-label="초대 코드 ${code.split("").join(" ")}">${code}</p>
-    <textarea id="inviteMsg" rows="3" readonly aria-label="초대 메시지">${msg}</textarea>
+    <p class="note" style="word-break:break-all">초대 링크: <a href="${url}" style="color:var(--acc)">${url}</a></p>
+    <textarea id="inviteMsg" rows="5" readonly aria-label="초대 메시지">${msg}</textarea>
     <div class="row">
       <button class="btn small" id="copyInvite">초대 메시지 복사하기</button>
       <button class="btn ghost small" id="passBtn">이 기기에서 배우자가 이어서 하기</button>
