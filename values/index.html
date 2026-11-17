@@ -288,7 +288,7 @@ function mkImg(){
   py+=54;
   c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("영역별 일치",cx+56,py);py+=48;
   R.g.forEach(function(g,k){var y=py+k*78,bx=cx+320,bw=cw-320-104;
-   c.fillStyle=INK;c.font="400 30px "+FN;c.textAlign="left";c.fillText(g[0],cx+56,y);
+   c.fillStyle=INK;c.font="700 32px "+GF;c.textAlign="left";c.fillText(g[0],cx+56,y);
    rr(c,bx,y-24,bw,22,11);c.fillStyle=LINE;c.fill();
    rr(c,bx,y-24,bw*g[3]/100,22,11);c.fillStyle=g[3]>=50?OK:NO;c.fill();
    c.fillStyle=g[3]>=50?OK:NO;c.textAlign="right";c.font="700 32px "+GF;c.fillText(g[3]+"%",cx+cw-56,y+4)});
