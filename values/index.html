@@ -287,14 +287,15 @@ function mkImg(){
   c.save();c.setLineDash([10,8]);c.strokeStyle=LINE;c.lineWidth=3;c.beginPath();c.moveTo(cx+56,py);c.lineTo(cx+cw-56,py);c.stroke();c.restore();
   py+=54;
   c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("영역별 일치",cx+56,py);py+=48;
-  R.g.forEach(function(g,k){var y=py+k*78,bx=cx+320,bw=cw-320-104;
-   c.fillStyle=INK;c.font="700 32px "+GF;c.textAlign="left";c.fillText(g[0],cx+56,y);
-   rr(c,bx,y-24,bw,22,11);c.fillStyle=LINE;c.fill();
-   rr(c,bx,y-24,bw*g[3]/100,22,11);c.fillStyle=g[3]>=50?OK:NO;c.fill();
-   c.fillStyle=g[3]>=50?OK:NO;c.textAlign="right";c.font="700 32px "+GF;c.fillText(g[3]+"%",cx+cw-56,y+4)});
+  var pctColW=120,pctRight=cx+cw-56,barEnd=pctRight-pctColW,bx0=cx+330,bw0=barEnd-bx0,barH=20;
+  R.g.forEach(function(g,k){var y=py+k*78,labelY=y+11;
+   c.fillStyle=INK;c.font="700 32px "+GF;c.textAlign="left";c.fillText(g[0],cx+56,labelY);
+   rr(c,bx0,y,bw0,barH,10);c.fillStyle=LINE;c.fill();
+   rr(c,bx0,y,Math.max(bw0*g[3]/100,barH),barH,10);c.fillStyle=g[3]>=50?OK:NO;c.fill();
+   c.fillStyle=g[3]>=50?OK:NO;c.textAlign="right";c.font="700 34px "+GF;c.fillText(g[3]+"%",pctRight,y+barH+2)});
   py+=R.g.length*78+26;
   c.textAlign="center";c.fillStyle=MUTE;c.font="400 26px "+FN;c.fillText("서로 다른 부분을 미리 아는 것이 목적이에요",W/2,py);py+=38;
-  c.fillStyle=ACC;c.font="700 30px "+GF;c.fillText("웨딩 프로젝트",W/2,py);
+  c.fillStyle=ACC;c.font="700 30px "+GF;c.fillText("Wedding Project",W/2,py);
   cv.toBlob(function(b){done(b)},"image/png")})}).catch(function(){return new Promise(function(done){
   var W=1080,H=900,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
   c.fillStyle=BG;c.fillRect(0,0,W,H);c.textAlign="center";c.fillStyle=ACC;c.font="700 170px "+GF;c.fillText(R.pct+"%",W/2,420);
