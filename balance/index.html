@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>신혼생활 밸런스 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one narrow column; the only loud element is the two-colour VS pair. */
+:root {
+  --bg: #f2f5f1;
+  --surface: #ffffff;
+  --ink: #17231e;
+  --muted: #5d6b64;
+  --line: #d5ddd6;
+  --a: #c2264f;
+  --a-soft: #fbe6ec;
+  --b: #0c6f80;
+  --b-soft: #dff1f4;
+  --display: "Black Han Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111916;
+    --surface: #1a2521;
+    --ink: #edf2ee;
+    --muted: #9aaaa1;
+    --line: #2f3d37;
+    --a: #ff7d9c;
+    --a-soft: #3a1c26;
+    --b: #5ccbdc;
+    --b-soft: #12343b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111916;
+  --surface: #1a2521;
+  --ink: #edf2ee;
+  --muted: #9aaaa1;
+  --line: #2f3d37;
+  --a: #ff7d9c;
+  --a-soft: #3a1c26;
+  --b: #5ccbdc;
+  --b-soft: #12343b;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+h1, h2, h3, p { margin: 0; }
+h1, h2 { font-family: var(--display); font-weight: 400; text-wrap: balance; line-height: 1.15; }
+h1 { font-size: clamp(2.4rem, 9vw, 3.6rem); }
+h1 .a { color: var(--a); }
+h1 .b { color: var(--b); }
+h2 { font-size: clamp(1.8rem, 7vw, 2.6rem); }
+h3 { font-size: 1rem; font-weight: 600; }
+.eyebrow { font-size: .875rem; font-weight: 600; color: var(--muted); }
+.lead { font-size: 1.0625rem; color: var(--muted); max-width: 34em; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+button { font: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+.btn {
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.small { padding: 8px 14px; font-size: .9375rem; }
+.linkbtn { border: 0; background: none; color: var(--muted); padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+/* Start screen sample pair and question pair share the VS look */
+.versus { display: grid; grid-template-columns: 1fr; gap: 0; position: relative; }
+.choice {
+  border: 0;
+  text-align: left;
+  padding: 26px 22px;
+  min-height: 132px;
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+  transition: transform .12s ease;
+}
+.why { font-size: .875rem; font-weight: 500; color: var(--muted); }
+.hero { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 8px 12px; }
+.hero img { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; }
+.hero .ink { stroke: var(--ink); } .hero .inkfill { fill: var(--ink); } .hero .skin { fill: var(--surface); }
+.hero .sa { stroke: var(--a); } .hero .safill { fill: var(--a-soft); } .hero .sadot { fill: var(--a); }
+.hero .sb { stroke: var(--b); } .hero .sbfill { fill: var(--b-soft); } .hero .sbdot { fill: var(--b); }
+.choice.left { background: var(--a-soft); border-radius: 18px 18px 0 0; border-bottom: 3px solid var(--a); }
+.choice.right { background: var(--b-soft); border-radius: 0 0 18px 18px; border-top: 3px solid var(--b); }
+button.choice:hover { transform: scale(1.015); }
+button.choice:active { transform: scale(.985); }
+.vs {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-size: 1.25rem;
+  background: var(--ink); color: var(--bg);
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+@media (min-width: 600px) {
+  .versus { grid-template-columns: 1fr 1fr; }
+  .choice { min-height: 220px; padding: 30px 34px 30px 26px; }
+  .choice.left { border-radius: 18px 0 0 18px; border-bottom: 0; border-right: 3px solid var(--a); }
+  .choice.right { border-radius: 0 18px 18px 0; border-top: 0; border-left: 3px solid var(--b); padding: 30px 26px 30px 34px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .choice { transition: none; }
+  button.choice:hover, button.choice:active { transform: none; }
+}
+
+.progress { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.progress > i { display: block; height: 100%; background: var(--ink); }
+.count { font-variant-numeric: tabular-nums; font-weight: 600; }
+.chip { font-size: .8125rem; font-weight: 600; border: 1px solid var(--ink); border-radius: 999px; padding: 2px 10px; }
+
+.meter { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.meter .track { height: 10px; border-radius: 5px; background: var(--b); overflow: hidden; }
+.meter .track > i { display: block; height: 100%; background: var(--a); }
+.meter .la { color: var(--a); font-weight: 600; }
+.meter .lb { color: var(--b); font-weight: 600; }
+
+.big { font-family: var(--display); font-size: clamp(4rem, 20vw, 6.5rem); line-height: 1; font-variant-numeric: tabular-nums; }
+dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; }
+dt { font-weight: 600; white-space: nowrap; }
+dd { margin: 0; color: var(--muted); }
+
+.code { font-family: var(--display); font-size: 2rem; letter-spacing: .18em; }
+input[type="text"] {
+  font: inherit; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  width: 7.5em; padding: 10px 14px;
+  border: 2px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--ink);
+}
+textarea {
+  font: inherit; font-size: .9375rem; width: 100%; resize: none;
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg); color: var(--ink);
+}
+.note { font-size: .875rem; color: var(--muted); min-height: 1.4em; }
+.error { color: var(--a); }
+
+.diff { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.diff li { border-left: 3px solid var(--line); padding-left: 12px; }
+.diff .cat { font-size: .8125rem; font-weight: 600; color: var(--muted); }
+.diff .me b { color: var(--a); }
+.diff .you b { color: var(--b); }
+.topics { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+/* Card-style question screen */
+.qcard { position: relative; background: var(--surface); border: 2px solid var(--ink); border-radius: 18px; padding: 32px 18px 18px; text-align: center; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 5px 0 var(--line); }
+.qnum { position: absolute; top: -21px; left: 50%; transform: translateX(-50%); width: 42px; height: 42px; border-radius: 50%; background: var(--ink); color: var(--bg); font-family: var(--display); font-size: 1.125rem; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.qcard h2 { font-family: var(--body); font-weight: 500; font-size: clamp(1.125rem, 4.8vw, 1.4375rem); line-height: 1.45; }
+.qcard h2 b { font-weight: 700; }
+.duel { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+.card { position: relative; border: 2px solid; border-radius: 18px; background: var(--surface); color: var(--ink); padding: 46px 10px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; transition: transform .12s ease; }
+.card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 36px; border-radius: 15px 15px 0 0; }
+.card.left { border-color: var(--a); box-shadow: 0 5px 0 var(--a-soft); }
+.card.right { border-color: var(--b); box-shadow: 0 5px 0 var(--b-soft); }
+.card.left::before { background: var(--a-soft); }
+.card.right::before { background: var(--b-soft); }
+.letter { position: absolute; top: -20px; left: 50%; font-family: var(--display); font-size: 3rem; line-height: 1; }
+.left .letter { color: var(--a); transform: translateX(-50%) rotate(-7deg); }
+.right .letter { color: var(--b); transform: translateX(-50%) rotate(7deg); }
+.icon { width: 68px; height: 68px; flex: none; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.left .icon { stroke: var(--a); }
+.right .icon { stroke: var(--b); }
+.ctext { margin: auto 0; display: flex; flex-direction: column; gap: 4px; font-size: 1rem; font-weight: 400; line-height: 1.5; }
+.ctext b { font-weight: 700; font-size: 1.125rem; }
+button.card:hover { transform: translateY(-4px); }
+button.card:active { transform: translateY(1px); }
+.duel .vs { z-index: 1; top: 37%; border: 3px solid var(--bg); width: 50px; height: 50px; font-size: 1.125rem; }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } button.card:hover, button.card:active { transform: none; } }
+.art { display: block; width: 100%; max-width: 250px; height: auto; aspect-ratio: 1; border-radius: 12px; background: #fff; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+// s = 생활 축(A 어울림 / B 여유), e = 표현 축(A 표현 / B 담백), g = 대화 주제 묶음
+const Q = [
+  { c: "애정 표현", x: "e", g: "애정", s: "배우자가 **사랑을 표현하는 방식**", a: "매일 **말로 \"사랑해\"** 표현하기", b: "말없이 껴안거나 **스킨십으로 표현하기**", i: ["chat", "heart"] },
+  { c: "주말 생활", x: "s", g: "시간", s: "결혼 후 **우리의 주말**", a: "주말에는 무조건 **하루는 데이트**", b: "**각자 취미와 휴식** 즐기기", i: ["heart", "music"], ra: "평일에는 잘 만나지 못하니", rb: "평일에도 매일 붙어 있으니" },
+  { c: "기념일", x: "e", g: "애정", s: "**결혼기념일**이 다가올 때", a: "이벤트와 선물로 **특별하게**", b: "평소처럼 밥 한 끼로 **소박하게**", i: ["gift", "meal"] },
+  { c: "가족관계", x: "s", g: "가족", s: "**양가 가족**과의 거리", a: "**꼭 참석하는** 생활", b: "**명절에만 보는** 둘만의 생활", i: ["users", "home"], ra: "제사, 가까운 직계가족 생신에는", rb: "용돈과 생일 축하 인사는 챙기되" },
+  { c: "갈등 해결", x: "e", g: "대화", s: "**크게 싸운** 날 밤", a: "밤을 새워서라도 **바로 풀기**", b: "일단 자고 **내일 대화하기**", i: ["chat", "moon"] },
+  { c: "취미", x: "s", g: "시간", s: "배우자가 새 취미를 **같이 하자고** 할 때", a: "나도 **같이 배우기**", b: "**혼자 즐기게** 두기", i: ["users", "user"], ra: "썩 내키지 않아도 같이 해 보면 좋을 테니", rb: "나는 그 취미에 관심이 없으니" },
+  { c: "선물", x: "e", g: "애정", s: "**내 생일**에 받고 싶은 선물", a: "**깜짝 이벤트** 선물", b: "필요했던 걸 물어보고 **사주는 선물**", i: ["star", "bag"] },
+  { c: "친구 모임", x: "s", g: "가족", s: "배우자의 **친구 모임**이 있는 날", a: "나도 **같이 따라가기**", b: "나도 **약속 잡아서 나가기**", i: ["users", "user"] },
+  { c: "고민 상담", x: "e", g: "대화", s: "내가 **너무 힘들어할 때** 배우자의 행동", a: "무조건 내 편 들며 **공감해 주기**", b: "냉정하고 차분하게 **해결책 정리해 주기**", i: ["heart", "bulb"] },
+  { c: "저녁 시간", x: "s", g: "시간", s: "**평일 저녁** 식사", a: "늦어도 기다렸다 **같이 먹기**", b: "각자 편할 때 **먼저 먹기**", i: ["clock", "meal"] },
+  { c: "칭찬", x: "e", g: "애정", s: "내가 **요리를 했을 때** 배우자의 반응", a: "맛없어도 **폭풍 칭찬**과 리액션", b: "반찬 투정 없이 말없이 **한 그릇 더**", i: ["star", "meal"] },
+  { c: "여행", x: "s", g: "시간", s: "신혼 **첫 휴가**", a: "일정 꽉 채운 **관광 여행**", b: "한가롭게 즐기는 **휴양 여행**", i: ["plane", "umbrella"] },
+  { c: "스킨십", x: "e", g: "애정", s: "둘이 **비 오는 길**을 걸을 때", n: "1인용 우산 2개 있음", a: "우산 하나를 **같이 쓴다**", b: "각자 **따로 쓴다**", i: ["heart", "umbrella"], ra: "어깨가 좀 젖어도 붙어 있고 싶으니", rb: "둘 다 비에 젖지 않는 게 먼저니" },
+  { c: "집 분위기", x: "s", g: "가족", s: "우리 **신혼집**은", a: "친구들이 놀러 와서 **가끔 즐겨도 좋다**", b: "아무도 초대하지 않고 **둘만 있고 싶다**", i: ["users", "lock"] },
+  { c: "사과", x: "e", g: "대화", s: "배우자가 잘못했을 때 **화해 방식**", a: "차분히 대화하면서 **말로 사과하기**", b: "좋아하는 간식을 사 오며 **은근슬쩍 풀기**", i: ["chat", "cup"] },
+  { c: "휴일 아침", x: "s", g: "시간", s: "**쉬는 날** 아침", a: "일찍 깨워서 **같이 시작하기**", b: "깰 때까지 **서로 건드리지 않기**", i: ["sun", "bed"] },
+  { c: "데이트", x: "e", g: "애정", s: "결혼 후 **데이트**", a: "차려입고 **분위기 좋은 맛집**", b: "잠옷 입고 **집에서 배달 음식**", i: ["star", "sofa"] },
+  { c: "집안일", x: "s", g: "시간", s: "**밀린 집안일**을 하는 날", a: "한 곳씩 **같이 끝내기**", b: "구역 나눠 **각자 하기**", i: ["users", "list"], ra: "잘하든 못하든 둘이 붙어서", rb: "각자 잘하는 일을 맡아서" },
+  { c: "하루 대화", x: "e", g: "대화", s: "**퇴근하고** 집에 왔을 때 배우자에게 바라는 것", a: "재잘재잘 **이야기 다 들어주기**", b: "각자 할 일 하며 **조용히 쉬기**", i: ["chat", "sofa"], ra: "하고 싶었던 말이 많았을 테니", rb: "반갑게 인사만 나누고" },
+  { c: "연락", x: "s", g: "대화", s: "떨어져 있는 **업무 시간**", a: "틈날 때마다 **연락하기**", b: "**용건 있을 때만** 연락하기", i: ["phone", "clock"], ra: "내 사랑은 계속 표현하고 싶으니", rb: "일이 바빠 신경 쓰기 힘드니" }
+];
+const ICONS = {
+  heart: "M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z",
+  chat: "M4 5h16v11H9l-5 4z M8 9h8 M8 12h5",
+  gift: "M4 10h16v10H4z M3 7h18v3H3z M12 7v13 M12 7c-2-4-6-3-4 0 M12 7c2-4 6-3 4 0",
+  home: "M4 11l8-7 8 7 M6 10v10h12V10 M10 20v-5h4v5",
+  users: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M3 20c0-4 3-6 6-6s6 2 6 6 M16 11a3 3 0 1 0 0-6 M17 14c3 0 5 2 5 6",
+  user: "M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-5 4-7 8-7s8 2 8 7",
+  moon: "M19 14A8 8 0 1 1 10 5a6 6 0 0 0 9 9z",
+  sun: "M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2",
+  plane: "M3 13l18-8-6 16-3-7z M12 14l9-9",
+  umbrella: "M3 12a9 9 0 0 1 18 0z M12 12v7a2 2 0 0 0 4 0 M12 3v-1",
+  meal: "M6 3v8a2 2 0 0 0 4 0V3 M8 3v18 M16 3c-2 2-2 7 0 9v9",
+  clock: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 7v5l3 2",
+  star: "M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.2 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z",
+  phone: "M8 3h8v18H8z M11 18h2",
+  music: "M9 18V5l10-2v13 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z M19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z",
+  list: "M5 6h1 M9 6h10 M5 12h1 M9 12h10 M5 18h1 M9 18h10",
+  bulb: "M9 18h6 M10 21h4 M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z",
+  cup: "M5 9h12v5a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5z M17 11h2a2 2 0 0 1 0 4h-2 M9 3v3 M13 3v3",
+  sofa: "M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3 M3 12a2 2 0 0 1 4 0v3h10v-3a2 2 0 0 1 4 0v6H3z",
+  bed: "M3 19V7 M3 15h18v4 M21 15a4 4 0 0 0-4-4h-6v4 M7 13a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z",
+  lock: "M6 11h12v9H6z M8 11V8a4 4 0 0 1 8 0v3 M12 14v3",
+  bag: "M5 8h14l-1 12H6z M9 8a3 3 0 0 1 6 0"
+};
+const fmt = s => s.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+const plain = s => s.replace(/\*\*/g, "");
+const TIE = { s: Q.findIndex(q => q.x === "s"), e: Q.findIndex(q => q.x === "e") };
+const TYPES = {
+  ae: { name: "알콩달콩 이벤트형", line: "함께하는 시간도, 표현도 아낌없이", good: "매일이 연애처럼 활기차다", care: "혼자만의 시간이 부족해질 수 있다" },
+  ab: { name: "든든한 단짝형", line: "말은 적어도 늘 곁에 있는 가장 친한 친구", good: "함께하는 일상이 자연스럽고 편하다", care: "마음을 말로 전할 기회를 놓치기 쉽다" },
+  ye: { name: "둘만의 로맨스형", line: "각자의 시간은 지키고, 마음은 자주 전한다", good: "거리와 다정함의 균형이 좋다", care: "함께하는 활동이 줄어들 수 있다" },
+  yb: { name: "편안한 동반자형", line: "서로의 공간을 존중하는 잔잔한 사이", good: "간섭 없이 편안하고 안정적이다", care: "서로 무심하다고 느낄 수 있다" }
+};
+const TIERS = [
+  { min: 18, title: "복사 붙여넣기 커플", text: "거의 한 사람이 두 번 풀었어요. 엇갈린 한두 문항이 오히려 궁금해지네요." },
+  { min: 13, title: "찰떡궁합 커플", text: "큰 방향이 같아요. 다른 몇 가지만 미리 맞춰 두면 신혼이 한결 편해져요." },
+  { min: 7, title: "반반 커플", text: "절반은 통하고 절반은 새로워요. 서로에게 배울 게 가장 많은 구간이에요." },
+  { min: 0, title: "정반대 매력 커플", text: "이렇게 다른데 사랑에 빠졌네요. 오늘 저녁 대화 주제는 충분합니다." }
+];
+const TOPICS = {
+  "애정": "내가 가장 사랑받는다고 느끼는 순간은 언제인가요?",
+  "시간": "일주일 중 꼭 함께하고 싶은 시간과 혼자이고 싶은 시간은 언제인가요?",
+  "가족": "양가 가족, 친구들과는 얼마나 자주 만나면 좋을까요?",
+  "대화": "속상할 때 상대가 어떻게 해 주면 가장 힘이 되나요?"
+};
+const AL = "0123456789abcdefghjkmnpqrstvwxyz";
+
+function encode(ans) {
+  let n = 0;
+  ans.forEach((v, i) => { if (v === "A") n |= (1 << i); });
+  let s = "";
+  for (let k = 0; k < 4; k++) s += AL[(n >> (5 * k)) & 31];
+  return s;
+}
+function decode(raw) {
+  const s = String(raw || "").trim().toLowerCase().replace(/o/g, "0").replace(/[il]/g, "1").replace(/u/g, "v");
+  if (s.length !== 4) return null;
+  let n = 0;
+  for (let k = 0; k < 4; k++) {
+    const v = AL.indexOf(s[k]);
+    if (v < 0) return null;
+    n |= v << (5 * k);
+  }
+  return Q.map((_, i) => ((n >> i) & 1) ? "A" : "B");
+}
+function score(ans) {
+  let r = 0, l = 0;
+  Q.forEach((q, i) => { if (ans[i] === "A") { if (q.x === "s") r++; else l++; } });
+  const social = r > 5 || (r === 5 && ans[TIE.s] === "A");
+  const expressive = l > 5 || (l === 5 && ans[TIE.e] === "A");
+  return { r, l, key: (social ? "a" : "y") + (expressive ? "e" : "b") };
+}
+function compare(mine, theirs) {
+  const diff = [];
+  Q.forEach((q, i) => { if (mine[i] !== theirs[i]) diff.push(i); });
+  const same = Q.length - diff.length;
+  return { same, pct: Math.round(same / Q.length * 100), diff, tier: TIERS.find(t => same >= t.min) };
+}
+
+let S = { screen: "start", idx: 0, answers: [], flips: [], partner: null, fromInvite: false };
+const app = document.getElementById("app");
+
+function newFlips() { return Q.map(() => Math.random() < 0.5); }
+function go(screen) { S.screen = screen; render(); window.scrollTo(0, 0); }
+function begin() { S.idx = 0; S.answers = []; S.flips = newFlips(); go("quiz"); }
+function resetAll() {
+  S = { screen: "start", idx: 0, answers: [], flips: [], partner: null, fromInvite: false };
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  render();
+}
+function pick(v) {
+  S.answers[S.idx] = v;
+  if (S.idx < Q.length - 1) { S.idx++; render(); }
+  else go(S.partner ? "couple" : "result");
+}
+function copyFrom(id, noteId) {
+  const el = document.getElementById(id), note = document.getElementById(noteId);
+  const done = () => { note.textContent = "복사했어요. 메신저에 붙여 넣어 보내세요."; };
+  const fail = () => { el.focus(); el.select(); note.textContent = "자동 복사가 막혀 있어요. 선택된 글을 직접 복사해 주세요."; };
+  try { navigator.clipboard.writeText(el.value).then(done, fail); } catch (e) { fail(); }
+}
+
+function meter(labelA, labelB, countA) {
+  const pct = countA * 10;
+  return `<div class="meter"><span class="la">${labelA} ${pct}%</span><span class="track"><i style="width:${pct}%"></i></span><span class="lb">${labelB} ${100 - pct}%</span></div>`;
+}
+
+function viewStart() {
+  const invited = !!S.partner;
+  return `
+  <header class="stack">
+    <p class="eyebrow">예비부부를 위한 20문항 · 약 2분</p>
+    <h1>신혼생활<br><span class="a">밸런스</span> <span class="b">게임</span></h1>
+    <p class="lead">${invited
+      ? "예비 배우자가 먼저 답을 골랐어요. 같은 20문항에 답하면 둘의 일치율과 엇갈린 문항이 나옵니다."
+      : "정답은 없어요. 다만 둘의 답이 다를 뿐. 혼자 먼저 고르고, 예비 배우자에게 보내 비교해 보세요."}</p>
+  </header>
+  <figure class="hero"><img src="img/cover.png" alt="저울 양쪽에 앉은 신부와 신랑 그림" width="640" height="640"></figure>
+  <div class="row">
+    <button class="btn" id="startBtn">${invited ? "나도 골라 보기" : "게임 시작하기"}</button>
+    ${invited ? `<button class="linkbtn" id="dropInvite">초대 없이 혼자 하기</button>` : ""}
+  </div>
+  ${invited ? "" : `
+  <form class="panel stack" id="codeForm">
+    <h3><label for="codeInput">초대 코드를 받았나요?</label></h3>
+    <div class="row">
+      <input type="text" id="codeInput" maxlength="4" autocomplete="off" placeholder="예: 7K2M">
+      <button class="btn ghost small" type="submit">코드로 시작하기</button>
+    </div>
+    <p class="note error" id="codeNote" role="status"></p>
+  </form>`}`;
+}
+
+function viewQuiz() {
+  const q = Q[S.idx], flip = S.flips[S.idx];
+  const L = flip ? "B" : "A", R = flip ? "A" : "B";
+  const card = (v, side, letter) => {
+    const why = v === "A" ? q.ra : q.rb, t = v === "A" ? q.a : q.b, ic = ICONS[q.i[v === "A" ? 0 : 1]];
+    return `<button class="card ${side}" data-v="${v}"><span class="letter" aria-hidden="true">${letter}</span><img class="art" src="img/q${String(S.idx + 1).padStart(2, "0")}${v === "A" ? "a" : "b"}.png" alt="" width="480" height="480"><span class="ctext">${why ? `<span class="why">${why}</span>` : ""}<span>${fmt(t)}</span></span></button>`;
+  };
+  return `
+  <div class="stack">
+    <div class="row" style="justify-content:space-between">
+      <span class="chip">${q.c}</span>
+      <span class="count">${S.idx + 1} / ${Q.length}</span>
+    </div>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${Q.length}" aria-valuenow="${S.idx}"><i style="width:${S.idx / Q.length * 100}%"></i></div>
+  </div>
+  <div class="qcard">
+    <span class="qnum" aria-hidden="true">${S.idx + 1}</span>
+    <h2 id="qTitle" tabindex="-1">${fmt(q.s)}</h2>${q.n ? `
+    <p class="why">${q.n}</p>` : ""}
+  </div>
+  <div class="duel">
+    ${card(L, "left", "A")}
+    ${card(R, "right", "B")}
+    <span class="vs" aria-hidden="true">VS</span>
+  </div>
+  <div class="row" style="justify-content:center">
+    ${S.idx > 0 ? `<button class="linkbtn" id="backBtn">이전 문항으로</button>` : ""}
+  </div>`;
+}
+
+function typeBlock(ans, who) {
+  const sc = score(ans), t = TYPES[sc.key];
+  return `
+  <section class="panel stack">
+    <p class="eyebrow">${who}</p>
+    <h3 style="font-size:1.25rem">${t.name}</h3>
+    <p>${t.line}</p>
+    ${meter("어울림", "여유", sc.r)}
+    ${meter("표현", "담백", sc.l)}
+    <dl><dt>강점</dt><dd>${t.good}</dd><dt>조심할 점</dt><dd>${t.care}</dd></dl>
+  </section>`;
+}
+
+function viewResult() {
+  const sc = score(S.answers), t = TYPES[sc.key], code = encode(S.answers).toUpperCase();
+  const msg = `신혼생활 밸런스 게임 했더니 나는 '${t.name}' 나왔어. 자기는 뭐 고를지 궁금한데, 초대 코드 ${code} 넣고 2분만 해 봐!`;
+  return `
+  <header class="stack">
+    <p class="eyebrow">나의 신혼 스타일은</p>
+    <h2 id="resTitle" tabindex="-1">${t.name}</h2>
+    <p class="lead">${t.line}</p>
+  </header>
+  <section class="panel stack">
+    ${meter("어울림", "여유", sc.r)}
+    ${meter("표현", "담백", sc.l)}
+    <dl><dt>강점</dt><dd>${t.good}</dd><dt>조심할 점</dt><dd>${t.care}</dd></dl>
+  </section>
+  <section class="panel stack">
+    <h3>예비 배우자와 비교하기</h3>
+    <p>상대가 이 코드를 넣고 답하면 일치율이 나옵니다.</p>
+    <p class="code" aria-label="초대 코드 ${code.split("").join(" ")}">${code}</p>
+    <textarea id="inviteMsg" rows="3" readonly aria-label="초대 메시지">${msg}</textarea>
+    <div class="row">
+      <button class="btn small" id="copyInvite">초대 메시지 복사하기</button>
+      <button class="btn ghost small" id="passBtn">이 기기에서 배우자가 이어서 하기</button>
+    </div>
+    <p class="note" id="inviteNote" role="status"></p>
+  </section>
+  <div class="row"><button class="linkbtn" id="retryBtn">처음부터 다시 고르기</button></div>`;
+}
+
+function viewCouple() {
+  const cmp = compare(S.answers, S.partner);
+  const cats = [...new Set(cmp.diff.map(i => Q[i].g))];
+  const msg = `신혼생활 밸런스 게임 했더니 일치율 ${cmp.pct}%, '${cmp.tier.title}' 나옴. 너희 커플은 몇 % 나올까?`;
+  const txt = (i, v) => plain(v === "A" ? Q[i].a : Q[i].b);
+  return `
+  <header class="stack">
+    <p class="eyebrow">우리의 일치율은</p>
+    <p class="big">${cmp.pct}%</p>
+    <h2 id="resTitle" tabindex="-1">${cmp.tier.title}</h2>
+    <p class="lead">20문항 중 ${cmp.same}개가 같았어요. ${cmp.tier.text}</p>
+  </header>
+  ${typeBlock(S.answers, "나")}
+  ${typeBlock(S.partner, "예비 배우자")}
+  ${cmp.diff.length ? `
+  <section class="panel stack">
+    <h3>엇갈린 문항 ${cmp.diff.length}개</h3>
+    <ul class="diff">
+      ${cmp.diff.map(i => `<li><div class="cat">${Q[i].c} · ${plain(Q[i].s)}</div><div class="me"><b>나</b> ${txt(i, S.answers[i])}</div><div class="you"><b>상대</b> ${txt(i, S.partner[i])}</div></li>`).join("")}
+    </ul>
+  </section>
+  <section class="panel stack">
+    <h3>오늘 나눠 볼 이야기</h3>
+    <ul class="topics">${cats.map(c => `<li>${TOPICS[c]}</li>`).join("")}</ul>
+  </section>` : ""}
+  <section class="panel stack">
+    <h3>결과 자랑하기</h3>
+    <textarea id="shareMsg" rows="3" readonly aria-label="공유 메시지">${msg}</textarea>
+    <div class="row"><button class="btn small" id="copyShare">공유 메시지 복사하기</button></div>
+    <p class="note" id="shareNote" role="status"></p>
+  </section>
+  <div class="row"><button class="linkbtn" id="retryBtn">처음부터 다시 고르기</button></div>`;
+}
+
+function render() {
+  const views = { start: viewStart, quiz: viewQuiz, result: viewResult, couple: viewCouple };
+  app.innerHTML = views[S.screen]();
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener("click", fn); };
+
+  if (S.screen === "start") {
+    on("startBtn", begin);
+    on("dropInvite", resetAll);
+    const form = document.getElementById("codeForm");
+    if (form) form.addEventListener("submit", e => {
+      e.preventDefault();
+      const got = decode(document.getElementById("codeInput").value);
+      if (!got) { document.getElementById("codeNote").textContent = "코드를 찾을 수 없어요. 받은 4글자를 다시 확인해 주세요."; return; }
+      S.partner = got; S.fromInvite = true; begin();
+    });
+  }
+  if (S.screen === "quiz") {
+    if (S.idx < Q.length - 1) ["a", "b"].forEach(k => { new Image().src = `img/q${String(S.idx + 2).padStart(2, "0")}${k}.png`; });
+    app.querySelectorAll("button.card").forEach(b => b.addEventListener("click", () => pick(b.dataset.v)));
+    on("backBtn", () => { S.idx--; render(); });
+  }
+  if (S.screen === "result") {
+    try { history.replaceState(null, "", "#vs-" + encode(S.answers)); } catch (e) {}
+    on("copyInvite", () => copyFrom("inviteMsg", "inviteNote"));
+    on("passBtn", () => { S.partner = S.answers.slice(); S.fromInvite = false; go("start"); });
+    on("retryBtn", resetAll);
+  }
+  if (S.screen === "couple") {
+    on("copyShare", () => copyFrom("shareMsg", "shareNote"));
+    on("retryBtn", resetAll);
+  }
+}
+
+function start(saved) {
+  if (saved && saved.screen) {
+    S = saved;
+  } else {
+    const m = /^#vs-([0-9a-z]{4})$/i.exec(location.hash || "");
+    const got = m ? decode(m[1]) : null;
+    if (got) { S.partner = got; S.fromInvite = true; }
+  }
+  render();
+}
+window.claude?.hot?.snapshot(() => S);
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+</body>
+</html>

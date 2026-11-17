@@ -87,6 +87,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .pill{align-self:flex-start;margin-top:auto;font-family:var(--display);font-weight:700;font-size:.9rem;padding:3px 14px;border-radius:999px;background:var(--accent);color:#fff}
 .pill.soon{background:none;color:var(--ink-soft);border:2px dashed var(--ink-soft)}
 
+.game-list{display:flex;flex-wrap:wrap;gap:var(--gap)}
+.card-art.fit img{object-fit:contain}
+
 .empty{border:2px dashed var(--ink-soft);border-radius:22px;padding:28px 24px;color:var(--ink-soft);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .empty .dot{width:44px;height:44px;border-radius:50%;flex:none}
 
@@ -125,7 +128,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     </a>
     <nav class="nav" aria-label="카테고리">
       <button type="button" data-go="cat-test">테스트</button>
-      <button type="button" data-go="cat-2" data-soon>카테고리 2</button>
+      <button type="button" data-go="cat-2">밸런스 게임</button>
       <button type="button" data-go="cat-3" data-soon>카테고리 3</button>
     </nav>
   </header>
@@ -153,8 +156,8 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     </section>
 
     <section class="cat" id="cat-2" aria-labelledby="cat-2-title">
-      <div class="cat-head"><h2 class="cat-title" id="cat-2-title"><span class="cat-no">2</span>카테고리 2</h2></div>
-      <div class="empty"><span class="dot" style="background:var(--blue)"></span>준비 중입니다. 카테고리 이름과 내용을 정하면 이 자리에 들어갑니다.</div>
+      <div class="cat-head"><h2 class="cat-title" id="cat-2-title"><span class="cat-no">2</span>밸런스 게임</h2></div>
+      <div class="game-list" id="game-list"></div>
     </section>
 
     <section class="cat" id="cat-3" aria-labelledby="cat-3-title">
@@ -177,6 +180,10 @@ const TESTS = [
   { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/hero.png", src:"test3/", tone:"#f3d6e2" },
   { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2" }
 ];
+/* 밸런스 게임 목록: 여기에 항목을 추가하면 '밸런스 게임' 카테고리에 카드가 생깁니다. */
+const GAMES = [
+  { id:"balance", title:"신혼생활 밸런스 게임", desc:"정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.", img:"balance/img/cover.png", src:"balance/", tone:"#ffffff" }
+];
 const INTERVAL = 2000;
 
 const artSvg = t => '<img src="' + t.img + '" alt="">';
@@ -194,6 +201,15 @@ function makeCard(t, clone){
   a.querySelector(".card-desc").textContent = t.desc;
   return a;
 }
+/* 밸런스 게임 카드: 슬라이드 없이 나란히 놓습니다 */
+const gameList = document.getElementById("game-list");
+GAMES.forEach(g => {
+  const a = makeCard(g, false);
+  a.classList.add("is-center");
+  a.querySelector(".card-art").classList.add("fit");
+  a.querySelector(".pill").textContent = "게임 하기";
+  gameList.appendChild(a);
+});
 /* 가운데 자리(C)에 첫 테스트가 오도록 두 벌을 이어 붙입니다 */
 const C = 3, N = TESTS.length, OFFSET = (N - C % N) % N;
 for (let i = 0; i < N * Math.ceil(8 / N); i++) track.appendChild(makeCard(TESTS[(i + OFFSET) % N], i >= N));
@@ -257,13 +273,14 @@ const frame = document.getElementById("test-frame");
 let openId = null;
 function route(){
   const id = (location.hash || "").replace("#", "");
-  const t = TESTS.find(x => x.id === id);
+  const t = TESTS.find(x => x.id === id) || GAMES.find(x => x.id === id);
   if (!t){
     viewHome.hidden = false; viewTest.hidden = true;
     if (openId){ frame.removeAttribute("src"); openId = null; }
     settle(); return;
   }
   viewHome.hidden = true; viewTest.hidden = false;
+  document.getElementById("back").textContent = GAMES.includes(t) ? "← 게임 목록으로" : "← 테스트 목록으로";
   if (openId !== t.id){ frame.style.height = "760px"; frame.title = t.title; frame.src = t.src; openId = t.id; }
   window.scrollTo(0, 0);
 }
