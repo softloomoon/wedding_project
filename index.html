@@ -100,7 +100,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .test-box{margin-top:24px;display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(20px,4vw,48px);align-items:center;border:2px dashed var(--line);border-radius:26px;overflow:hidden;background:var(--card-bg)}
 .test-art{background:var(--tone);align-self:stretch;display:grid;place-items:center;padding:24px}
 .test-art svg{width:86%;height:auto}
-.test-frame{display:block;width:100%;height:760px;margin-top:20px;border:2px dashed var(--line);border-radius:22px;background:var(--card-bg)}
+.test-frame{display:block;width:100%;height:760px;margin-top:20px;border:2px dashed var(--line);border-radius:22px;background:var(--card-bg);overflow:hidden}
 .test-info{padding:28px clamp(18px,3vw,36px) 32px clamp(18px,3vw,8px)}
 .test-info h2{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.25;margin:0 0 10px}
 .test-info p{margin:0 0 18px;color:var(--ink-soft);max-width:28em}
@@ -168,7 +168,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 
   <main id="view-test" class="test" hidden>
     <button type="button" class="back" id="back">← 테스트 목록으로</button>
-    <iframe class="test-frame" id="test-frame" title="테스트"></iframe>
+    <iframe class="test-frame" id="test-frame" title="테스트" scrolling="no"></iframe>
   </main>
 
   <footer>Wedding Project</footer>
@@ -297,7 +297,7 @@ function fitFrame(){
       if (el.firstElementChild || /^(SCRIPT|STYLE|TITLE|LINK|META)$/.test(el.tagName)) continue;
       const r = el.getBoundingClientRect(); if (r.height) h = Math.max(h, r.bottom + top);
     }
-    h = Math.max(420, Math.ceil(h + 40));
+    h = Math.max(420, Math.ceil(h + 64));
     if (Math.abs(h - frame.offsetHeight) > 4) frame.style.height = h + "px";
   } catch (e) {}
 }
