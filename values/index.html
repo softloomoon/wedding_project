@@ -132,6 +132,13 @@ function home(){
   viewCode(code)
  }
 }
+function joinUrl(code){return location.origin+location.pathname+"?join="+code}
+function joinWith(code){
+ home();
+ var cd=document.getElementById("cd");
+ if(cd){cd.value=code;var card=cd.closest(".card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"})}
+ var n2=document.getElementById("n2");if(n2)n2.focus()
+}
 function viewCode(code){
  app.innerHTML='<p class="mute">확인하는 중이에요…</p>';
  sbFetch(code).then(function(res){
@@ -213,13 +220,20 @@ function share(){
  })
 }
 function renderShare(code){
- app.innerHTML='<h1>답변을 마쳤어요</h1><p>아래 코드를 상대에게 보내 주세요. 상대가 코드를 입력하고 답하면 비교 결과가 나와요. 이 코드는 나중에 \'코드로 상태 확인하기\'에서 진행 상황을 볼 때도 써요.</p><div class="code" id="cc">'+code+'</div>'+
- '<button class="primary" id="cp">코드 복사하기</button><p class="mute" style="margin-top:12px" id="ms"></p>'+
+ S.code=code;
+ var url=joinUrl(code);
+ var msg="결혼 가치관 맞춰보기 끝냈어! 아래 링크 눌러서 같이 맞춰봐.\n"+url+"\n(링크가 안 열리면 코드 "+code+" 입력)";
+ app.innerHTML='<h1>답변을 마쳤어요</h1><p>아래 링크를 상대에게 보내 주세요. 링크를 누르면 코드가 미리 입력된 화면으로 바로 들어가요. 상대가 이름만 적고 답하면 비교 결과가 나와요. 이 코드는 나중에 \'코드로 상태 확인하기\'에서 진행 상황을 볼 때도 써요.</p><div class="code" id="cc">'+code+'</div>'+
+ '<p class="mute" style="word-break:break-all">초대 링크: <a href="'+esc(url)+'">'+esc(url)+'</a></p>'+
+ '<div class="row" style="margin:12px 0"><button class="primary" id="shbtn">공유하기</button><button id="cp">코드만 복사</button></div><p class="mute" style="margin-top:4px" id="ms"></p>'+
  '<button id="ck" style="margin:4px 0">나중에 이 코드로 상태 확인하기</button>'+
  '<div class="card"><h2>같은 기기로 바로 하고 싶다면</h2><p class="mute">휴대폰을 상대에게 넘겨 이어서 풀어도 돼요. 이 경우 따로 코드가 필요 없어요.</p><label class="mute">상대 이름 또는 별명</label><input id="pn" maxlength="10" placeholder="예: 지연">'+gSel("g3")+'<div class="err" id="er3"></div></div><button class="primary" id="sd" style="margin:4px 0 24px">상대가 이어서 풀기</button>'+
  '<button id="hm">처음으로</button>';
+ document.getElementById("shbtn").onclick=function(){var m=document.getElementById("ms");
+  function fb(){try{navigator.clipboard.writeText(msg).then(function(){m.textContent="공유 기능을 쓸 수 없어 메시지(링크 포함)를 복사했어요. 원하는 곳에 붙여넣어 보내 주세요."},function(){m.textContent="복사도 안 돼요. 아래 링크를 직접 선택해 전달해 주세요."})}catch(e){m.textContent="복사가 안 돼요. 아래 링크를 직접 선택해 전달해 주세요."}}
+  if(navigator.share){navigator.share({title:"결혼 가치관 맞춰보기",text:msg,url:url}).catch(function(e){if(!e||e.name!=="AbortError")fb()})}else fb()};
  document.getElementById("cp").onclick=function(){var m=document.getElementById("ms");
-  try{navigator.clipboard.writeText(code).then(function(){m.textContent="복사했어요."},function(){m.textContent="직접 적어서 전달해 주세요."})}catch(e){m.textContent="직접 적어서 전달해 주세요."}};
+  try{navigator.clipboard.writeText(code).then(function(){m.textContent="코드를 복사했어요."},function(){m.textContent="직접 적어서 전달해 주세요."})}catch(e){m.textContent="직접 적어서 전달해 주세요."}};
  document.getElementById("ck").onclick=function(){viewCode(code)};
  var gt3=gWire("g3");document.getElementById("sd").onclick=function(){var pn=document.getElementById("pn").value.trim(),e3=document.getElementById("er3");if(!pn){e3.textContent="이름 또는 별명을 입력해 주세요.";return}var nx=dx();nx.g=gt3();nx.n=pn;S={role:"B",name:pn,mine:[],x:nx,other:{a:S.mine,x:S.x},i:0,pName:S.name};go()};
  document.getElementById("hm").onclick=home
@@ -380,7 +394,10 @@ function result(){
 
 (function(){
  var m=/[?&]code=([A-Za-z0-9]{4,8})/.exec(location.search)||/[#&]code=([A-Za-z0-9]{4,8})/.exec(location.hash);
- if(m)viewCode(m[1].toUpperCase());else home()
+ if(m){viewCode(m[1].toUpperCase());return}
+ var j=/[?&]join=([A-Za-z0-9]{4,8})/.exec(location.search)||/[#&]join=([A-Za-z0-9]{4,8})/.exec(location.hash);
+ if(j){joinWith(j[1].toUpperCase());return}
+ home()
 })();
 </script>
 </body>
