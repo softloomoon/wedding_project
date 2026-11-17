@@ -265,6 +265,34 @@
   }
   .discuss-list li{margin-bottom:8px;}
 
+  /* 사진으로 저장 / 공유하기 */
+  .action-row{display:flex;gap:10px;margin:0 0 12px;}
+  .action-row button{
+    flex:1;
+    padding:12px 16px;
+    min-height:48px;
+    border-radius:999px;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .08s ease, border-color .15s ease, background .15s ease;
+  }
+  .action-row button:active{transform:scale(0.98);}
+  .save-btn{border:none;background:var(--accent);color:#fff;box-shadow:0 10px 20px -10px rgba(163,38,92,0.6);}
+  .save-btn:active{background:#7e1d49;}
+  .share-btn{border:2px dashed var(--line);background:var(--card);color:var(--accent);}
+  .share-btn:active{border-color:var(--accent);}
+  .action-status{font-size:.85rem;color:var(--sub);margin:0 0 10px;min-height:1.2em;}
+  .action-preview img{
+    display:block;
+    width:100%;
+    border-radius:18px;
+    margin:0 0 24px;
+    border:6px solid var(--card);
+    outline:1.5px solid var(--line);
+    box-shadow:0 14px 28px -16px rgba(58,36,48,.35);
+  }
+
 </style>
 </head>
 <body>
@@ -302,11 +330,19 @@
     <div class="result-title" id="result-title"></div>
     <div class="result-desc" id="result-desc"></div>
 
+    <div class="action-row"><button class="save-btn" id="sv1">📸 사진으로 저장</button><button class="share-btn" id="sh1">공유하기</button></div>
+    <div class="action-status" id="pvm1" role="status"></div>
+    <div class="action-preview" id="pv1"></div>
+
     <div class="section-label">내가 결혼 생활에서 중요하게 생각하는 가치</div>
     <div class="bars" id="result-bars"></div>
 
     <div class="section-label">결혼 전에 꼭 이야기해 볼 질문</div>
     <ol class="discuss-list" id="discuss-list"></ol>
+
+    <div class="action-row"><button class="save-btn" id="sv2">📸 사진으로 저장</button><button class="share-btn" id="sh2">공유하기</button></div>
+    <div class="action-status" id="pvm2" role="status"></div>
+    <div class="action-preview" id="pv2"></div>
 
     <button class="restart-btn" onclick="restartQuiz()">다시 해보기</button>
   </div>
@@ -413,6 +449,8 @@ const TYPE_COLOR = {
   C: { fg: "var(--type-c)", bg: "var(--type-c-bg)" },
   D: { fg: "var(--type-d)", bg: "var(--type-d-bg)" }
 };
+
+const TYPE_HEX = { A:"#c2690b", B:"#1d7a8c", C:"#c23b5a", D:"#3f8a4e" };
 
 const TYPE_CARD_IMG = {
   A: "cards/card-a.png",
@@ -566,6 +604,11 @@ function showResult(){
     discussEl.appendChild(li);
   });
 
+  LR = {
+    topTypes: topTypes,
+    bars: ['A','B','C','D'].map(t => ({ t:t, label: TYPE_LABEL[t], pct: Math.round((counts[t] / QUESTIONS.length) * 100) }))
+  };
+
   document.getElementById('progress-fill').style.width = '100%';
   show('screen-result');
 }
@@ -573,6 +616,81 @@ function showResult(){
 function restartQuiz(){
   show('screen-intro');
 }
+
+/* ---- 사진으로 저장 / 공유하기 ---- */
+let LR = null;
+
+function heartPath(c,cx,cy,s){var t=s/16;c.beginPath();c.moveTo(cx,cy+3*t);
+ c.bezierCurveTo(cx,cy+2*t,cx-6*t,cy-4*t,cx-10*t,cy-2*t);
+ c.bezierCurveTo(cx-16*t,cy+2*t,cx-10*t,cy+10*t,cx,cy+16*t);
+ c.bezierCurveTo(cx+10*t,cy+10*t,cx+16*t,cy+2*t,cx+10*t,cy-2*t);
+ c.bezierCurveTo(cx+6*t,cy-4*t,cx,cy+2*t,cx,cy+3*t);c.closePath()}
+function rr(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function loadImg(src){return new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im)};im.onerror=rej;im.src=src})}
+
+function mkImg(){
+ var ld=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 40px "Gaegu"'),document.fonts.load('400 30px "Noto Sans KR"')]).catch(function(){}).then(function(){return document.fonts.ready}).catch(function(){}):Promise.resolve();
+ var R=LR,imgs=R.topTypes.map(function(t){return TYPE_CARD_IMG[t]});
+ var BG="#f8efe2",CARD="#fffaf2",INK="#3a2430",MUTE="#9a7d83",LINE="#ecd9ce",ACC="#a3265c",GF='"Gaegu",cursive';
+ return Promise.all([ld,Promise.all(imgs.map(loadImg))]).then(function(res){return new Promise(function(done){
+  var loaded=res[1],W=1080,H=1360,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  c.fillStyle=BG;c.fillRect(0,0,W,H);
+  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1260,30);c.fill();c.restore();
+  var cx=56,cy0=56,cw=W-cx*2,ch=H-cy0*2;
+  c.save();c.shadowColor="rgba(58,36,48,.18)";c.shadowBlur=36;c.shadowOffsetY=16;rr(c,cx,cy0,cw,ch,40);c.fillStyle=CARD;c.fill();c.restore();
+  c.save();c.setLineDash([12,10]);c.lineWidth=3;c.strokeStyle=ACC;rr(c,cx,cy0,cw,ch,40);c.stroke();c.restore();
+  var py=cy0+58;
+  c.textBaseline="alphabetic";c.textAlign="center";c.fillStyle=ACC;c.font="700 34px "+GF;c.fillText("✦ 나의 결혼 마지노선 테스트 ✦",W/2,py);py+=46;
+  /* 완성된 캐릭터 카드(이름/문구 포함)를 그대로 보여줌 - 1장 또는 동점이면 여러 장 */
+  var n=loaded.length,gap=16,phW=Math.min(420,(cw-112-(n-1)*gap)/n),rowW=n*phW+(n-1)*gap,startX=W/2-rowW/2;
+  loaded.forEach(function(img,i){
+   var ih=phW*(img.height/img.width),x=startX+i*(phW+gap)+phW/2,rot=(n===1)?-0.02:0;
+   c.save();c.translate(x,py+ih/2+16);c.rotate(rot);
+   c.save();c.shadowColor="rgba(58,36,48,.28)";c.shadowBlur=22;c.shadowOffsetY=10;c.fillStyle="#fffdf8";rr(c,-phW/2-10,-ih/2-10,phW+20,ih+20,16);c.fill();c.restore();
+   c.save();rr(c,-phW/2,-ih/2,phW,ih,8);c.clip();c.drawImage(img,-phW/2,-ih/2,phW,ih);c.restore();
+   c.restore();
+  });
+  var maxIh=Math.max.apply(null,loaded.map(function(img){return phW*(img.height/img.width)}));
+  py+=maxIh+60;
+  c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("가치관 비중",cx+56,py);py+=72;
+  var pctColW=120,pctRight=cx+cw-56,barEnd=pctRight-pctColW,bx0=cx+330,bw0=barEnd-bx0,barH=20;
+  R.bars.forEach(function(g,k){var y=py+k*78,labelY=y+11;
+   c.fillStyle=INK;c.font="700 32px "+GF;c.textAlign="left";c.fillText(g.label,cx+56,labelY);
+   rr(c,bx0,y,bw0,barH,10);c.fillStyle=LINE;c.fill();
+   rr(c,bx0,y,Math.max(bw0*g.pct/100,barH),barH,10);c.fillStyle=TYPE_HEX[g.t];c.fill();
+   c.fillStyle=TYPE_HEX[g.t];c.textAlign="right";c.font="700 34px "+GF;c.fillText(g.pct+"%",pctRight,y+barH+2)});
+  py+=R.bars.length*78+26;
+  c.textAlign="center";c.fillStyle=MUTE;c.font="400 26px "+FN;c.fillText("결혼 전에 꼭 이야기해 볼 질문도 앱에서 확인해보세요",W/2,py);py+=38;
+  c.fillStyle=ACC;c.font="700 30px "+GF;c.fillText("Wedding Project",W/2,py);
+  cv.toBlob(function(b){done(b)},"image/png")})}).catch(function(){return new Promise(function(done){
+  var W=1080,H=700,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  c.fillStyle="#f8efe2";c.fillRect(0,0,W,H);c.textAlign="center";c.fillStyle="#a3265c";c.font="700 56px "+GF;c.fillText("나의 결혼 마지노선 테스트",W/2,350);
+  cv.toBlob(function(b){done(b)},"image/png")})})
+}
+var FN='"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+function sumTxt(){return "나의 결혼 마지노선 테스트 결과: " + LR.topTypes.map(function(t){return RESULTS[t].name}).join(" · ")}
+
+[1,2].forEach(function(n){
+ var saveBtn=document.getElementById('sv'+n),shareBtn=document.getElementById('sh'+n);
+ if(!saveBtn) return;
+ var st=document.getElementById('pvm'+n),pvw=document.getElementById('pv'+n);
+ function hint(){st.textContent='아래 사진을 길게 눌러 저장해 주세요.'}
+ function showPreview(blob){var url=URL.createObjectURL(blob);
+  pvw.innerHTML='<img src="'+url+'" alt="결과 사진">';
+  return url}
+ saveBtn.onclick=function(){st.textContent='사진을 만드는 중이에요.';
+  mkImg().then(function(blob){
+   var url=showPreview(blob);
+   try{var a=document.createElement('a');a.href=url;a.download='결혼마지노선-결과.png';document.body.appendChild(a);a.click();document.body.removeChild(a);
+    st.textContent='사진을 저장했어요. 저장되지 않았다면 아래 사진을 길게 눌러 저장해 주세요.'}
+   catch(e){hint()}
+  }).catch(function(){st.textContent='사진을 만들지 못했어요. 다시 시도해 주세요.'})};
+ shareBtn.onclick=function(){
+  function fb(){var s=sumTxt();try{navigator.clipboard.writeText(s).then(function(){st.textContent='공유 기능을 쓸 수 없어 결과 요약을 복사했어요. 사진으로 저장해서 함께 보내 주세요.'},function(){st.textContent='공유 기능을 쓸 수 없어요. 사진으로 저장해서 보내 주세요.'})}catch(e){st.textContent='공유 기능을 쓸 수 없어요. 사진으로 저장해서 보내 주세요.'}}
+  mkImg().then(function(blob){var f=new File([blob],'결혼마지노선-결과.png',{type:'image/png'});
+   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:'나의 결혼 마지노선 테스트',text:sumTxt()});
+   fb()}).catch(function(e){if(!e||e.name!=='AbortError')fb()})};
+});
 
 </script>
 </body>
