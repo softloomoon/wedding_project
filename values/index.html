@@ -259,24 +259,25 @@ function heartPath(c,cx,cy,s){var t=s/16;c.beginPath();c.moveTo(cx,cy+3*t);
  c.bezierCurveTo(cx+6*t,cy-4*t,cx,cy+2*t,cx,cy+3*t);c.closePath()}
 function rr(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function mkImg(){
- var ld=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('400 30px "Noto Sans KR"'),document.fonts.load('700 40px "Noto Sans KR"'),document.fonts.load('400 40px "Gaegu"'),document.fonts.load('700 40px "Gaegu"')]).catch(function(){}):Promise.resolve();
+ var ld=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('400 30px "Noto Sans KR"'),document.fonts.load('700 40px "Noto Sans KR"'),document.fonts.load('400 40px "Gaegu"'),document.fonts.load('700 40px "Gaegu"')]).catch(function(){}).then(function(){return document.fonts.ready}).catch(function(){}):Promise.resolve();
  var R=LR,tImg=TIER_IMG[tierIdx(R.pct)];
  var BG="#f8efe2",CARD="#fffaf2",INK="#3a2430",MUTE="#9a7d83",LINE="#ecd9ce",ACC="#a3265c",OK="#4a8a5a",NO="#b5651d";
  var col={f:"#c23b5a",m:"#5b6fa0",o:"#8a7a73"},GF='"Gaegu",cursive';
  return Promise.all([ld,loadImg(tImg)]).then(function(res){return new Promise(function(done){
-  var img=res[1],W=1080,H=1800,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  var img=res[1],W=1080,H=1560,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
   c.fillStyle=BG;c.fillRect(0,0,W,H);
-  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1688,30);c.fill();c.restore();
+  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1448,30);c.fill();c.restore();
   var cx=56,cy0=56,cw=W-cx*2,ch=H-cy0*2;
   c.save();c.shadowColor="rgba(58,36,48,.18)";c.shadowBlur=36;c.shadowOffsetY=16;rr(c,cx,cy0,cw,ch,40);c.fillStyle=CARD;c.fill();c.restore();
   c.save();c.setLineDash([12,10]);c.lineWidth=3;c.strokeStyle=ACC;rr(c,cx,cy0,cw,ch,40);c.stroke();c.restore();
   var py=cy0+58;
   c.textBaseline="alphabetic";c.textAlign="center";c.fillStyle=ACC;c.font="700 34px "+GF;c.fillText("✦ 결혼 가치관 맞춰보기 ✦",W/2,py);py+=46;
-  var iw=520,ih=img.height/img.width*iw;
+  /* 사진 속 캡션 문구(헤드라인·설명)는 잘라내고 일러스트만 보여줌 */
+  var sw=img.width,sh=img.height*0.645,iw=440,ih=iw*(sh/sw);
   c.save();c.translate(W/2,py+ih/2+16);c.rotate(-0.02);
   c.save();c.shadowColor="rgba(58,36,48,.28)";c.shadowBlur=26;c.shadowOffsetY=10;c.fillStyle="#fffdf8";rr(c,-iw/2-14,-ih/2-14,iw+28,ih+28,18);c.fill();c.restore();
-  c.save();rr(c,-iw/2,-ih/2,iw,ih,8);c.clip();c.drawImage(img,-iw/2,-ih/2,iw,ih);c.restore();
-  c.restore();py+=ih+56;
+  c.save();rr(c,-iw/2,-ih/2,iw,ih,8);c.clip();c.drawImage(img,0,0,sw,sh,-iw/2,-ih/2,iw,ih);c.restore();
+  c.restore();py+=ih+48;
   c.font="700 50px "+GF;
   var w1=c.measureText(R.pn).width,w3=c.measureText(" & ").width,w2=c.measureText(R.mn).width,x0=W/2-(w1+w2+w3)/2;
   c.textAlign="left";c.fillStyle=col[R.ga];c.fillText(R.pn,x0,py);c.fillStyle=INK;c.fillText(" & ",x0+w1,py);c.fillStyle=col[R.gb];c.fillText(R.mn,x0+w1+w3,py);
@@ -286,11 +287,11 @@ function mkImg(){
   c.save();c.setLineDash([10,8]);c.strokeStyle=LINE;c.lineWidth=3;c.beginPath();c.moveTo(cx+56,py);c.lineTo(cx+cw-56,py);c.stroke();c.restore();
   py+=54;
   c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("영역별 일치",cx+56,py);py+=48;
-  R.g.forEach(function(g,k){var y=py+k*78,bx=cx+320,bw=cw-320-112;
+  R.g.forEach(function(g,k){var y=py+k*78,bx=cx+320,bw=cw-320-104;
    c.fillStyle=INK;c.font="400 30px "+FN;c.textAlign="left";c.fillText(g[0],cx+56,y);
    rr(c,bx,y-24,bw,22,11);c.fillStyle=LINE;c.fill();
    rr(c,bx,y-24,bw*g[3]/100,22,11);c.fillStyle=g[3]>=50?OK:NO;c.fill();
-   c.fillStyle=MUTE;c.textAlign="right";c.font="400 28px "+FN;c.fillText(g[1]+"/"+g[2]+" · "+g[3]+"%",cx+cw-56,y)});
+   c.fillStyle=g[3]>=50?OK:NO;c.textAlign="right";c.font="700 32px "+GF;c.fillText(g[3]+"%",cx+cw-56,y+4)});
   py+=R.g.length*78+26;
   c.textAlign="center";c.fillStyle=MUTE;c.font="400 26px "+FN;c.fillText("서로 다른 부분을 미리 아는 것이 목적이에요",W/2,py);py+=38;
   c.fillStyle=ACC;c.font="700 30px "+GF;c.fillText("웨딩 프로젝트",W/2,py);
