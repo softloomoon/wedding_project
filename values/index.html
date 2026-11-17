@@ -311,8 +311,9 @@ function mkImg(){
   c.fillStyle=MUTE;c.font="400 28px "+FN;c.fillText("결혼 가치관 맞춰보기",W/2,500);
   cv.toBlob(function(b){done(b)},"image/png")})})
 }
-function sumTxt(){return "결혼 가치관 맞춰보기 결과: "+LR.pn+" & "+LR.mn+" 일치율 "+LR.pct+"% ("+LR.t[0]+")"}
-function act(n){return '<div class="row" style="margin:12px 0"><button id="sv'+n+'">📸 사진으로 저장</button><button id="sh'+n+'">공유하기</button></div><div class="mute" id="pvm'+n+'" role="status"></div><div id="pv'+n+'"></div>'}
+function resultUrl(){if(!S.code)return "";return location.origin+location.pathname+"?code="+S.code}
+function sumTxt(){var t="결혼 가치관 맞춰보기 결과: "+LR.pn+" & "+LR.mn+" 일치율 "+LR.pct+"% ("+LR.t[0]+")",u=resultUrl();return u?t+"\n결과 보기: "+u:t}
+function act(n){var u=resultUrl(),lk=u?'<p class="mute" style="margin:8px 0 0;word-break:break-all">결과 링크: <a href="'+esc(u)+'">'+esc(u)+'</a> <button id="lc'+n+'" style="margin-left:4px">복사</button></p>':'';return '<div class="row" style="margin:12px 0"><button id="sv'+n+'">📸 사진으로 저장</button><button id="sh'+n+'">공유하기</button></div><div class="mute" id="pvm'+n+'" role="status"></div><div id="pv'+n+'"></div>'+lk}
 function result(){
  var a=S.other.a,b=S.mine,xa=S.other.x,xb=S.x,m=0,tot=0;
  Q.forEach(function(q,i){if(i===17)return;tot++;if(i===16&&a[16]===3&&b[16]===3){if(a[17]===b[17])m++}else if(a[i]===b[i])m++});
@@ -367,14 +368,20 @@ function result(){
    catch(e){hint()}
   }).catch(function(){st.textContent="사진을 만들지 못했어요. 다시 시도해 주세요."})};
  document.getElementById("sh"+n).onclick=function(){
-  function fb(){var s=sumTxt();try{navigator.clipboard.writeText(s).then(function(){st.textContent="공유 기능을 쓸 수 없어 결과 요약을 복사했어요. 사진으로 저장해서 함께 보내 주세요."},function(){st.textContent="공유 기능을 쓸 수 없어요. 사진으로 저장해서 보내 주세요."})}catch(e){st.textContent="공유 기능을 쓸 수 없어요. 사진으로 저장해서 보내 주세요."}}
-  mkImg().then(function(blob){var f=new File([blob],"결혼가치관-결과.png",{type:"image/png"});
-   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:"결혼 가치관 맞춰보기",text:sumTxt()});
-   fb()}).catch(function(e){if(!e||e.name!=="AbortError")fb()})};});
+  function fb(){var s=sumTxt();try{navigator.clipboard.writeText(s).then(function(){st.textContent="공유 기능을 쓸 수 없어 결과 요약(링크 포함)을 복사했어요. 원하는 곳에 붙여넣어 보내 주세요."},function(){st.textContent="공유 기능을 쓸 수 없어요. 아래 링크 복사 버튼을 눌러 전달해 주세요."})}catch(e){st.textContent="공유 기능을 쓸 수 없어요. 아래 링크 복사 버튼을 눌러 전달해 주세요."}}
+  mkImg().then(function(blob){var f=new File([blob],"결혼가치관-결과.png",{type:"image/png"}),u=resultUrl();
+   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share(u?{files:[f],title:"결혼 가치관 맞춰보기",text:sumTxt(),url:u}:{files:[f],title:"결혼 가치관 맞춰보기",text:sumTxt()});
+   fb()}).catch(function(e){if(!e||e.name!=="AbortError")fb()})};
+ var lc=document.getElementById("lc"+n);
+ if(lc)lc.onclick=function(){var u=resultUrl();try{navigator.clipboard.writeText(u).then(function(){lc.textContent="복사됨"},function(){lc.textContent="복사 실패"})}catch(e){lc.textContent="복사 실패"}setTimeout(function(){lc.textContent="복사"},1500)}
+ });
  document.getElementById("rs").onclick=home;window.scrollTo(0,0)
 }
 
-home();
+(function(){
+ var m=/[?&]code=([A-Za-z0-9]{4,8})/.exec(location.search)||/[#&]code=([A-Za-z0-9]{4,8})/.exec(location.hash);
+ if(m)viewCode(m[1].toUpperCase());else home()
+})();
 </script>
 </body>
 </html>
