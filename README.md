@@ -8,7 +8,9 @@
 - `values/index.html` — 결혼 가치관 맞춰보기 테스트 (질문, 결과 화면, 이미지 저장/공유 기능 포함)
 - `test3/index.html` — 나의 결혼 마지노선 테스트
 - `balance/index.html` — 신혼생활 밸런스 게임 (그림은 `balance/img/`)
-- `worker.js`, `wrangler.jsonc`, `.assetsignore` — Cloudflare Workers 설정 (질문 게시판 API `/api/questions`)
+- `qna/` — 익명 질문방 페이지(`index.html`), 관리자 페이지(`admin.html`), 공통 스크립트·스타일
+- `worker.js`, `wrangler.jsonc`, `.assetsignore` — Cloudflare Workers 설정과 익명 질문방 API
+- `apps-script/mail-relay.gs` — 메일 발송용 Google Apps Script
 - `vercel.json` — Vercel 배포용 설정
 - `netlify.toml` — Netlify 배포용 설정
 - `README.md` — 이 안내문
@@ -40,20 +42,31 @@
 
 Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 도메인을 연결할 수 있어요. 도메인은 가비아, 후이즈, Namecheap, Google Domains 같은 곳에서 구매하면 됩니다.
 
-## 질문 접수 메일 (4번 카테고리)
+## 익명 질문방 (4번 카테고리)
 
-- 질문 폼은 [FormSubmit](https://formsubmit.co)으로 `softloomon@gmail.com`에 메일을 보냅니다. 주소는 `index.html`의 `ASK_ENDPOINT`에서 바꿀 수 있어요.
-- 배포 후 **첫 질문을 한 번 보내면** FormSubmit에서 활성화 메일이 와요. 메일의 Activate 버튼을 눌러야 그 다음 질문부터 들어옵니다. (스팸함도 확인)
-- 활성화 후 받은 랜덤 문자열로 `ASK_ENDPOINT`의 메일 주소를 바꾸면 페이지 소스에 메일 주소가 보이지 않아요.
+- 메인 4번 칸: 인기 질문 3개 + **익명으로 질문하기** 버튼(눌러야 작성 폼이 열림) + 전체 보기 링크
+- `qna/` 질문방 페이지: 최신/인기 정렬, 공지 고정, 질문 상세, 익명 의견, 공감, 신고, 질문자 관리 링크 화면
+- `qna/admin.html` 관리자 페이지: 질문 승인, 숨기기, 다시 공개, 삭제, 의견 관리, 공지 쓰기
+- 서버: `worker.js` (Cloudflare Worker) + Durable Object(SQLite). 배포할 때 자동으로 만들어져요.
 
-## 질문 게시판 (4번 카테고리)
+### 동작 방식
+- 질문: 회원가입 없이 작성. `REVIEW_QUESTIONS`가 `"true"`면 운영자가 승인해야 공개돼요.
+- 의견: 누구나 바로 공개. 서로 다른 3명이 신고하면 자동으로 숨겨져요.
+- 이메일: 알림을 원하는 사람만 입력. 공개 API는 이메일을 절대 돌려주지 않아요.
+  - 질문 접수 시 **비밀 관리 링크**를 화면에 보여주고 메일로도 보내요. 이 링크로 알림을 끄고 켜거나 질문을 지울 수 있어요.
+  - 새 의견이 달리면 질문자에게 메일이 가고, 메일마다 알림 해제 링크가 있어요.
+- 운영자 메일(`ADMIN_EMAIL`)로 새 질문(승인 링크 포함), 새 의견, 신고 알림이 와요.
+- 스팸 방지: 허니팟 칸, 작성 시간 확인, 같은 접속자의 연속 등록 제한(질문 2분, 의견 20초, 하루 질문 5개·의견 30개), 같은 글 반복 금지, 링크는 1개까지, 금칙어, 전화번호·이메일·주민번호 차단, 다른 사이트에서 오는 요청 차단. 원하면 Cloudflare Turnstile도 켤 수 있어요.
 
-- 게시판에는 '새로운 질문이 등록되었습니다'와 등록일만 보여요. 질문 내용·이메일은 메일로만 오고 어디에도 저장하지 않아요.
-- 게시판 기록은 Cloudflare Durable Object(SQLite)에 저장돼요. `wrangler.jsonc`에 적혀 있어서 배포할 때 자동으로 만들어지니 대시보드에서 따로 만들 필요는 없어요.
-- 같은 접속자는 1분에 한 번만 게시판에 등록돼요(도배 방지).
-- 게시판 기능은 Cloudflare Workers에서만 동작해요. Vercel·Netlify에 올리면 게시판은 '불러오지 못했어요'로 보여요.
+### 처음 한 번 설정하기
+1. **관리자 비밀번호**: Cloudflare 대시보드 → Workers & Pages → wedding-project → Settings → Variables and Secrets → Add → 종류 **Secret**, 이름 `ADMIN_KEY`, 값은 길고 어려운 비밀번호
+2. **메일 발송**: `apps-script/mail-relay.gs` 맨 위 안내대로 Google Apps Script 웹앱을 배포하고, 같은 화면에 Secret으로 `MAIL_WEBHOOK_URL`(웹앱 URL), `MAIL_SECRET`(스크립트의 SECRET 값)을 추가
+3. (선택) Turnstile: Cloudflare → Turnstile에서 위젯을 만들고, `wrangler.jsonc`의 `TURNSTILE_SITE_KEY`에 사이트 키를 넣은 뒤 Secret으로 `TURNSTILE_SECRET` 추가
+
+- `ADMIN_KEY`가 없으면 승인할 방법이 없어서 질문이 바로 공개돼요.
+- 메일 설정이 없으면 게시판은 그대로 동작하고 메일만 가지 않아요.
 
 ## 참고
 
-- 이 사이트는 서버가 없어서 사용자 답변이 어디에도 저장되지 않아요. 통계를 모으고 싶으면 나중에 서버리스 함수나 데이터베이스를 추가해야 해요.
+- 테스트·밸런스 게임 답변은 어디에도 저장되지 않아요. 익명 질문방만 Cloudflare에 저장돼요.
 - 애드센스를 붙이려면 개인정보처리방침, 이용약관 같은 페이지와 블로그성 콘텐츠가 더 필요할 수 있어요. 승인 기준은 바뀔 수 있으니 신청 전 공식 안내를 확인하세요.

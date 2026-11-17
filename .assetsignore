@@ -7,3 +7,4 @@ netlify.toml
 vercel.json
 node_modules
 .wrangler
+apps-script

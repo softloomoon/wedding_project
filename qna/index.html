@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>익명 질문방 · 웨딩 프로젝트</title>
+<meta name="description" content="결혼을 준비하며 생긴 고민, 궁금증을 익명으로 묻고 다른 사람들의 생각을 들어보세요.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#f8efe2;--ink:#3a2430;--ink-soft:#9a7d83;--red:#c23b5a;--green:#4a8a5a;--pink:#f3d6e2;--line:#ecd9ce;--card-bg:#fffaf2;--accent:#a3265c;
+  --display:"Gaegu",cursive;--body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;--gutter:clamp(16px,4vw,48px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.65;word-break:keep-all}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+.wrap{max-width:760px;margin:0 auto;padding:0 var(--gutter)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0 12px;border-bottom:3px dashed var(--line)}
+.brand{font-family:var(--display);font-weight:700;font-size:1.8rem;text-decoration:none;color:var(--accent);line-height:1.1}
+.top a.home{font-family:var(--display);font-size:1.1rem;text-decoration:none;color:var(--ink-soft)}
+.top a.home:hover{color:var(--accent)}
+main{padding:28px 0 64px}
+.back{display:inline-block;margin:0 0 16px;font-family:var(--display);font-weight:700;font-size:1.1rem;color:var(--accent);text-decoration:none}
+.tabs{display:flex;gap:6px;margin:0 0 6px}
+.tabs button{border:2px dashed transparent;background:none;border-radius:999px;padding:4px 14px;font-family:var(--display);font-weight:700;font-size:1.1rem;color:var(--ink-soft);cursor:pointer}
+.tabs button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.more{display:block;width:100%;margin:6px 0 0;border:2px dashed var(--line);border-radius:999px;background:none;padding:10px;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--accent);cursor:pointer}
+.q-detail .qn-topic{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:999px;background:#fdf3ea;color:var(--accent);margin:0 0 10px}
+.q-body{margin:0 0 12px;font-size:1.15rem;font-weight:700;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.q-body .qn-mark{margin-right:4px}
+.q-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.c-title{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 4px}
+.c-title h2{margin:0;font-family:var(--display);font-size:1.5rem}
+.c-empty{margin:0;padding:18px 0;border-top:1px solid var(--line);color:var(--ink-soft)}
+.manage dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 18px}
+.manage dt{color:var(--ink-soft)}
+.manage dd{margin:0}
+.manage .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.danger{background:var(--red)}
+.status-pill{display:inline-block;font-size:.84rem;font-weight:700;padding:2px 10px;border-radius:999px}
+.st-public{background:#e3f0e4;color:var(--green)}.st-pending{background:#fdf3ea;color:#b5651d}.st-hidden{background:#eee;color:#666}
+footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-soft);font-size:.9rem}
+[hidden]{display:none !important}
+</style>
+<link rel="stylesheet" href="qna.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="../">Wedding Project</a>
+    <a class="home" href="../#cat-4">← 메인으로</a>
+  </header>
+  <main id="main" aria-live="polite"></main>
+  <footer>Wedding Project · 질문과 의견은 모두 공개돼요. 이메일 주소와 개인정보는 공개하지 않아요.</footer>
+</div>
+<script src="qna.js"></script>
+<script>
+(() => {
+  const Q = window.WPQna, main = document.getElementById("main"), params = new URLSearchParams(location.search);
+  const PUBLIC_NOTE = '<p class="qn-public">💡 <b>모든 질문과 의견은 공개돼요.</b> 누구나 읽을 수 있으니 실명, 전화번호, 주소, 회사명 같은 개인정보는 적지 말아 주세요. 비방·광고 글은 신고되면 숨겨지고, 운영자가 삭제할 수 있어요.</p>';
+
+  if (params.get("manage")) manageView(params.get("manage"));
+  else if (params.get("id")) detailView(Number(params.get("id")));
+  else listView();
+
+  /* ───── 목록 ───── */
+  function listView(){
+    document.title = "익명 질문방 · 웨딩 프로젝트";
+    main.innerHTML =
+      '<section class="qn-card">' +
+      '<div class="qn-head"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></div>' +
+      '<p class="qn-desc">결혼을 준비하며 생긴 고민, 궁금증, 다른 사람들의 생각이 궁금한 이야기를 나눠보세요.</p>' +
+      '<button type="button" class="qn-btn qn-wide" id="open" aria-expanded="false" aria-controls="ask">✏️ 익명으로 질문하기</button>' +
+      '<div id="ask" hidden></div>' + PUBLIC_NOTE + '</section>' +
+      '<section style="margin-top:28px"><ul class="qn-list" id="notices" style="margin:0"></ul>' +
+      '<div class="tabs" role="group" aria-label="정렬"><button type="button" data-sort="latest" aria-pressed="true">최신 질문</button><button type="button" data-sort="popular" aria-pressed="false">인기 질문</button></div>' +
+      '<div class="qn-card" style="padding-top:8px;padding-bottom:8px"><ul class="qn-list" id="list" style="margin:0"></ul><p class="qn-empty" id="empty" hidden style="margin:12px 0"></p></div>' +
+      '<button type="button" class="more" id="more" hidden>더 보기</button></section>';
+    let form = null;
+    const open = document.getElementById("open"), ask = document.getElementById("ask");
+    open.addEventListener("click", () => {
+      const on = ask.hidden;
+      ask.hidden = !on; open.setAttribute("aria-expanded", on);
+      open.textContent = on ? "작성 닫기" : "✏️ 익명으로 질문하기";
+      open.classList.toggle("qn-ghost", on);
+      if (on){ if (!form) form = Q.mountAskForm(ask, { onDone: () => load(true) }); else form.reset(); form.focus(); }
+    });
+    let sort = "latest", shown = 0, total = 0;
+    const list = document.getElementById("list"), more = document.getElementById("more"), empty = document.getElementById("empty");
+    async function load(reset){
+      if (reset){ shown = 0; }
+      const r = await Q.api("/questions?sort=" + sort + "&limit=10&offset=" + shown);
+      if (reset) list.innerHTML = "";
+      if (!r.ok){ empty.hidden = false; empty.textContent = "질문을 불러오지 못했어요. 잠시 후 다시 확인해 주세요."; more.hidden = true; return; }
+      if (reset){
+        const nl = document.getElementById("notices"); nl.innerHTML = "";
+        (r.notices || []).forEach(n => nl.appendChild(Q.questionItem(n)));
+      }
+      total = r.total;
+      r.items.forEach(q => list.appendChild(Q.questionItem(q)));
+      shown += r.items.length;
+      empty.hidden = total > 0; empty.textContent = "아직 공개된 질문이 없어요. 첫 질문을 남겨 보세요!";
+      more.hidden = shown >= total;
+    }
+    document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => {
+      sort = b.dataset.sort;
+      document.querySelectorAll("[data-sort]").forEach(x => x.setAttribute("aria-pressed", x === b));
+      load(true);
+    }));
+    more.addEventListener("click", () => load(false));
+    load(true);
+  }
+
+  /* ───── 질문 상세 + 의견 ───── */
+  async function detailView(id){
+    main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">불러오는 중이에요…</p>';
+    const r = await Q.api("/questions/" + id);
+    if (!r.ok){
+      main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">' + Q.msgFor(r.reason) + "</p>";
+      return;
+    }
+    const q = r.question;
+    document.title = (q.is_notice ? "[공지] " : "Q. ") + q.body.slice(0, 40) + " · 익명 질문방";
+    let firstView = false;
+    try { const k = "wp-viewed-" + id; if (!sessionStorage.getItem(k)){ sessionStorage.setItem(k, "1"); firstView = true; Q.api("/questions/" + id + "/view", { method: "POST" }); } } catch (e) {}
+    main.innerHTML =
+      '<a class="back" href="./">← 질문 목록</a>' +
+      '<article class="qn-card q-detail">' +
+      '<span class="qn-topic"></span>' +
+      '<p class="q-body">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span>') + '<span id="qbody"></span></p>' +
+      '<div class="q-foot"><p class="qn-meta">' + (q.is_notice ? "운영자" : "익명 질문자") + "<span>" + Q.fmtDate(q.created_at) + "</span><span>조회 " + (q.views + (firstView ? 1 : 0)) + '</span></p>' +
+      (q.is_notice ? "" : '<button type="button" class="qn-mini" data-report="q" data-id="' + q.id + '">🚩 신고</button>') + '</div>' +
+      '<div id="qreport"></div></article>' +
+      '<div class="c-title"><h2>의견 <span id="ccount">' + r.comments.length + '</span>개</h2></div>' +
+      '<ul class="qn-comments" id="comments"></ul>' +
+      '<form class="qn-cform" id="cform" novalidate><h3>나의 의견 남기기</h3>' +
+      '<label class="qn-label" for="cbody">회원가입 없이 익명으로 의견을 남길 수 있어요.</label>' +
+      '<textarea id="cbody" maxlength="500" placeholder="경험이나 생각을 편하게 나눠 주세요."></textarea>' +
+      '<p class="qn-hint"><span>실명, 전화번호 같은 개인정보는 적지 말아 주세요.</span><span class="qn-count" id="ccnt">0/500</span></p>' +
+      '<div class="qn-hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' +
+      '<div class="qn-ts" id="cts"></div>' +
+      '<label class="qn-check qn-agree"><input type="checkbox" id="cagree"><span>내 의견은 <b>누구나 볼 수 있게 공개</b>된다는 점에 동의해요.</span></label>' +
+      '<button type="submit" class="qn-btn qn-send" id="csend" disabled>의견 등록하기</button>' +
+      '<p class="qn-msg" id="cmsg" role="status" aria-live="polite"></p></form>' + PUBLIC_NOTE;
+    main.querySelector(".qn-topic").textContent = q.topic;
+    document.getElementById("qbody").textContent = q.body;
+    const ul = document.getElementById("comments");
+    let n = 0;
+    const liked = Q.store.get("wp-liked");
+    function addComment(c, fresh){
+      n++;
+      const li = document.createElement("li");
+      li.className = "qn-c";
+      li.innerHTML = '<p class="qn-c-head"><b>익명 ' + n + '</b><span>' + Q.ago(c.created_at) + '</span></p><p class="qn-c-body"></p>' +
+        '<div class="qn-c-actions"><button type="button" class="qn-mini" data-like="' + c.id + '" aria-label="공감">♥ 공감 <span>' + (c.likes || 0) + '</span></button>' +
+        '<button type="button" class="qn-mini" data-report="c" data-id="' + c.id + '">🚩 신고</button></div><div class="rbox"></div>';
+      li.querySelector(".qn-c-body").textContent = c.body;
+      const lb = li.querySelector("[data-like]");
+      if (liked.includes(c.id)){ lb.classList.add("on"); lb.setAttribute("aria-pressed", "true"); }
+      ul.appendChild(li);
+      if (fresh) li.scrollIntoView({ block: "nearest" });
+    }
+    if (!r.comments.length) ul.innerHTML = '<li class="c-empty">아직 의견이 없어요. 첫 의견을 남겨 주세요!</li>';
+    r.comments.forEach(c => addComment(c));
+
+    /* 공감 · 신고 */
+    main.addEventListener("click", async e => {
+      const lb = e.target.closest("[data-like]");
+      if (lb){
+        if (lb.classList.contains("on")) return;
+        const cid = Number(lb.dataset.like);
+        lb.disabled = true;
+        const res = await Q.api("/comments/" + cid + "/like", { method: "POST" });
+        lb.disabled = false;
+        if (res.ok){ lb.classList.add("on"); lb.setAttribute("aria-pressed", "true"); lb.querySelector("span").textContent = res.likes; Q.store.add("wp-liked", cid); }
+        return;
+      }
+      const rb = e.target.closest("[data-report]");
+      if (rb){
+        const kind = rb.dataset.report, tid = Number(rb.dataset.id);
+        const holder = kind === "q" ? document.getElementById("qreport") : rb.closest(".qn-c").querySelector(".rbox");
+        if (Q.store.get("wp-reported").includes(kind + tid)){ holder.innerHTML = '<div class="qn-report-box">이미 신고하셨어요. 확인 후 조치할게요.</div>'; return; }
+        if (holder.innerHTML){ holder.innerHTML = ""; return; }
+        holder.innerHTML = '<div class="qn-report-box">신고 사유를 골라 주세요.<br><select><option>비방·욕설</option><option>광고·스팸</option><option>개인정보 노출</option><option>음란·불쾌한 내용</option><option>기타</option></select>' +
+          '<button type="button" class="qn-mini do-report">신고하기</button> <button type="button" class="qn-mini no-report">취소</button></div>';
+        holder.querySelector(".no-report").onclick = () => (holder.innerHTML = "");
+        holder.querySelector(".do-report").onclick = async () => {
+          const res = await Q.api("/report", { method: "POST", body: { kind, id: tid, reason: holder.querySelector("select").value } });
+          if (res.ok){ Q.store.add("wp-reported", kind + tid); holder.innerHTML = '<div class="qn-report-box">신고가 접수됐어요. 운영자가 확인할게요. 고마워요.</div>'; }
+          else holder.innerHTML = '<div class="qn-report-box">' + Q.msgFor(res.reason) + "</div>";
+        };
+      }
+    });
+
+    /* 의견 작성 */
+    const cf = document.getElementById("cform"), cb = document.getElementById("cbody"), ca = document.getElementById("cagree"), cs = document.getElementById("csend"), cm = document.getElementById("cmsg"), cc = document.getElementById("ccnt");
+    const say = (t, cls) => { cm.textContent = t; cm.className = "qn-msg" + (cls ? " " + cls : ""); };
+    const upd = () => { cc.textContent = cb.value.length + "/500"; cs.disabled = !cb.value.trim() || !ca.checked; };
+    cb.addEventListener("input", upd); ca.addEventListener("change", upd); upd();
+    let guard = null; Q.spamGuard(document.getElementById("cts")).then(g => (guard = g));
+    let busy = false;
+    cf.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (busy) return;
+      const text = cb.value.trim();
+      if (text.length < 2){ say("의견을 2자 이상 적어 주세요.", "err"); return; }
+      busy = true; cs.disabled = true; cs.textContent = "등록하는 중…"; say("");
+      const res = await Q.api("/questions/" + id + "/comments", { method: "POST", body: {
+        body: text, website: cf.website.value, elapsed: guard ? Date.now() - guard.openedAt : 0, turnstile: guard ? guard.token() : "" } });
+      busy = false; cs.textContent = "의견 등록하기";
+      if (guard) guard.reset();
+      if (!res.ok){ say(Q.msgFor(res.reason), "err"); upd(); return; }
+      if (!n) ul.innerHTML = "";
+      addComment(res.comment, true);
+      document.getElementById("ccount").textContent = n;
+      cf.reset(); upd();
+      say("의견이 등록됐어요. 고마워요! 💌", "ok");
+    });
+  }
+
+  /* ───── 질문자 비밀 관리 링크 ───── */
+  async function manageView(raw){
+    document.title = "내 질문 관리 · 익명 질문방";
+    const m = /^(\d+)-([0-9a-f]{36})$/.exec(raw || "");
+    main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">불러오는 중이에요…</p>';
+    if (!m){ main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">관리 링크가 올바르지 않아요. 받은 링크를 그대로 열어 주세요.</p>'; return; }
+    const id = Number(m[1]), token = m[2];
+    const r = await Q.api("/manage?id=" + id + "&token=" + token);
+    if (!r.ok){ main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">질문을 찾을 수 없어요. 이미 삭제되었거나 링크가 올바르지 않아요.</p>'; return; }
+    render(r.question);
+    function render(q){
+      const st = { public: ["공개 중", "st-public"], pending: ["검토 중 (곧 공개돼요)", "st-pending"], hidden: ["숨김 처리됨", "st-hidden"] }[q.status] || [q.status, "st-hidden"];
+      main.innerHTML =
+        '<a class="back" href="./">← 질문 목록</a><section class="qn-card manage">' +
+        '<div class="qn-head"><h1>내 질문 관리</h1></div><p class="qn-desc">이 링크를 가진 사람만 이 화면을 볼 수 있어요. 다른 사람에게 공유하지 마세요.</p>' +
+        '<p class="q-body"><span class="qn-mark">Q.</span><span id="mbody"></span></p>' +
+        '<dl><dt>상태</dt><dd><span class="status-pill ' + st[1] + '">' + st[0] + '</span></dd><dt>분야</dt><dd id="mtopic"></dd><dt>등록일</dt><dd>' + Q.fmtDate(q.created_at) + '</dd>' +
+        '<dt>의견 · 조회</dt><dd>' + q.comment_count + '개 · ' + q.views + '</dd><dt>메일 알림</dt><dd>' + (q.notify && q.has_email ? "켜짐" : "꺼짐") + '</dd></dl>' +
+        (q.status === "public" ? '<p><a class="qn-more-link" style="margin:0 0 14px" href="./?id=' + q.id + '">공개된 질문 보러 가기 →</a></p>' : "") +
+        '<div class="row" id="notify-row"></div>' +
+        '<div class="row"><button type="button" class="qn-btn qn-ghost" id="del">질문 삭제하기</button></div><div class="row" id="del-confirm" hidden></div>' +
+        '<p class="qn-msg" id="mmsg" role="status"></p></section>';
+      document.getElementById("mbody").textContent = q.body;
+      document.getElementById("mtopic").textContent = q.topic;
+      const msg = document.getElementById("mmsg"), nr = document.getElementById("notify-row");
+      const say = (t, cls) => { msg.textContent = t; msg.className = "qn-msg" + (cls ? " " + cls : ""); };
+      if (q.notify && q.has_email){
+        nr.innerHTML = '<button type="button" class="qn-btn qn-ghost" id="off">메일 알림 끄기</button>';
+        document.getElementById("off").onclick = () => act({ action: "notify_off" }, "메일 알림을 껐어요.");
+      } else {
+        nr.innerHTML = (q.has_email ? '<button type="button" class="qn-btn qn-ghost" id="on">메일 알림 다시 켜기</button><span class="qn-hint" style="margin:0">또는 새 주소:</span>' : "") +
+          '<input type="email" class="qn-field" id="nemail" placeholder="알림 받을 이메일 주소" style="max-width:300px;margin:0"><button type="button" class="qn-btn" id="on2">이 주소로 알림 받기</button>';
+        if (q.has_email) document.getElementById("on").onclick = () => act({ action: "notify_on" }, "메일 알림을 켰어요.");
+        document.getElementById("on2").onclick = () => {
+          const v = document.getElementById("nemail").value.trim();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){ say("이메일 주소 형식을 확인해 주세요.", "err"); return; }
+          act({ action: "notify_on", email: v }, "메일 알림을 켰어요. 이메일은 공개되지 않아요.");
+        };
+      }
+      document.getElementById("del").onclick = () => {
+        const c = document.getElementById("del-confirm");
+        c.hidden = false;
+        c.innerHTML = '<span>질문과 달린 의견이 모두 지워지고 되돌릴 수 없어요.</span><button type="button" class="qn-btn danger" id="del2">정말 삭제</button><button type="button" class="qn-btn qn-ghost" id="del-no">취소</button>';
+        document.getElementById("del-no").onclick = () => { c.hidden = true; c.innerHTML = ""; };
+        document.getElementById("del2").onclick = async () => {
+          const res = await Q.api("/manage", { method: "POST", body: { id, token, action: "delete" } });
+          if (res.ok) main.innerHTML = '<section class="qn-card"><h1 class="qn-form-title">질문을 삭제했어요</h1><p class="qn-desc">이용해 주셔서 고마워요.</p><a class="qn-btn" href="./">질문방으로</a></section>';
+          else say(Q.msgFor(res.reason), "err");
+        };
+      };
+      async function act(body, okText){
+        const res = await Q.api("/manage", { method: "POST", body: Object.assign({ id, token }, body) });
+        if (!res.ok){ say(Q.msgFor(res.reason), "err"); return; }
+        render(res.question);
+        const m2 = document.getElementById("mmsg"); m2.textContent = okText; m2.className = "qn-msg ok";
+      }
+    }
+  }
+})();
+</script>
+</body>
+</html>
