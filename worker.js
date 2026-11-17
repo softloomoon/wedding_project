@@ -18,7 +18,8 @@ import { DurableObject } from "cloudflare:workers";
 const DAY = 24 * 60 * 60 * 1000;
 const TOPICS = ["결혼 준비 및 비용", "연인 관계 및 가치관", "예식 및 신혼생활", "기타 궁금한 점"];
 const LIMITS = {
-  question: { min: 10, max: 1000, gapMs: 2 * 60 * 1000, perDay: 5 },
+  question: { min: 5, max: 1000, gapMs: 2 * 60 * 1000, perDay: 5 },
+  title: { min: 5, max: 60 },
   comment: { min: 2, max: 500, gapMs: 20 * 1000, perDay: 30 },
 };
 const MIN_FILL_MS = 3000; // 폼을 연 지 3초 안에 보낸 글은 자동 등록으로 봅니다
@@ -48,6 +49,7 @@ export class QuestionBoard extends DurableObject {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         created_at INTEGER NOT NULL,
         topic TEXT NOT NULL,
+        title TEXT NOT NULL DEFAULT '',
         body TEXT NOT NULL,
         email TEXT,
         notify INTEGER NOT NULL DEFAULT 1,
@@ -76,6 +78,8 @@ export class QuestionBoard extends DurableObject {
       `CREATE TABLE IF NOT EXISTS qna_views (question_id INTEGER NOT NULL, key TEXT NOT NULL, day INTEGER NOT NULL, PRIMARY KEY(question_id, key, day))`
     ];
     for (const q of schema) this.sql.exec(q);
+    /* 제목 칸이 생기기 전에 만든 저장소에는 title 칸을 추가합니다 (이미 있으면 그냥 넘어가요) */
+    try { this.sql.exec("ALTER TABLE qna_questions ADD COLUMN title TEXT NOT NULL DEFAULT ''"); } catch (e) {}
   }
 
   rows(q, ...b) { return this.sql.exec(q, ...b).toArray(); }
@@ -101,35 +105,35 @@ export class QuestionBoard extends DurableObject {
       : "id DESC";
     const args = sort === "popular" ? [Date.now() - 30 * DAY] : [];
     const items = this.rows(
-      `SELECT id, created_at, topic, body, views, comment_count FROM qna_questions WHERE status = 'public' AND is_notice = 0 ORDER BY ${order} LIMIT ? OFFSET ?`,
+      `SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count FROM qna_questions WHERE status = 'public' AND is_notice = 0 ORDER BY ${order} LIMIT ? OFFSET ?`,
       ...args, limit, offset
     );
     const total = this.first("SELECT COUNT(*) AS n FROM qna_questions WHERE status = 'public' AND is_notice = 0").n;
-    const notices = this.rows("SELECT id, created_at, topic, body, views, comment_count, 1 AS is_notice FROM qna_questions WHERE status = 'public' AND is_notice = 1 ORDER BY id DESC LIMIT 3");
+    const notices = this.rows("SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count, 1 AS is_notice FROM qna_questions WHERE status = 'public' AND is_notice = 1 ORDER BY id DESC LIMIT 3");
     return { total, items, notices };
   }
 
   getQuestion(id) {
-    const q = this.first("SELECT id, created_at, topic, body, views, comment_count, is_notice FROM qna_questions WHERE id = ? AND status = 'public'", id);
+    const q = this.first("SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count, is_notice FROM qna_questions WHERE id = ? AND status = 'public'", id);
     if (!q) return null;
     const comments = this.rows("SELECT id, created_at, body, likes FROM qna_comments WHERE question_id = ? AND status = 'public' ORDER BY id ASC", id);
     return { question: q, comments };
   }
 
-  addQuestion({ key, topic, body, email, publish, manageHash }) {
+  addQuestion({ key, topic, title, body, email, publish, manageHash }) {
     const why = this.checkRate(key, "question", body);
     if (why) return { ok: false, reason: why };
     this.hit(key, "question");
     const now = Date.now();
     const row = this.first(
-      "INSERT INTO qna_questions (created_at, topic, body, email, notify, status, last_activity, manage_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
-      now, topic, body, email || null, email ? 1 : 0, publish ? "public" : "pending", now, manageHash
+      "INSERT INTO qna_questions (created_at, topic, title, body, email, notify, status, last_activity, manage_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+      now, topic, title, body, email || null, email ? 1 : 0, publish ? "public" : "pending", now, manageHash
     );
     return { ok: true, id: row.id, status: publish ? "public" : "pending" };
   }
 
   addComment({ key, questionId, body }) {
-    const q = this.first("SELECT id, body, email, notify FROM qna_questions WHERE id = ? AND status = 'public'", questionId);
+    const q = this.first("SELECT id, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, email, notify FROM qna_questions WHERE id = ? AND status = 'public'", questionId);
     if (!q) return { ok: false, reason: "not_found" };
     const why = this.checkRate(key, "comment", body);
     if (why) return { ok: false, reason: why };
@@ -137,7 +141,7 @@ export class QuestionBoard extends DurableObject {
     const now = Date.now();
     const c = this.first("INSERT INTO qna_comments (question_id, created_at, body) VALUES (?, ?, ?) RETURNING id, created_at, body, likes", questionId, now, body);
     this.recount(questionId, now);
-    return { ok: true, comment: c, question: { id: q.id, body: q.body, email: q.notify ? q.email : null } };
+    return { ok: true, comment: c, question: { id: q.id, title: q.title, email: q.notify ? q.email : null } };
   }
 
   recount(questionId, touch) {
@@ -167,7 +171,7 @@ export class QuestionBoard extends DurableObject {
 
   report(kind, id, key, reason) {
     const table = kind === "q" ? "qna_questions" : "qna_comments";
-    const t = this.first(`SELECT id, body, status, report_count FROM ${table} WHERE id = ?`, id);
+    const t = this.first(`SELECT id, ${kind === "q" ? "title || ' / ' || body AS body" : "body"}, status, report_count FROM ${table} WHERE id = ?`, id);
     if (!t || t.status !== "public") return { ok: false, reason: "not_found" };
     if (this.first("SELECT 1 AS x FROM qna_reports WHERE kind = ? AND target_id = ? AND key = ?", kind, id, key)) return { ok: true, already: true };
     this.sql.exec("INSERT INTO qna_reports (kind, target_id, key, at, reason) VALUES (?, ?, ?, ?, ?)", kind, id, key, Date.now(), reason);
@@ -183,7 +187,7 @@ export class QuestionBoard extends DurableObject {
 
   /* 질문자 비밀 관리 링크 */
   manageGet(id, hash) {
-    const q = this.first("SELECT id, created_at, topic, body, status, notify, (email IS NOT NULL) AS has_email, comment_count, views, manage_hash FROM qna_questions WHERE id = ?", id);
+    const q = this.first("SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, status, notify, (email IS NOT NULL) AS has_email, comment_count, views, manage_hash FROM qna_questions WHERE id = ?", id);
     if (!q || !q.manage_hash || q.manage_hash !== hash || q.status === "deleted") return null;
     delete q.manage_hash;
     return q;
@@ -219,19 +223,19 @@ export class QuestionBoard extends DurableObject {
     this.recount(c.question_id);
     return { ok: true };
   }
-  addNotice(body) {
+  addNotice(title, body) {
     const now = Date.now();
-    return this.first("INSERT INTO qna_questions (created_at, topic, body, status, last_activity, is_notice, notify) VALUES (?, '공지', ?, 'public', ?, 1, 0) RETURNING id", now, body, now);
+    return this.first("INSERT INTO qna_questions (created_at, topic, title, body, status, last_activity, is_notice, notify) VALUES (?, '공지', ?, ?, 'public', ?, 1, 0) RETURNING id", now, title, body, now);
   }
 
   /* 운영자 기능 */
   setStatus(kind, id, status) {
     if (!["public", "hidden", "pending"].includes(status)) return { ok: false };
     if (kind === "q") {
-      const q = this.first("SELECT id, body, email, notify, status FROM qna_questions WHERE id = ?", id);
+      const q = this.first("SELECT id, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, email, notify, status FROM qna_questions WHERE id = ?", id);
       if (!q) return { ok: false, reason: "not_found" };
       this.sql.exec("UPDATE qna_questions SET status = ? WHERE id = ?", status, id);
-      return { ok: true, before: q.status, question: { id: q.id, body: q.body, email: q.notify ? q.email : null } };
+      return { ok: true, before: q.status, question: { id: q.id, title: q.title, email: q.notify ? q.email : null } };
     }
     const c = this.first("SELECT id, question_id FROM qna_comments WHERE id = ?", id);
     if (!c || status === "pending") return { ok: false, reason: "not_found" };
@@ -247,7 +251,7 @@ export class QuestionBoard extends DurableObject {
 
   adminList(status, limit, offset) {
     const items = this.rows(
-      `SELECT id, created_at, topic, body, status, views, comment_count, report_count, is_notice, (email IS NOT NULL) AS has_email FROM qna_questions ${status === "all" ? "" : "WHERE status = ?"} ORDER BY id DESC LIMIT ? OFFSET ?`,
+      `SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, status, views, comment_count, report_count, is_notice, (email IS NOT NULL) AS has_email FROM qna_questions ${status === "all" ? "" : "WHERE status = ?"} ORDER BY id DESC LIMIT ? OFFSET ?`,
       ...(status === "all" ? [] : [status]), limit, offset
     );
     return { items };
@@ -256,7 +260,7 @@ export class QuestionBoard extends DurableObject {
   adminComments(limit, offset) {
     return {
       items: this.rows(
-        "SELECT c.id, c.question_id, c.created_at, c.body, c.status, c.likes, c.report_count, q.body AS question FROM qna_comments c JOIN qna_questions q ON q.id = c.question_id ORDER BY c.id DESC LIMIT ? OFFSET ?",
+        "SELECT c.id, c.question_id, c.created_at, c.body, c.status, c.likes, c.report_count, COALESCE(NULLIF(q.title, ''), substr(q.body, 1, 60)) AS question FROM qna_comments c JOIN qna_questions q ON q.id = c.question_id ORDER BY c.id DESC LIMIT ? OFFSET ?",
         limit, offset
       ),
     };
@@ -394,7 +398,8 @@ export default {
       const offset = Math.max(0, parseInt(url.searchParams.get("offset"), 10) || 0);
       const sort = url.searchParams.get("sort") === "popular" ? "popular" : "latest";
       const data = await board.listQuestions(sort, limit, offset);
-      data.items = data.items.map((q) => ({ ...q, body: clip(q.body, 160) }));
+      data.items = data.items.map((q) => ({ ...q, body: clip(q.body, 120) }));
+      data.notices = (data.notices || []).map((q) => ({ ...q, body: clip(q.body, 120) }));
       return json(data);
     }
 
@@ -402,21 +407,23 @@ export default {
       const d = await readJson(request);
       if (!d) return json({ ok: false, reason: "bad_request" }, 400);
       const body = clean(d.body), topic = TOPICS.includes(d.topic) ? d.topic : TOPICS[3];
+      const title = clean(d.title).replace(/\s+/g, " ");
+      if (title.length < LIMITS.title.min || title.length > LIMITS.title.max) return json({ ok: false, reason: "title_length" }, 400);
       const email = d.notify === true ? clean(d.email).toLowerCase() : "";
       if (d.notify === true && !email) return json({ ok: false, reason: "email" }, 400);
       if (body.length < LIMITS.question.min || body.length > LIMITS.question.max) return json({ ok: false, reason: "length" }, 400);
       if (email && !isEmail(email)) return json({ ok: false, reason: "email" }, 400);
       if (d.agree !== true) return json({ ok: false, reason: "agree" }, 400);
-      const spam = await spamCheck(env, request, d, body);
+      const spam = await spamCheck(env, request, d, title + "\n" + body);
       if (spam) return json({ ok: false, reason: spam }, 400);
       const publish = !reviewOn(env);
       const token = [...crypto.getRandomValues(new Uint8Array(18))].map((b) => b.toString(16).padStart(2, "0")).join("");
-      const res = await board.addQuestion({ key: await visitorKey(request, env), topic, body, email, publish, manageHash: await sha("manage|" + token) });
+      const res = await board.addQuestion({ key: await visitorKey(request, env), topic, title, body, email, publish, manageHash: await sha("manage|" + token) });
       if (!res.ok) return json(res, 429);
       const manageUrl = `${origin}/qna/?manage=${res.id}-${token}`;
       if (email) {
         ctx.waitUntil(sendMail(env, email, "[웨딩 프로젝트] 질문이 접수됐어요 (관리 링크)",
-          mailWrap(`<p><b>익명 질문방에 질문이 접수됐어요.</b> ${publish ? "지금 바로 공개됐어요." : "운영 정책에 맞게 확인한 뒤 공개돼요."}</p>${quote(clip(body, 200))}<p>새 의견이 달리면 이 메일로 알려 드려요.</p><p><a href="${manageUrl}" style="font-weight:700">내 질문 관리하기</a><br><span style="font-size:13px;color:#9a7d83">이 링크로 알림을 끄거나 질문을 삭제할 수 있어요. 다른 사람에게 공유하지 마세요.</span></p>`)));
+          mailWrap(`<p><b>익명 질문방에 질문이 접수됐어요.</b> ${publish ? "지금 바로 공개됐어요." : "운영 정책에 맞게 확인한 뒤 공개돼요."}</p><p><b>${esc(title)}</b></p>${quote(clip(body, 200))}<p>새 의견이 달리면 이 메일로 알려 드려요.</p><p><a href="${manageUrl}" style="font-weight:700">내 질문 관리하기</a><br><span style="font-size:13px;color:#9a7d83">이 링크로 알림을 끄거나 질문을 삭제할 수 있어요. 다른 사람에게 공유하지 마세요.</span></p>`)));
       }
       if (env.ADMIN_EMAIL) {
         ctx.waitUntil((async () => {
@@ -425,8 +432,8 @@ export default {
                 ? `<p><a href="${await modLink(env, origin, "q", res.id, "hide")}">이 질문 숨기기</a></p>`
                 : `<p><a href="${await modLink(env, origin, "q", res.id, "approve")}" style="font-weight:700">✅ 승인하고 공개하기</a> &nbsp;·&nbsp; <a href="${await modLink(env, origin, "q", res.id, "hide")}">숨기기</a></p>`)
             : "";
-          await sendMail(env, env.ADMIN_EMAIL, `[웨딩 프로젝트] 새 질문 #${res.id}${publish ? "" : " (승인 대기)"}`,
-            mailWrap(`<p><b>새 질문이 ${publish ? "등록되어 공개됐어요" : "들어왔어요. 확인 후 승인해 주세요"}.</b></p><p>분야: ${esc(topic)}<br>질문자 알림 메일: ${email ? "입력함" : "없음"}</p>${quote(body)}${links}<p><a href="${origin}/qna/admin.html">관리자 페이지</a></p>`));
+          await sendMail(env, env.ADMIN_EMAIL, `[웨딩 프로젝트] 새 질문 #${res.id}${publish ? "" : " (승인 대기)"}: ${clip(title, 40)}`,
+            mailWrap(`<p><b>새 질문이 ${publish ? "등록되어 공개됐어요" : "들어왔어요. 확인 후 승인해 주세요"}.</b></p><p>분야: ${esc(topic)}<br>질문자 알림 메일: ${email ? "입력함" : "없음"}</p><p><b>${esc(title)}</b></p>${quote(body)}${links}<p><a href="${origin}/qna/admin.html">관리자 페이지</a></p>`));
         })());
       }
       return json({ ok: true, id: res.id, status: res.status, manageUrl }, 201);
@@ -460,7 +467,7 @@ export default {
         if (res.question.email) {
           const unsub = env.ADMIN_KEY ? `${origin}/api/unsub?id=${qid}&t=${await sign(env, `unsub|${qid}`)}` : "";
           await sendMail(env, res.question.email, "[웨딩 프로젝트] 내 질문에 새로운 의견이 달렸어요",
-            mailWrap(`<p><b>남겨주신 질문에 새로운 의견이 달렸어요.</b></p><p style="color:#9a7d83">내 질문</p>${quote(clip(res.question.body, 200))}<p style="color:#9a7d83">새 의견</p>${quote(body)}<p><a href="${link}" style="font-weight:700">질문방에서 보기</a></p>${unsub ? `<p style="font-size:13px"><a href="${unsub}" style="color:#9a7d83">이 질문의 알림 그만 받기</a></p>` : ""}`));
+            mailWrap(`<p><b>남겨주신 질문에 새로운 의견이 달렸어요.</b></p><p style="color:#9a7d83">내 질문</p>${quote(res.question.title)}<p style="color:#9a7d83">새 의견</p>${quote(body)}<p><a href="${link}" style="font-weight:700">질문방에서 보기</a></p>${unsub ? `<p style="font-size:13px"><a href="${unsub}" style="color:#9a7d83">이 질문의 알림 그만 받기</a></p>` : ""}`));
         }
         if (env.ADMIN_EMAIL) {
           const hide = env.ADMIN_KEY ? `<p><a href="${await modLink(env, origin, "c", res.comment.id, "hide")}">이 의견 숨기기</a></p>` : "";
@@ -528,7 +535,7 @@ export default {
         if (!r.ok) return html("없음", `<h1>${what}을(를) 찾지 못했어요</h1>`, 404);
         if (k === "q" && status === "public" && r.before === "pending" && r.question.email) {
           ctx.waitUntil(sendMail(env, r.question.email, "[웨딩 프로젝트] 남겨주신 질문이 공개됐어요",
-            mailWrap(`<p><b>남겨주신 질문이 익명 질문방에 공개됐어요.</b></p>${quote(clip(r.question.body, 200))}<p><a href="${origin}/qna/?id=${id}" style="font-weight:700">질문방에서 보기</a></p><p style="font-size:13px;color:#9a7d83">새 의견이 달리면 이 메일로 알려 드려요.</p>`)));
+            mailWrap(`<p><b>남겨주신 질문이 익명 질문방에 공개됐어요.</b></p>${quote(r.question.title)}<p><a href="${origin}/qna/?id=${id}" style="font-weight:700">질문방에서 보기</a></p><p style="font-size:13px;color:#9a7d83">새 의견이 달리면 이 메일로 알려 드려요.</p>`)));
         }
         const view = k === "q" ? `${origin}/qna/?id=${id}` : `${origin}/qna/admin.html`;
         return html("완료", `<h1>${what}: ${label} 완료</h1><p><a href="${view}">확인하러 가기</a></p>`);
@@ -564,9 +571,9 @@ export default {
       }
       if (path === "/api/admin/notice" && method === "POST") {
         const d = await readJson(request);
-        const body = clean(d && d.body);
-        if (body.length < 2 || body.length > 2000) return json({ ok: false, reason: "length" }, 400);
-        const r = await board.addNotice(body);
+        const body = clean(d && d.body), title = clean(d && d.title).replace(/\s+/g, " ");
+        if (title.length < 2 || title.length > 60 || body.length < 2 || body.length > 2000) return json({ ok: false, reason: "length" }, 400);
+        const r = await board.addNotice(title, body);
         return json({ ok: true, id: r.id }, 201);
       }
       if (path === "/api/admin/status" && method === "POST") {
@@ -575,7 +582,7 @@ export default {
         const r = await board.setStatus(d.kind, Number(d.id), d.status);
         if (r.ok && d.kind === "q" && d.status === "public" && r.before === "pending" && r.question.email) {
           ctx.waitUntil(sendMail(env, r.question.email, "[웨딩 프로젝트] 남겨주신 질문이 공개됐어요",
-            mailWrap(`<p><b>남겨주신 질문이 익명 질문방에 공개됐어요.</b></p>${quote(clip(r.question.body, 200))}<p><a href="${origin}/qna/?id=${d.id}" style="font-weight:700">질문방에서 보기</a></p>`)));
+            mailWrap(`<p><b>남겨주신 질문이 익명 질문방에 공개됐어요.</b></p>${quote(r.question.title)}<p><a href="${origin}/qna/?id=${d.id}" style="font-weight:700">질문방에서 보기</a></p>`)));
         }
         return json({ ok: !!r.ok }, r.ok ? 200 : 404);
       }

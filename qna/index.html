@@ -29,7 +29,8 @@ main{padding:28px 0 64px}
 .tabs button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
 .more{display:block;width:100%;margin:6px 0 0;border:2px dashed var(--line);border-radius:999px;background:none;padding:10px;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--accent);cursor:pointer}
 .q-detail .qn-topic{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:999px;background:#fdf3ea;color:var(--accent);margin:0 0 10px}
-.q-body{margin:0 0 12px;font-size:1.15rem;font-weight:700;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.q-body{margin:0 0 12px;font-size:1.2rem;font-weight:700;line-height:1.5;word-break:break-word}
+.q-desc{margin:0 0 16px;white-space:pre-wrap;word-break:break-word;line-height:1.75}
 .q-body .qn-mark{margin-right:4px}
 .q-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .c-title{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 4px}
@@ -123,14 +124,15 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       return;
     }
     const q = r.question;
-    document.title = (q.is_notice ? "[공지] " : "Q. ") + q.body.slice(0, 40) + " · 익명 질문방";
+    document.title = (q.is_notice ? "[공지] " : "Q. ") + q.title.slice(0, 40) + " · 익명 질문방";
     let firstView = false;
     try { const k = "wp-viewed-" + id; if (!sessionStorage.getItem(k)){ sessionStorage.setItem(k, "1"); firstView = true; Q.api("/questions/" + id + "/view", { method: "POST" }); } } catch (e) {}
     main.innerHTML =
       '<a class="back" href="./">← 질문 목록</a>' +
       '<article class="qn-card q-detail">' +
       '<span class="qn-topic"></span>' +
-      '<p class="q-body">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span>') + '<span id="qbody"></span></p>' +
+      '<h1 class="q-body">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span>') + '<span id="qtitle"></span></h1>' +
+      '<p class="q-desc" id="qbody"></p>' +
       '<div class="q-foot"><p class="qn-meta">' + (q.is_notice ? "운영자" : "익명 질문자") + "<span>" + Q.fmtDate(q.created_at) + "</span><span>조회 " + (q.views + (firstView ? 1 : 0)) + '</span></p>' +
       (q.is_notice ? "" : '<button type="button" class="qn-mini" data-report="q" data-id="' + q.id + '">🚩 신고</button>') + '</div>' +
       '<div id="qreport"></div></article>' +
@@ -146,7 +148,9 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       '<button type="submit" class="qn-btn qn-send" id="csend" disabled>의견 등록하기</button>' +
       '<p class="qn-msg" id="cmsg" role="status" aria-live="polite"></p></form>' + PUBLIC_NOTE;
     main.querySelector(".qn-topic").textContent = q.topic;
-    document.getElementById("qbody").textContent = q.body;
+    document.getElementById("qtitle").textContent = q.title;
+    const qb = document.getElementById("qbody");
+    if (q.body && q.body !== q.title) qb.textContent = q.body; else qb.remove();
     const ul = document.getElementById("comments");
     let n = 0;
     const liked = Q.store.get("wp-liked");
@@ -236,13 +240,14 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       main.innerHTML =
         '<a class="back" href="./">← 질문 목록</a><section class="qn-card manage">' +
         '<div class="qn-head"><h1>내 질문 관리</h1></div><p class="qn-desc">이 링크를 가진 사람만 이 화면을 볼 수 있어요. 다른 사람에게 공유하지 마세요.</p>' +
-        '<p class="q-body"><span class="qn-mark">Q.</span><span id="mbody"></span></p>' +
+        '<p class="q-body"><span class="qn-mark">Q.</span><span id="mtitle"></span></p><p class="q-desc" id="mbody"></p>' +
         '<dl><dt>상태</dt><dd><span class="status-pill ' + st[1] + '">' + st[0] + '</span></dd><dt>분야</dt><dd id="mtopic"></dd><dt>등록일</dt><dd>' + Q.fmtDate(q.created_at) + '</dd>' +
         '<dt>의견 · 조회</dt><dd>' + q.comment_count + '개 · ' + q.views + '</dd><dt>메일 알림</dt><dd>' + (q.notify && q.has_email ? "켜짐" : "꺼짐") + '</dd></dl>' +
         (q.status === "public" ? '<p><a class="qn-more-link" style="margin:0 0 14px" href="./?id=' + q.id + '">공개된 질문 보러 가기 →</a></p>' : "") +
         '<div class="row" id="notify-row"></div>' +
         '<div class="row"><button type="button" class="qn-btn qn-ghost" id="del">질문 삭제하기</button></div><div class="row" id="del-confirm" hidden></div>' +
         '<p class="qn-msg" id="mmsg" role="status"></p></section>';
+      document.getElementById("mtitle").textContent = q.title;
       document.getElementById("mbody").textContent = q.body;
       document.getElementById("mtopic").textContent = q.topic;
       const msg = document.getElementById("mmsg"), nr = document.getElementById("notify-row");

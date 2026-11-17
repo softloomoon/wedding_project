@@ -14,6 +14,7 @@
     rrn: "주민등록번호 같은 개인정보는 적을 수 없어요.",
     captcha: "스팸 방지 확인을 완료해 주세요.",
     length: "글자 수를 확인해 주세요.",
+    title_length: "제목은 5자 이상 60자 이하로 적어 주세요.",
     email: "이메일 주소 형식을 확인해 주세요.",
     agree: "공개 및 개인정보 안내에 동의해 주세요.",
     not_found: "글을 찾을 수 없어요. 삭제되었거나 아직 공개되지 않았을 수 있어요.",
@@ -93,8 +94,11 @@
     a.href = qnaBase() + "?id=" + q.id;
     a.innerHTML =
       '<p class="qn-q">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span> ') + '<span class="qn-text"></span></p>' +
+      '<p class="qn-excerpt"></p>' +
       '<p class="qn-meta">' + (q.is_notice ? "운영자" : "익명 질문자") + '<span>의견 ' + (q.comment_count || 0) + "개</span><span>조회 " + (q.views || 0) + "</span><span>" + ago(q.created_at) + "</span></p>";
-    a.querySelector(".qn-text").textContent = q.body;
+    a.querySelector(".qn-text").textContent = q.title || q.body;
+    const ex = a.querySelector(".qn-excerpt");
+    if (q.title && q.body && q.body.indexOf(q.title) !== 0) ex.textContent = q.body.replace(/\s+/g, " "); else ex.remove();
     li.appendChild(a);
     return li;
   }
@@ -110,8 +114,11 @@
       '<fieldset><legend>질문 분야</legend>' +
       TOPICS.map((t, i) => '<label class="qn-radio"><input type="radio" name="' + uid + '-topic" value="' + esc(t) + '"' + (i === 0 ? " checked" : "") + ">" + esc(t) + "</label>").join("") +
       "</fieldset>" +
-      '<label class="qn-label" for="' + uid + '-body">궁금한 내용을 적어주세요.</label>' +
-      '<textarea id="' + uid + '-body" maxlength="1000" placeholder="예: 결혼 준비는 어디서부터 시작해야 할까요?"></textarea>' +
+      '<label class="qn-label" for="' + uid + '-title">질문 제목</label>' +
+      '<input type="text" class="qn-title-input" id="' + uid + '-title" maxlength="60" placeholder="예: 결혼 준비는 어디서부터 시작해야 할까요?" autocomplete="off">' +
+      '<p class="qn-hint"><span>한 문장으로 짧게 적어 주세요.</span><span class="qn-tcount">0/60</span></p>' +
+      '<label class="qn-label" for="' + uid + '-body">자세한 설명</label>' +
+      '<textarea id="' + uid + '-body" maxlength="1000" placeholder="상황이나 궁금한 점을 자세히 적어 주세요. 자세할수록 좋은 의견을 받을 수 있어요."></textarea>' +
       '<p class="qn-hint"><span>실명, 전화번호, 주소 같은 개인정보는 적지 말아 주세요.</span><span class="qn-count">0/1000</span></p>' +
       '<label class="qn-check"><input type="checkbox" class="qn-notify">새 의견이 달리면 이메일로 알림 받기 (선택)</label>' +
       '<div class="qn-email-box" hidden><input type="email" class="qn-email" maxlength="120" placeholder="알림 받을 이메일 주소" autocomplete="email">' +
@@ -123,11 +130,16 @@
       '<p class="qn-msg" role="status" aria-live="polite"></p>' +
       "</form>";
     const f = root.querySelector("form"), body = f.querySelector("textarea"), count = f.querySelector(".qn-count");
+    const title = f.querySelector(".qn-title-input"), tcount = f.querySelector(".qn-tcount");
     const notify = f.querySelector(".qn-notify"), emailBox = f.querySelector(".qn-email-box"), email = f.querySelector(".qn-email");
     const agree = f.querySelector(".qn-agree-box"), send = f.querySelector(".qn-send"), msg = f.querySelector(".qn-msg");
     const say = (t, cls) => { msg.textContent = t; msg.className = "qn-msg" + (cls ? " " + cls : ""); };
-    const upd = () => { count.textContent = body.value.length + "/1000"; send.disabled = body.value.trim().length < 1 || !agree.checked; };
-    body.addEventListener("input", upd); agree.addEventListener("change", upd);
+    const upd = () => {
+      count.textContent = body.value.length + "/1000"; tcount.textContent = title.value.length + "/60";
+      send.disabled = !title.value.trim() || !body.value.trim() || !agree.checked;
+    };
+    body.addEventListener("input", upd); title.addEventListener("input", upd); agree.addEventListener("change", upd);
+    title.addEventListener("keydown", (e) => { if (e.key === "Enter"){ e.preventDefault(); body.focus(); } });
     notify.addEventListener("change", () => { emailBox.hidden = !notify.checked; if (notify.checked) email.focus(); });
     let guard = null;
     spamGuard(f.querySelector(".qn-ts")).then((g) => (guard = g));
@@ -135,14 +147,15 @@
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (busy) return;
-      const text = body.value.trim(), mail = email.value.trim();
-      if (text.length < 10) { say("질문을 10자 이상 적어 주세요.", "err"); body.focus(); return; }
+      const text = body.value.trim(), mail = email.value.trim(), ttl = title.value.trim();
+      if (ttl.length < 5) { say("제목을 5자 이상 적어 주세요.", "err"); title.focus(); return; }
+      if (text.length < 5) { say("자세한 설명을 5자 이상 적어 주세요.", "err"); body.focus(); return; }
       if (notify.checked && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { say("알림 받을 이메일 주소를 확인해 주세요.", "err"); email.focus(); return; }
       if (!agree.checked) { say(REASONS.agree, "err"); return; }
       busy = true; send.disabled = true; send.textContent = "등록하는 중…"; say("");
       const r = await api("/questions", { method: "POST", body: {
         topic: (f.querySelector("input[type=radio]:checked") || {}).value,
-        body: text, notify: notify.checked, email: notify.checked ? mail : "", agree: true,
+        title: ttl, body: text, notify: notify.checked, email: notify.checked ? mail : "", agree: true,
         website: f.website.value, elapsed: guard ? Date.now() - guard.openedAt : 0, turnstile: guard ? guard.token() : "",
       } });
       busy = false; send.textContent = "질문 등록하기";
@@ -152,7 +165,7 @@
       if (opts.onDone) opts.onDone(r);
     });
     upd();
-    return { focus: () => body.focus(), reset: () => { if (guard) guard.openedAt = Date.now(); } };
+    return { focus: () => title.focus(), reset: () => { if (guard) guard.openedAt = Date.now(); } };
   }
 
   function showDone(root, r, mailed) {
