@@ -177,7 +177,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 <script>
 /* 테스트 목록: 여기에 항목을 추가하면 배너에 자동으로 들어갑니다. img 는 카드 그림, src 는 테스트 페이지 파일입니다. */
 const TESTS = [
-  { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/hero.png", src:"test3/", tone:"#f3d6e2" },
+  { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/card.svg", src:"test3/", tone:"#ffffff", fit:true },
   { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2" }
 ];
 /* 밸런스 게임 목록: 여기에 항목을 추가하면 '밸런스 게임' 카테고리에 카드가 생깁니다. */
@@ -196,7 +196,7 @@ function makeCard(t, clone){
   a.href = "#" + t.id;
   a.style.setProperty("--tone", t.tone);
   if (clone){ a.setAttribute("aria-hidden","true"); a.tabIndex = -1; }
-  a.innerHTML = '<div class="card-art">' + artSvg(t) + '</div><div class="card-body"><h3 class="card-title"></h3><p class="card-desc"></p><span class="pill">테스트 하기</span></div>';
+  a.innerHTML = '<div class="card-art' + (t.fit ? ' fit' : '') + '">' + artSvg(t) + '</div><div class="card-body"><h3 class="card-title"></h3><p class="card-desc"></p><span class="pill">테스트 하기</span></div>';
   a.querySelector(".card-title").textContent = t.title;
   a.querySelector(".card-desc").textContent = t.desc;
   return a;
