@@ -4,7 +4,7 @@
 
 ## 안에 들어있는 파일
 
-- `index.html` — Wedding Project 메인 페이지 (테스트 카드 슬라이드)
+- `index.html` — Wedding Project 메인 페이지. 카테고리 4개: ① 테스트 & 밸런스 게임(카드 슬라이드) ② 결혼 준비 정보 ③ 연인이 나누면 좋을 대화 질문 ④ 궁금한 점 질문하기(질문 접수 폼)
 - `values/index.html` — 결혼 가치관 맞춰보기 테스트 (질문, 결과 화면, 이미지 저장/공유 기능 포함)
 - `test3/index.html` — 나의 결혼 마지노선 테스트
 - `balance/index.html` — 신혼생활 밸런스 게임 (그림은 `balance/img/`)
@@ -38,6 +38,12 @@
 ## 나중에 도메인을 연결하려면
 
 Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 도메인을 연결할 수 있어요. 도메인은 가비아, 후이즈, Namecheap, Google Domains 같은 곳에서 구매하면 됩니다.
+
+## 질문 접수 메일 (4번 카테고리)
+
+- 질문 폼은 [FormSubmit](https://formsubmit.co)으로 `softloomon@gmail.com`에 메일을 보냅니다. 주소는 `index.html`의 `ASK_ENDPOINT`에서 바꿀 수 있어요.
+- 배포 후 **첫 질문을 한 번 보내면** FormSubmit에서 활성화 메일이 와요. 메일의 Activate 버튼을 눌러야 그 다음 질문부터 들어옵니다. (스팸함도 확인)
+- 활성화 후 받은 랜덤 문자열로 `ASK_ENDPOINT`의 메일 주소를 바꾸면 페이지 소스에 메일 주소가 보이지 않아요.
 
 ## 참고
 

@@ -40,7 +40,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* 상단 */
 .top{position:sticky;top:0;z-index:10;background:var(--paper);display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:0 calc(var(--gutter) * -1);padding:14px var(--gutter) 10px;border-bottom:3px dashed var(--line)}
 .nav{margin-left:-16px}
-.cat{scroll-margin-top:130px}
+.cat{scroll-margin-top:150px}
 .brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:1.9rem;text-decoration:none;line-height:1.1;color:var(--accent)}
 .brand svg{width:26px;height:26px;flex:none}
 .nav{display:flex;gap:8px;flex-wrap:wrap}
@@ -106,6 +106,31 @@ button{font:inherit;color:inherit;cursor:pointer}
 .test-info p{margin:0 0 18px;color:var(--ink-soft);max-width:28em}
 .notice{display:inline-block;padding:10px 16px;border-radius:14px;background:var(--pink);border:2px dashed var(--accent);color:var(--ink);font-size:.95rem}
 
+/* 4. 질문하기 */
+.ask-card{max-width:640px;border:2px dashed var(--line);border-radius:22px;background:var(--card-bg);padding:clamp(20px,4vw,32px)}
+.ask-card h3{font-family:var(--display);font-weight:700;font-size:1.7rem;line-height:1.25;margin:0 0 6px}
+.ask-card .lead{margin:0 0 20px;color:var(--ink-soft)}
+.ask-card fieldset{border:0;margin:0 0 18px;padding:0}
+.ask-card legend,.ask-card .lbl{display:block;font-size:.92rem;font-weight:500;color:var(--ink-soft);margin:0 0 8px;padding:0}
+.ask-card .radio{display:flex;align-items:center;gap:10px;padding:5px 0;cursor:pointer}
+.ask-card .radio input{width:20px;height:20px;margin:0;accent-color:var(--accent);flex:none}
+.ask-card textarea,.ask-card input[type=email]{display:block;width:100%;font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 6px}
+.ask-card textarea{min-height:140px;resize:vertical}
+.ask-card input[type=email]{border-radius:999px;padding:12px 18px}
+.ask-card textarea:focus,.ask-card input[type=email]:focus{border-color:var(--accent);outline:none}
+.ask-card .hint{margin:0 0 18px;font-size:.84rem;color:var(--ink-soft)}
+.ask-card .count{float:right}
+.ask-card .agree{display:flex;align-items:flex-start;gap:10px;margin:0 0 18px;font-size:.92rem;cursor:pointer}
+.ask-card .agree input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+.ask-send{width:100%;min-height:52px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--display);font-weight:700;font-size:1.25rem}
+.ask-send:disabled{opacity:.45;cursor:not-allowed}
+.ask-msg{min-height:1.6em;margin:12px 0 0;font-size:.95rem}
+.ask-msg.err{color:var(--red)}
+.ask-msg.ok{color:var(--green);font-weight:500}
+.ask-notes{margin:18px 0 0;padding:16px 18px 16px 34px;border-radius:16px;background:var(--pink);font-size:.88rem;line-height:1.6}
+.ask-notes li+li{margin-top:4px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
 footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-soft);font-size:.9rem}
 [hidden]{display:none !important}
 @media (max-width:760px){
@@ -127,9 +152,10 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       Wedding Project
     </a>
     <nav class="nav" aria-label="카테고리">
-      <button type="button" data-go="cat-test">테스트</button>
-      <button type="button" data-go="cat-2">밸런스 게임</button>
-      <button type="button" data-go="cat-3" data-soon>카테고리 3</button>
+      <button type="button" data-go="cat-test">테스트 &amp; 밸런스 게임</button>
+      <button type="button" data-go="cat-2" data-soon>결혼 준비 정보</button>
+      <button type="button" data-go="cat-3" data-soon>연인 대화 질문</button>
+      <button type="button" data-go="cat-4">질문하기</button>
     </nav>
   </header>
 
@@ -143,8 +169,11 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     </section>
 
     <section class="cat" id="cat-test" aria-labelledby="cat-test-title">
-      <div class="cat-head center">
-        <h2 class="cat-title" id="cat-test-title">상대방과 나의 결혼에 대한 생각 test</h2>
+      <div class="cat-head">
+        <div>
+          <h2 class="cat-title" id="cat-test-title"><span class="cat-no">1</span>테스트 &amp; 밸런스 게임</h2>
+          <p class="cat-sub">상대방과 나의 결혼에 대한 생각을 맞춰 봐요.</p>
+        </div>
       </div>
       <div class="slider-wrap">
         <button type="button" class="arrow prev" id="prev" aria-label="이전 테스트"><svg viewBox="0 0 22 26" aria-hidden="true"><path d="M19 3v20L3 13z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg></button>
@@ -156,13 +185,43 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     </section>
 
     <section class="cat" id="cat-2" aria-labelledby="cat-2-title">
-      <div class="cat-head"><h2 class="cat-title" id="cat-2-title"><span class="cat-no">2</span>밸런스 게임</h2></div>
-      <div class="game-list" id="game-list"></div>
+      <div class="cat-head"><div><h2 class="cat-title" id="cat-2-title"><span class="cat-no">2</span>결혼 준비 정보</h2><p class="cat-sub">결혼 준비 순서, 비용, 체크리스트를 정리해 드릴게요.</p></div></div>
+      <div class="empty"><span class="dot" style="background:var(--yellow)"></span>준비 중이에요. 곧 결혼 준비 정보가 올라올 예정이에요.</div>
     </section>
 
     <section class="cat" id="cat-3" aria-labelledby="cat-3-title">
-      <div class="cat-head"><h2 class="cat-title" id="cat-3-title"><span class="cat-no">3</span>카테고리 3</h2></div>
-      <div class="empty"><span class="dot" style="background:var(--green)"></span>준비 중입니다. 카테고리 이름과 내용을 정하면 이 자리에 들어갑니다.</div>
+      <div class="cat-head"><div><h2 class="cat-title" id="cat-3-title"><span class="cat-no">3</span>연인이 나누면 좋을 대화 질문</h2><p class="cat-sub">결혼 전에 서로 꼭 한 번 물어보면 좋은 질문들이에요.</p></div></div>
+      <div class="empty"><span class="dot" style="background:var(--green)"></span>준비 중이에요. 곧 대화 질문이 올라올 예정이에요.</div>
+    </section>
+
+    <section class="cat" id="cat-4" aria-labelledby="cat-4-title">
+      <div class="cat-head"><div><h2 class="cat-title" id="cat-4-title"><span class="cat-no">4</span>궁금한 점 질문하기</h2></div></div>
+      <form class="ask-card" id="ask-form" novalidate>
+        <h3>무엇이든 물어보세요 💌</h3>
+        <p class="lead">결혼 준비를 하면서 궁금했던 점이 있나요?<br>WEDDING PROJECT에 질문을 남겨주세요.</p>
+        <fieldset>
+          <legend>질문 분야</legend>
+          <label class="radio"><input type="radio" name="topic" value="결혼 준비 및 비용" checked>결혼 준비 및 비용</label>
+          <label class="radio"><input type="radio" name="topic" value="연인 관계 및 가치관">연인 관계 및 가치관</label>
+          <label class="radio"><input type="radio" name="topic" value="예식 및 신혼생활">예식 및 신혼생활</label>
+          <label class="radio"><input type="radio" name="topic" value="기타 궁금한 점">기타 궁금한 점</label>
+        </fieldset>
+        <label class="lbl" for="ask-q">궁금한 내용을 적어주세요.</label>
+        <textarea id="ask-q" maxlength="1000" placeholder="예: 결혼 준비는 어디서부터 시작해야 할까요?"></textarea>
+        <p class="hint">이름, 연락처 같은 개인정보나 민감한 사연은 적지 말아 주세요. <span class="count" id="ask-count">0/1000</span></p>
+        <label class="lbl" for="ask-email">이메일 (선택)</label>
+        <input type="email" id="ask-email" maxlength="100" placeholder="답변 알림을 원한다면 입력해주세요." autocomplete="email">
+        <p class="hint">이메일은 답변 알림이 필요한 경우에만 입력해 주세요. 공개되지 않아요.</p>
+        <div class="hp" aria-hidden="true"><label>비워 두세요<input type="text" id="ask-hp" tabindex="-1" autocomplete="off"></label></div>
+        <label class="agree"><input type="checkbox" id="ask-agree">남긴 질문이 이름·개인정보를 뺀 형태로 사이트 콘텐츠에 소개될 수 있다는 점에 동의해요.</label>
+        <button type="submit" class="ask-send" id="ask-send" disabled>질문 보내기</button>
+        <p class="ask-msg" id="ask-msg" role="status" aria-live="polite"></p>
+        <ul class="ask-notes">
+          <li>모든 질문에 개별 답변을 드리지는 못할 수 있어요.</li>
+          <li>질문자의 이름이나 개인정보는 공개하지 않아요.</li>
+          <li>비슷한 질문은 모아서 하나의 콘텐츠로 답변드릴 수 있어요.</li>
+        </ul>
+      </form>
     </section>
   </main>
 
@@ -176,13 +235,11 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 
 <script>
 /* 테스트 목록: 여기에 항목을 추가하면 배너에 자동으로 들어갑니다. img 는 카드 그림, src 는 테스트 페이지 파일입니다. */
+/* 1번 카테고리(테스트 & 밸런스 게임) 목록. game:true 인 항목은 버튼이 '게임 하기'로 나옵니다. */
 const TESTS = [
   { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/card.svg", src:"test3/", tone:"#ffffff", fit:true },
-  { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2" }
-];
-/* 밸런스 게임 목록: 여기에 항목을 추가하면 '밸런스 게임' 카테고리에 카드가 생깁니다. */
-const GAMES = [
-  { id:"balance", title:"신혼생활 밸런스 게임", desc:"정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.", img:"balance/img/cover.png", src:"balance/", tone:"#ffffff" }
+  { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2" },
+  { id:"balance", title:"신혼생활 밸런스 게임", desc:"정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.", img:"balance/img/cover.png", src:"balance/", tone:"#ffffff", fit:true, game:true }
 ];
 const INTERVAL = 2000;
 
@@ -196,20 +253,12 @@ function makeCard(t, clone){
   a.href = "#" + t.id;
   a.style.setProperty("--tone", t.tone);
   if (clone){ a.setAttribute("aria-hidden","true"); a.tabIndex = -1; }
-  a.innerHTML = '<div class="card-art' + (t.fit ? ' fit' : '') + '">' + artSvg(t) + '</div><div class="card-body"><h3 class="card-title"></h3><p class="card-desc"></p><span class="pill">테스트 하기</span></div>';
+  a.innerHTML = '<div class="card-art' + (t.fit ? ' fit' : '') + '">' + artSvg(t) + '</div><div class="card-body"><h3 class="card-title"></h3><p class="card-desc"></p><span class="pill"></span></div>';
+  a.querySelector(".pill").textContent = t.game ? "게임 하기" : "테스트 하기";
   a.querySelector(".card-title").textContent = t.title;
   a.querySelector(".card-desc").textContent = t.desc;
   return a;
 }
-/* 밸런스 게임 카드: 슬라이드 없이 나란히 놓습니다 */
-const gameList = document.getElementById("game-list");
-GAMES.forEach(g => {
-  const a = makeCard(g, false);
-  a.classList.add("is-center");
-  a.querySelector(".card-art").classList.add("fit");
-  a.querySelector(".pill").textContent = "게임 하기";
-  gameList.appendChild(a);
-});
 /* 가운데 자리(C)에 첫 테스트가 오도록 두 벌을 이어 붙입니다 */
 const C = 3, N = TESTS.length, OFFSET = (N - C % N) % N;
 for (let i = 0; i < N * Math.ceil(8 / N); i++) track.appendChild(makeCard(TESTS[(i + OFFSET) % N], i >= N));
@@ -273,14 +322,14 @@ const frame = document.getElementById("test-frame");
 let openId = null;
 function route(){
   const id = (location.hash || "").replace("#", "");
-  const t = TESTS.find(x => x.id === id) || GAMES.find(x => x.id === id);
+  const t = TESTS.find(x => x.id === id);
   if (!t){
     viewHome.hidden = false; viewTest.hidden = true;
     if (openId){ frame.removeAttribute("src"); openId = null; }
     settle(); return;
   }
   viewHome.hidden = true; viewTest.hidden = false;
-  document.getElementById("back").textContent = GAMES.includes(t) ? "← 게임 목록으로" : "← 테스트 목록으로";
+  document.getElementById("back").textContent = t.game ? "← 게임 목록으로" : "← 테스트 목록으로";
   if (openId !== t.id){
     frame.style.height = "760px"; frame.title = t.title;
     /* frame.src 를 직접 바꾸면 iframe 탐색이 브라우저 히스토리에 별도로 쌓여 뒤로가기가 한 번에 안 먹는 문제가 생겨서, replace 로 같은 자리에서만 바꿉니다 */
@@ -323,6 +372,61 @@ document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", 
   const el = document.getElementById(b.dataset.go);
   if (el) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 }));
+
+/* 4. 질문하기: 접수된 질문은 FormSubmit 을 통해 아래 메일로 전송됩니다.
+   처음 한 번은 FormSubmit 이 이 주소로 '활성화(Activate)' 메일을 보내니, 메일의 버튼을 눌러야 이후 질문이 들어옵니다.
+   활성화 후 받은 랜덤 문자열로 바꾸면 메일 주소가 페이지 소스에 노출되지 않아요. 예: "https://formsubmit.co/ajax/랜덤문자열" */
+const ASK_ENDPOINT = "https://formsubmit.co/ajax/softloomon@gmail.com";
+(() => {
+  const form = document.getElementById("ask-form");
+  const q = document.getElementById("ask-q"), email = document.getElementById("ask-email");
+  const agree = document.getElementById("ask-agree"), send = document.getElementById("ask-send");
+  const msg = document.getElementById("ask-msg"), count = document.getElementById("ask-count");
+  const say = (t, cls) => { msg.textContent = t; msg.className = "ask-msg" + (cls ? " " + cls : ""); };
+  const update = () => {
+    count.textContent = q.value.length + "/1000";
+    send.disabled = !q.value.trim() || !agree.checked;
+  };
+  q.addEventListener("input", update); agree.addEventListener("change", update); update();
+  let sending = false;
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (sending) return;
+    const text = q.value.trim(), mail = email.value.trim();
+    if (text.length < 5){ say("질문을 조금만 더 자세히 적어 주세요.", "err"); q.focus(); return; }
+    if (mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ say("이메일 주소 형식을 확인해 주세요.", "err"); email.focus(); return; }
+    if (!agree.checked){ say("콘텐츠 활용 안내에 동의해 주세요.", "err"); return; }
+    if (document.getElementById("ask-hp").value){ say("질문이 접수됐어요. 고마워요!", "ok"); form.reset(); update(); return; }
+    const topic = form.querySelector('input[name="topic"]:checked').value;
+    const data = {
+      _subject: "[웨딩 프로젝트 질문] " + topic,
+      _template: "table",
+      _captcha: "false",
+      "질문 분야": topic,
+      "질문 내용": text,
+      "답변 알림 이메일": mail || "입력 안 함",
+      "콘텐츠 활용 동의": "동의",
+      "보낸 시각": new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })
+    };
+    if (mail) data._replyto = mail;
+    sending = true; send.disabled = true; send.textContent = "보내는 중…"; say("");
+    try {
+      const res = await fetch(ASK_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || String(out.success) === "false") throw new Error(out.message || res.status);
+      form.reset();
+      say("질문이 접수됐어요. 고마워요! 💌", "ok");
+    } catch (err) {
+      say("질문을 보내지 못했어요. 잠시 후 다시 시도해 주세요.", "err");
+    } finally {
+      sending = false; send.textContent = "질문 보내기"; update();
+    }
+  });
+})();
 </script>
 </body>
 </html>
