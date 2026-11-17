@@ -23,6 +23,20 @@
     "TURNSTILE_SITE_KEY": "",
     // 쉼표로 구분한 추가 금칙어 (선택)
     "BANNED_WORDS": ""
+  },
+  // 미리보기(Preview) 배포용 설정. 브랜치나 PR 을 올리면 Cloudflare 가 미리보기 주소를 만드는데, 그때 이 값을 씁니다.
+  // 미리보기마다 Durable Object 저장소가 따로 생겨서 실제 사이트의 질문·의견과 섞이지 않아요.
+  "previews": {
+    "durable_objects": {
+      "bindings": [{ "name": "QUESTION_BOARD", "class_name": "QuestionBoard" }]
+    },
+    "vars": {
+      // 미리보기에서는 운영자 메일 알림을 보내지 않고, 질문도 바로 공개해서 테스트하기 쉽게 합니다.
+      "ADMIN_EMAIL": "",
+      "REVIEW_QUESTIONS": "false",
+      "TURNSTILE_SITE_KEY": "",
+      "BANNED_WORDS": ""
+    }
   }
   // 시크릿(대시보드 > Settings > Variables and Secrets 에서 'Secret'으로 추가): ADMIN_KEY, MAIL_WEBHOOK_URL, MAIL_SECRET, TURNSTILE_SECRET(선택)
 }
