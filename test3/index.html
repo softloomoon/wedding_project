@@ -330,10 +330,6 @@
     <div class="result-title" id="result-title"></div>
     <div class="result-desc" id="result-desc"></div>
 
-    <div class="action-row"><button class="save-btn" id="sv1">📸 사진으로 저장</button><button class="share-btn" id="sh1">공유하기</button></div>
-    <div class="action-status" id="pvm1" role="status"></div>
-    <div class="action-preview" id="pv1"></div>
-
     <div class="section-label">내가 결혼 생활에서 중요하게 생각하는 가치</div>
     <div class="bars" id="result-bars"></div>
 
@@ -633,7 +629,7 @@ function mkImg(){
  var R=LR,imgs=R.topTypes.map(function(t){return TYPE_CARD_IMG[t]});
  var BG="#f8efe2",CARD="#fffaf2",INK="#3a2430",MUTE="#9a7d83",LINE="#ecd9ce",ACC="#a3265c",GF='"Gaegu",cursive';
  return Promise.all([ld,Promise.all(imgs.map(loadImg))]).then(function(res){return new Promise(function(done){
-  var loaded=res[1],W=1080,H=1360,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  var loaded=res[1],W=1080,H=1400,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
   c.fillStyle=BG;c.fillRect(0,0,W,H);
   c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1260,30);c.fill();c.restore();
   var cx=56,cy0=56,cw=W-cx*2,ch=H-cy0*2;
@@ -642,7 +638,7 @@ function mkImg(){
   var py=cy0+58;
   c.textBaseline="alphabetic";c.textAlign="center";c.fillStyle=ACC;c.font="700 34px "+GF;c.fillText("✦ 나의 결혼 마지노선 테스트 ✦",W/2,py);py+=46;
   /* 완성된 캐릭터 카드(이름/문구 포함)를 그대로 보여줌 - 1장 또는 동점이면 여러 장 */
-  var n=loaded.length,gap=16,phW=Math.min(420,(cw-112-(n-1)*gap)/n),rowW=n*phW+(n-1)*gap,startX=W/2-rowW/2;
+  var n=loaded.length,gap=36,phW=Math.min(420,(cw-112-(n-1)*gap)/n),rowW=n*phW+(n-1)*gap,startX=W/2-rowW/2;
   loaded.forEach(function(img,i){
    var ih=phW*(img.height/img.width),x=startX+i*(phW+gap)+phW/2,rot=(n===1)?-0.02:0;
    c.save();c.translate(x,py+ih/2+16);c.rotate(rot);
@@ -651,7 +647,7 @@ function mkImg(){
    c.restore();
   });
   var maxIh=Math.max.apply(null,loaded.map(function(img){return phW*(img.height/img.width)}));
-  py+=maxIh+60;
+  py+=maxIh+104;
   c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("가치관 비중",cx+56,py);py+=72;
   var pctColW=120,pctRight=cx+cw-56,barEnd=pctRight-pctColW,bx0=cx+330,bw0=barEnd-bx0,barH=20;
   R.bars.forEach(function(g,k){var y=py+k*78,labelY=y+11;

@@ -264,7 +264,7 @@ function mkImg(){
  var BG="#f8efe2",CARD="#fffaf2",INK="#3a2430",MUTE="#9a7d83",LINE="#ecd9ce",ACC="#a3265c",OK="#4a8a5a",NO="#b5651d";
  var col={f:"#c23b5a",m:"#5b6fa0",o:"#8a7a73"},GF='"Gaegu",cursive';
  return Promise.all([ld,loadImg(tImg)]).then(function(res){return new Promise(function(done){
-  var img=res[1],W=1080,H=1630,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  var img=res[1],W=1080,H=1670,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
   c.fillStyle=BG;c.fillRect(0,0,W,H);
   c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1520,30);c.fill();c.restore();
   var cx=56,cy0=56,cw=W-cx*2,ch=H-cy0*2;
@@ -277,7 +277,7 @@ function mkImg(){
   c.save();c.translate(W/2,py+ih/2+16);c.rotate(-0.02);
   c.save();c.shadowColor="rgba(58,36,48,.28)";c.shadowBlur=26;c.shadowOffsetY=10;c.fillStyle="#fffdf8";rr(c,-iw/2-14,-ih/2-14,iw+28,ih+28,18);c.fill();c.restore();
   c.save();rr(c,-iw/2,-ih/2,iw,ih,8);c.clip();c.drawImage(img,-iw/2,-ih/2,iw,ih);c.restore();
-  c.restore();py+=ih+112;
+  c.restore();py+=ih+152;
   /* 퍼센트와 결과 문구를 한 줄에 */
   var pctF="700 96px "+GF,tagF="700 42px "+GF,pctGap=24;
   c.font=pctF;var pctTxt=R.pct+"%",wPct=c.measureText(pctTxt).width;

@@ -281,7 +281,12 @@ function route(){
   }
   viewHome.hidden = true; viewTest.hidden = false;
   document.getElementById("back").textContent = GAMES.includes(t) ? "← 게임 목록으로" : "← 테스트 목록으로";
-  if (openId !== t.id){ frame.style.height = "760px"; frame.title = t.title; frame.src = t.src; openId = t.id; }
+  if (openId !== t.id){
+    frame.style.height = "760px"; frame.title = t.title;
+    /* frame.src 를 직접 바꾸면 iframe 탐색이 브라우저 히스토리에 별도로 쌓여 뒤로가기가 한 번에 안 먹는 문제가 생겨서, replace 로 같은 자리에서만 바꿉니다 */
+    try { frame.contentWindow.location.replace(t.src); } catch (e) { frame.src = t.src; }
+    openId = t.id;
+  }
   window.scrollTo(0, 0);
 }
 /* 테스트 내용 길이에 맞춰 틀 높이를 조절합니다 */
