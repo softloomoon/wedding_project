@@ -71,7 +71,17 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 }
 .btn.ghost { background: transparent; color: var(--acc); border: 2px dashed var(--acc); box-shadow: none; }
 .btn.small { padding: 8px 14px; font-size: .9375rem; }
+.btn.block { display: block; width: 100%; text-align: center; min-height: 48px; }
+.btn.block:active { transform: scale(.98); }
 .linkbtn { border: 0; background: none; color: var(--muted); padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; }
+.btn-outline {
+  display: block; width: 100%; text-align: center; min-height: 48px;
+  padding: 12px 16px; border: 2px dashed var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--acc); font: inherit; font-weight: 700;
+  transition: transform .08s ease, border-color .15s ease;
+}
+.btn-outline:hover { border-color: var(--acc); }
+.btn-outline:active { transform: scale(.98); border-color: var(--acc); }
 
 .panel {
   background: var(--surface);
@@ -173,7 +183,7 @@ textarea {
 .qcard h2 { font-family: var(--body); font-weight: 500; font-size: clamp(1.125rem, 4.8vw, 1.4375rem); line-height: 1.45; }
 .qcard h2 b { font-weight: 700; }
 .duel { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
-.card { position: relative; border: 2px solid; border-radius: 18px; background: var(--surface); color: var(--ink); padding: 46px 10px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; transition: transform .12s ease; }
+.card { position: relative; border: 2px solid; border-radius: 18px; background: #fff; color: var(--ink); padding: 46px 10px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; transition: transform .12s ease; }
 .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 36px; border-radius: 15px 15px 0 0; }
 .card.left { border-color: var(--a); box-shadow: 0 5px 0 var(--a-soft); }
 .card.right { border-color: var(--b); box-shadow: 0 5px 0 var(--b-soft); }
@@ -378,9 +388,7 @@ function viewQuiz() {
     ${card(R, "right", "B")}
     <span class="vs" aria-hidden="true">VS</span>
   </div>
-  <div class="row" style="justify-content:center">
-    ${S.idx > 0 ? `<button class="linkbtn" id="backBtn">이전 문항으로</button>` : ""}
-  </div>`;
+  ${S.idx > 0 ? `<button class="btn-outline" id="backBtn">← 이전 문항으로</button>` : ""}`;
 }
 
 function typeBlock(ans, who) {
@@ -421,7 +429,7 @@ function viewResult() {
     </div>
     <p class="note" id="inviteNote" role="status"></p>
   </section>
-  <div class="row"><button class="linkbtn" id="retryBtn">처음부터 다시 고르기</button></div>`;
+  <button class="btn block" id="retryBtn">테스트 다시하기</button>`;
 }
 
 function viewCouple() {
@@ -455,7 +463,7 @@ function viewCouple() {
     <div class="row"><button class="btn small" id="copyShare">공유 메시지 복사하기</button></div>
     <p class="note" id="shareNote" role="status"></p>
   </section>
-  <div class="row"><button class="linkbtn" id="retryBtn">처음부터 다시 고르기</button></div>`;
+  <button class="btn block" id="retryBtn">테스트 다시하기</button>`;
 }
 
 function render() {
