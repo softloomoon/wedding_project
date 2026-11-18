@@ -111,6 +111,7 @@
       '<form class="qn-form" novalidate>' +
       '<h3 class="qn-form-title">무엇이든 물어보세요 💌</h3>' +
       '<p class="qn-lead">닉네임이나 회원가입 없이 익명으로 질문할 수 있어요.</p>' +
+      '<p class="qn-public" style="margin:0 0 16px">💡 <b>모든 질문과 의견은 공개돼요.</b> 누구나 읽을 수 있으니 실명, 전화번호, 주소, 회사명 같은 개인정보는 적지 말아 주세요. 이메일 주소는 알림용으로만 쓰고 절대 공개하지 않아요. 비방·광고 글은 신고되면 숨겨지고, 운영자가 삭제할 수 있어요.</p>' +
       '<fieldset><legend>질문 분야</legend>' +
       TOPICS.map((t, i) => '<label class="qn-radio"><input type="radio" name="' + uid + '-topic" value="' + esc(t) + '"' + (i === 0 ? " checked" : "") + ">" + esc(t) + "</label>").join("") +
       "</fieldset>" +
