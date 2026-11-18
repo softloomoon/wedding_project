@@ -107,6 +107,13 @@ body.playing .wrap{max-width:none;padding:0}
 body.playing .test{border-top:0;padding:10px 0 0}
 body.playing .back{margin-left:12px;padding:6px 14px;font-size:.95rem}
 body.playing .test-frame{margin-top:6px;border:0;border-radius:0;background:transparent}
+.recs{max-width:1120px;margin:8px auto 0;padding:28px var(--gutter) 56px;border-top:3px dashed var(--line);text-align:center}
+.recs-title{margin:0;font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.2rem)}
+.recs-sub{margin:4px 0 20px;color:var(--ink-soft)}
+.rec-list{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);text-align:left}
+.rec-list .card{opacity:1;transform:none}
+.rec-qna{display:inline-block;margin-top:24px;font-weight:700;color:var(--accent);text-decoration:none}
+.rec-qna:hover{text-decoration:underline}
 .test-info{padding:28px clamp(18px,3vw,36px) 32px clamp(18px,3vw,8px)}
 .test-info h2{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.25;margin:0 0 10px}
 .test-info p{margin:0 0 18px;color:var(--ink-soft);max-width:28em}
@@ -196,8 +203,14 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
   </main>
 
   <main id="view-test" class="test" hidden>
-    <button type="button" class="back" id="back">← 테스트 목록으로</button>
+    <button type="button" class="back" id="back">← 홈으로</button>
     <iframe class="test-frame" id="test-frame" title="테스트" scrolling="no"></iframe>
+    <section class="recs" id="recs" hidden aria-labelledby="recs-title">
+      <h2 class="recs-title" id="recs-title">이것도 해볼까요? 💞</h2>
+      <p class="recs-sub">둘이 함께 해보면 좋은 다른 테스트와 게임이에요.</p>
+      <div class="rec-list" id="rec-list"></div>
+      <a class="rec-qna" href="qna/">궁금한 점이 생겼다면 익명 질문방에 물어보세요 →</a>
+    </section>
   </main>
 
   <footer>Wedding Project</footer>
@@ -208,9 +221,10 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 /* 테스트 목록: 여기에 항목을 추가하면 배너에 자동으로 들어갑니다. img 는 카드 그림, src 는 테스트 페이지 파일입니다. */
 /* 1번 카테고리(테스트 & 밸런스 게임) 목록. game:true 인 항목은 버튼이 '게임 하기'로 나옵니다. */
 const TESTS = [
-  { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/card.svg", src:"test3/", tone:"#ffffff", fit:true },
-  { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2" },
-  { id:"balance", title:"신혼생활 밸런스 게임", desc:"정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.", img:"balance/img/cover.png", src:"balance/", tone:"#ffffff", fit:true, game:true }
+  /* done: 결과 화면이 나왔는지 알아보는 표시(이게 보이면 아래에 다른 게임 추천이 나와요) */
+  { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/card.svg", src:"test3/", tone:"#ffffff", fit:true, done:"#screen-result.active" },
+  { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2", done:"#rs, #cp" },
+  { id:"balance", title:"신혼생활 밸런스 게임", desc:"정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.", img:"balance/img/cover.png", src:"balance/", tone:"#ffffff", fit:true, game:true, done:"#resTitle, #retryBtn" }
 ];
 const INTERVAL = 2000;
 
@@ -300,7 +314,7 @@ function route(){
     settle(); return;
   }
   viewHome.hidden = true; viewTest.hidden = false; document.body.classList.add("playing");
-  document.getElementById("back").textContent = t.game ? "← 게임 목록으로" : "← 테스트 목록으로";
+  buildRecs(t);
   if (openId !== t.id){
     frame.style.height = "760px"; frame.title = t.title;
     /* frame.src 를 직접 바꾸면 iframe 탐색이 브라우저 히스토리에 별도로 쌓여 뒤로가기가 한 번에 안 먹는 문제가 생겨서, replace 로 같은 자리에서만 바꿉니다 */
@@ -310,6 +324,25 @@ function route(){
   window.scrollTo(0, 0);
 }
 /* 테스트 내용 길이에 맞춰 틀 높이를 조절합니다 */
+/* 게임이 끝나면 아래에 다른 테스트·게임 추천 */
+const recs = document.getElementById("recs"), recList = document.getElementById("rec-list");
+function buildRecs(cur){
+  recs.hidden = true;
+  recList.innerHTML = "";
+  TESTS.filter(x => x.id !== cur.id).forEach(x => {
+    const a = makeCard(x, false);
+    a.classList.add("is-center");
+    recList.appendChild(a);
+  });
+}
+function checkDone(){
+  if (viewTest.hidden || !openId) return;
+  const t = TESTS.find(x => x.id === openId);
+  let done = false;
+  try { const d = frame.contentDocument; done = !!(t && t.done && d && d.querySelector(t.done)); } catch (e) {}
+  if (recs.hidden === done) recs.hidden = !done;
+}
+setInterval(checkDone, 400);
 function fitFrame(){
   if (viewTest.hidden) return;
   try {
