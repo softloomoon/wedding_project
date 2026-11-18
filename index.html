@@ -110,8 +110,17 @@ body.playing .test-frame{margin-top:6px;border:0;border-radius:0;background:tran
 .recs{max-width:1120px;margin:8px auto 0;padding:28px var(--gutter) 56px;border-top:3px dashed var(--line);text-align:center}
 .recs-title{margin:0;font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4vw,2.2rem)}
 .recs-sub{margin:4px 0 20px;color:var(--ink-soft)}
-.rec-list{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);text-align:left}
-.rec-list .card{opacity:1;transform:none}
+.rec-list{display:flex;flex-direction:column;gap:14px;max-width:640px;margin:0 auto;text-align:left}
+.rec{display:flex;align-items:stretch;text-decoration:none;border:2px dashed var(--line);border-radius:20px;overflow:hidden;background:var(--card-bg);transition:border-color .2s,transform .2s}
+.rec:hover{border-color:var(--accent);transform:translateY(-2px)}
+.rec-art{flex:none;width:clamp(104px,28vw,150px);aspect-ratio:1;background:var(--tone);border-right:2px dashed var(--line);display:grid;place-items:center;overflow:hidden}
+.rec-art img{width:100%;height:100%;object-fit:cover;display:block}
+.rec-art.fit img{object-fit:contain}
+.rec-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;padding:14px 16px}
+.rec-title{margin:0;font-family:var(--display);font-weight:700;font-size:clamp(1.15rem,3.6vw,1.4rem);line-height:1.25}
+.rec-desc{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rec .pill{align-self:flex-end;margin-top:auto}
+@media (prefers-reduced-motion:reduce){.rec{transition:none}.rec:hover{transform:none}}
 .rec-qna{display:inline-block;margin-top:24px;font-weight:700;color:var(--accent);text-decoration:none}
 .rec-qna:hover{text-decoration:underline}
 .test-info{padding:28px clamp(18px,3vw,36px) 32px clamp(18px,3vw,8px)}
@@ -330,8 +339,15 @@ function buildRecs(cur){
   recs.hidden = true;
   recList.innerHTML = "";
   TESTS.filter(x => x.id !== cur.id).forEach(x => {
-    const a = makeCard(x, false);
-    a.classList.add("is-center");
+    /* 가로형 카드: 왼쪽 그림, 오른쪽 제목·설명, 오른쪽 아래 버튼 */
+    const a = document.createElement("a");
+    a.className = "rec";
+    a.href = "#" + x.id;
+    a.style.setProperty("--tone", x.tone);
+    a.innerHTML = '<div class="rec-art' + (x.fit ? ' fit' : '') + '"><img src="' + x.img + '" alt=""></div><div class="rec-body"><h3 class="rec-title"></h3><p class="rec-desc"></p><span class="pill"></span></div>';
+    a.querySelector(".rec-title").textContent = x.title;
+    a.querySelector(".rec-desc").textContent = x.desc;
+    a.querySelector(".pill").textContent = x.game ? "게임 하기" : "테스트 하기";
     recList.appendChild(a);
   });
 }
