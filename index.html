@@ -203,10 +203,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
         <div class="qn-sub"><b>요즘 많이 이야기하는 질문</b><span>인기 질문</span></div>
         <ul class="qn-list" id="hot-list"></ul>
         <p class="qn-empty" id="hot-empty">질문을 불러오는 중이에요…</p>
-        <button type="button" class="qn-btn qn-wide" id="ask-open" aria-expanded="false" aria-controls="ask-mount">✏️ 익명으로 질문하기</button>
-        <div id="ask-mount" hidden></div>
-        <a class="qn-more-link" href="qna/">질문 전체 보기 →</a>
-        <p class="qn-public">💡 <b>모든 질문과 의견은 공개돼요.</b> 실명, 전화번호 같은 개인정보는 적지 말아 주세요. 이메일 주소는 알림용으로만 쓰고 절대 공개하지 않아요.</p>
+        <a class="qn-btn qn-wide" href="qna/">질문 더 보러 가기 →</a>
       </div>
     </section>
   </main>
@@ -393,7 +390,7 @@ document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", 
   if (el) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 }));
 
-/* 4. 익명 질문방: 인기 질문 3개 + '익명으로 질문하기'를 눌러야 작성 폼이 열립니다. (qna/qna.js, worker.js) */
+/* 4. 익명 질문방 미리보기: 인기 질문 3개 + '질문 더 보러 가기'. 질문 작성은 질문방(qna/)에서 합니다. (qna/qna.js, worker.js) */
 (() => {
   const Q = window.WPQna;
   const hot = document.getElementById("hot-list"), hotEmpty = document.getElementById("hot-empty");
@@ -403,18 +400,9 @@ document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", 
     if (!r.ok){ hotEmpty.hidden = false; hotEmpty.textContent = "질문을 불러오지 못했어요. 잠시 후 다시 확인해 주세요."; return; }
     r.items.forEach(q => hot.appendChild(Q.questionItem(q)));
     hotEmpty.hidden = r.items.length > 0;
-    hotEmpty.textContent = "아직 공개된 질문이 없어요. 첫 질문을 남겨 보세요!";
+    hotEmpty.textContent = "아직 공개된 질문이 없어요. 질문방에서 첫 질문을 남겨 보세요!";
   }
   loadHot();
-  const open = document.getElementById("ask-open"), mount = document.getElementById("ask-mount");
-  let form = null;
-  open.addEventListener("click", () => {
-    const on = mount.hidden;
-    mount.hidden = !on; open.setAttribute("aria-expanded", on);
-    open.textContent = on ? "작성 닫기" : "✏️ 익명으로 질문하기";
-    open.classList.toggle("qn-ghost", on);
-    if (on){ if (!form) form = Q.mountAskForm(mount, { onDone: loadHot }); else form.reset(); form.focus(); }
-  });
 })();
 </script>
 </body>

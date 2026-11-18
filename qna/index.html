@@ -71,24 +71,27 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
   function listView(){
     document.title = "익명 질문방 · 웨딩 프로젝트";
     main.innerHTML =
-      '<section class="qn-card">' +
-      '<div class="qn-head"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></div>' +
+      '<header class="qn-head" style="margin:0 0 4px"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></header>' +
       '<p class="qn-desc">결혼을 준비하며 생긴 고민, 궁금증, 다른 사람들의 생각이 궁금한 이야기를 나눠보세요.</p>' +
-      '<button type="button" class="qn-btn qn-wide" id="open" aria-expanded="false" aria-controls="ask">✏️ 익명으로 질문하기</button>' +
-      '<div id="ask" hidden></div>' + PUBLIC_NOTE + '</section>' +
-      '<section style="margin-top:28px"><ul class="qn-list" id="notices" style="margin:0"></ul>' +
+      '<section><ul class="qn-list" id="notices" style="margin:0"></ul>' +
       '<div class="tabs" role="group" aria-label="정렬"><button type="button" data-sort="latest" aria-pressed="true">최신 질문</button><button type="button" data-sort="popular" aria-pressed="false">인기 질문</button></div>' +
       '<div class="qn-card" style="padding-top:8px;padding-bottom:8px"><ul class="qn-list" id="list" style="margin:0"></ul><p class="qn-empty" id="empty" hidden style="margin:12px 0"></p></div>' +
-      '<button type="button" class="more" id="more" hidden>더 보기</button></section>';
+      '<button type="button" class="more" id="more" hidden>더 보기</button></section>' +
+      '<section class="qn-card" id="ask-area" style="margin-top:28px">' +
+      '<div class="qn-head"><h3>✏️ 익명으로 질문하기</h3></div>' +
+      '<p class="qn-desc">닉네임이나 회원가입 없이 궁금한 점을 남겨 보세요. 다른 방문자들이 의견을 나눠 줄 거예요.</p>' +
+      '<button type="button" class="qn-btn qn-wide" id="open" aria-expanded="false" aria-controls="ask">익명으로 질문하기</button>' +
+      '<div id="ask" hidden></div></section>';
     let form = null;
     const open = document.getElementById("open"), ask = document.getElementById("ask");
     open.addEventListener("click", () => {
       const on = ask.hidden;
       ask.hidden = !on; open.setAttribute("aria-expanded", on);
-      open.textContent = on ? "작성 닫기" : "✏️ 익명으로 질문하기";
+      open.textContent = on ? "작성 닫기" : "익명으로 질문하기";
       open.classList.toggle("qn-ghost", on);
       if (on){ if (!form) form = Q.mountAskForm(ask, { onDone: () => load(true) }); else form.reset(); form.focus(); }
     });
+    if (location.hash === "#ask") setTimeout(() => { open.click(); document.getElementById("ask-area").scrollIntoView({ block: "start" }); }, 0);
     let sort = "latest", shown = 0, total = 0;
     const list = document.getElementById("list"), more = document.getElementById("more"), empty = document.getElementById("empty");
     async function load(reset){
@@ -138,7 +141,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       '<div id="qreport"></div></article>' +
       '<div class="c-title"><h2>의견 <span id="ccount">' + r.comments.length + '</span>개</h2></div>' +
       '<ul class="qn-comments" id="comments"></ul>' +
-      '<form class="qn-cform" id="cform" novalidate><h3>나의 의견 남기기</h3>' +
+      '<form class="qn-cform" id="cform" novalidate><h3>나의 의견 남기기</h3>' + PUBLIC_NOTE.replace('class="qn-public"', 'class="qn-public" style="margin:0 0 14px"') +
       '<label class="qn-label" for="cbody">회원가입 없이 익명으로 의견을 남길 수 있어요.</label>' +
       '<textarea id="cbody" maxlength="500" placeholder="경험이나 생각을 편하게 나눠 주세요."></textarea>' +
       '<p class="qn-hint"><span>실명, 전화번호 같은 개인정보는 적지 말아 주세요.</span><span class="qn-count" id="ccnt">0/500</span></p>' +
@@ -146,7 +149,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       '<div class="qn-ts" id="cts"></div>' +
       '<label class="qn-check qn-agree"><input type="checkbox" id="cagree"><span>내 의견은 <b>누구나 볼 수 있게 공개</b>된다는 점에 동의해요.</span></label>' +
       '<button type="submit" class="qn-btn qn-send" id="csend" disabled>의견 등록하기</button>' +
-      '<p class="qn-msg" id="cmsg" role="status" aria-live="polite"></p></form>' + PUBLIC_NOTE;
+      '<p class="qn-msg" id="cmsg" role="status" aria-live="polite"></p></form>';
     main.querySelector(".qn-topic").textContent = q.topic;
     document.getElementById("qtitle").textContent = q.title;
     const qb = document.getElementById("qbody");
