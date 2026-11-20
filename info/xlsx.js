@@ -82,10 +82,10 @@
     put(4, [S("두 사람이 모은 돈", 9), N(d.saved || 0, 10)]);
     put(5, [S("부모님 지원", 9), N(d.support || 0, 10)]);
     put(6, [S("총 예산 (모은 돈 + 부모님 지원)", 1), F(`B4+B5`, T, 7)]);
-    put(7, [S("실제 쓴 돈 합계", 9), F(`C${totalRow}`, allA, 10)]);
-    put(8, [S("남은 예산 (총 예산 − 실제 쓴 돈)", 1), F(`B6-B7`, T - allA, 8)]);
-    put(9, [S("계획 합계", 9), F(`B${totalRow}`, allB, 10)]);
-    put(10, [S("배분하지 않은 예산 (총 예산 − 계획 합계)", 9), F(`B6-B9`, T - allB, 10)]);
+    put(7, [S("[계획] 계획 합계", 9), F(`B${totalRow}`, allB, 10)]);
+    put(8, [S("[계획] 계획대로 쓰면 남는 돈 (총 예산 − 계획 합계)", 9), F(`B6-B7`, T - allB, 10)]);
+    put(9, [S("[실제] 실제 쓴 돈 합계", 9), F(`C${totalRow}`, allA, 10)]);
+    put(10, [S("[실제] 지금 남은 예산 (총 예산 − 실제 쓴 돈)", 1), F(`B6-B9`, T - allA, 8)]);
 
     const col = (i) => "ABCD"[i];
     let sheetRows = "";
@@ -102,7 +102,7 @@
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 <sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>
 <sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="12" topLeftCell="A13" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
-<cols><col min="1" max="1" width="36" customWidth="1"/><col min="2" max="3" width="15" customWidth="1"/><col min="4" max="4" width="30" customWidth="1"/></cols>
+<cols><col min="1" max="1" width="46" customWidth="1"/><col min="2" max="3" width="15" customWidth="1"/><col min="4" max="4" width="30" customWidth="1"/></cols>
 <sheetData>${sheetRows}</sheetData>
 <pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>
 <pageSetup paperSize="9" orientation="portrait" fitToWidth="1" fitToHeight="0"/>
