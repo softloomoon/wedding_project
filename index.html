@@ -81,7 +81,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 /* 슬라이드 배너: 가운데 카드 기준으로 왼쪽으로 넘어감 */
 .slider-wrap{position:relative;margin:0 calc(var(--gutter) * -1)}
-.slider{overflow:hidden;padding:10px 0 14px}
+.slider{overflow:hidden;padding:10px 0 14px;
+  /* 양 끝에서 잘린 카드가 보이지 않게 바탕색으로 부드럽게 사라지게 */
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 18%,#000 82%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 18%,#000 82%,transparent 100%)}
+@media (max-width:560px){.slider{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 10%,#000 90%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 10%,#000 90%,transparent 100%)}}
 .track{display:flex;gap:var(--gap);will-change:transform}
 .card{flex:none;width:var(--card-w);display:flex;flex-direction:column;text-decoration:none;border:2px dashed var(--line);border-radius:22px;overflow:hidden;background:var(--card-bg);opacity:.45;transform:scale(.9);transition:transform .6s ease,opacity .6s ease}
 .card.is-center{opacity:1;transform:none;border-color:var(--accent)}
