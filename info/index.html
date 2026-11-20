@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결혼 준비 정보 | 웨딩 프로젝트</title>
+<meta name="description" content="결혼 준비 순서와 시기별 체크리스트 등 예비부부에게 필요한 결혼 준비 정보를 모았어요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="웨딩 프로젝트">
+<meta property="og:title" content="결혼 준비 정보 | 웨딩 프로젝트">
+<meta property="og:description" content="결혼 준비 순서와 시기별 체크리스트 등 예비부부에게 필요한 결혼 준비 정보를 모았어요.">
+<meta property="og:image" content="https://wedding-project.softloomon.workers.dev/og/info.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://wedding-project.softloomon.workers.dev/info/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#f8efe2;--ink:#3a2430;--ink-soft:#9a7d83;--red:#c23b5a;--green:#4a8a5a;--pink:#f3d6e2;--line:#ecd9ce;--card-bg:#fffaf2;--accent:#a3265c;
+  --display:"Gaegu",cursive;--body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;--gutter:clamp(16px,4vw,48px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.65;word-break:keep-all}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+.wrap{max-width:760px;margin:0 auto;padding:0 var(--gutter)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0 12px;border-bottom:3px dashed var(--line)}
+.brand{font-family:var(--display);font-weight:700;font-size:1.8rem;text-decoration:none;color:var(--accent);line-height:1.1}
+.top a.home{font-family:var(--display);font-size:1.1rem;text-decoration:none;color:var(--ink-soft)}
+.top a.home:hover{color:var(--accent)}
+main{padding:24px 0 64px}
+.back{display:inline-block;margin:0 0 16px;font-family:var(--display);font-weight:700;font-size:1.1rem;color:var(--accent);text-decoration:none}
+footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-soft);font-size:.9rem}
+[hidden]{display:none !important}
+</style>
+<link rel="stylesheet" href="/info/info.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Wedding Project</a>
+    <a class="home" href="/#cat-2">← 메인으로</a>
+  </header>
+  <main>
+    <header class="post" style="margin:0 0 22px">
+      <span class="post-tag">결혼 준비 정보</span>
+      <h1>📋 결혼 준비 정보</h1>
+      <p class="post-lead" style="margin:0">결혼 준비 순서, 체크리스트처럼 준비하면서 꼭 필요한 정보를 모았어요. 글은 계속 추가될 예정이에요.</p>
+    </header>
+    <div class="ip-list" id="info-list"></div>
+    <p class="note">궁금한 점이 있다면 <a href="/qna/" style="color:var(--accent);font-weight:700">익명 질문방</a>에 물어보세요. 다른 예비부부들과 운영자가 의견을 나눠 줘요.</p>
+  </main>
+  <footer>Wedding Project · 결혼 준비 정보는 일반적인 기준이에요. 커플마다 상황에 맞게 조정해 주세요.</footer>
+</div>
+<script src="/info/posts.js"></script>
+<script>WPInfoList(document.getElementById("info-list"));</script>
+</body>
+</html>

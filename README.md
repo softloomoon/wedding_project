@@ -42,6 +42,13 @@
 
 Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 도메인을 연결할 수 있어요. 도메인은 가비아, 후이즈, Namecheap, Google Domains 같은 곳에서 구매하면 됩니다.
 
+## 결혼 준비 정보 (2번 카테고리)
+
+- `info/` 게시판: 글 목록. 글을 열면 맨 아래에 '결혼 준비 정보 목록'이 있어서 다른 글로 바로 넘어갈 수 있어요.
+- 글: `info/order/` (결혼 준비 순서), `info/checklist/` (시기별 체크리스트, 체크한 내용은 그 기기 브라우저에만 저장)
+- 글 목록은 `info/posts.js` 한 곳에서 관리해요. 메인 2번 칸(최대 3개), 게시판, 글 아래 목록에 함께 나와요.
+- 새 글 추가: `info/<이름>/index.html`을 기존 글을 복사해서 만들고, `info/posts.js`에 항목을 추가하세요. 미리보기 이미지는 `og/`에 넣고 글의 `og:image`를 맞춰 주세요.
+
 ## 링크 공유 미리보기 (네이버·카카오톡 등)
 
 - 테스트마다 자기 주소가 있어요. 블로그나 메신저에는 이 주소를 붙여 넣으세요.
@@ -49,6 +56,7 @@ Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 
   - 나의 결혼 마지노선 테스트: `https://wedding-project.softloomon.workers.dev/test3/`
   - 신혼생활 밸런스 게임: `https://wedding-project.softloomon.workers.dev/balance/`
   - 익명 질문방: `https://wedding-project.softloomon.workers.dev/qna/`
+  - 결혼 준비 정보: `…/info/`, 준비 순서 `…/info/order/`, 체크리스트 `…/info/checklist/`
   - 사이트 첫 화면: `https://wedding-project.softloomon.workers.dev/`
 - 주소마다 제목, 설명, 카드 이미지(`og/*.png`, 1200×630)가 따로 나와요. 테스트별 문구는 `worker.js`의 `PAGES`, 첫 화면 문구는 `index.html`의 `<!--og-->` 부분에서 바꿀 수 있어요.
 - 이 주소로 들어오면 사이트 화면 안에서 그 테스트가 바로 열려요. 예전 주소(`/#values`)는 자동으로 새 주소로 바뀌어요.
