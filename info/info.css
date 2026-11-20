@@ -78,8 +78,9 @@
 /* 인쇄: 제목 + 체크리스트 8칸(왼쪽 4·오른쪽 4, 같은 크기) + 나만의 체크리스트 + 메모, 고딕체, A4 1장 */
 @page{size:A4;margin:7mm 10mm}
 @media print{
+  :root{--p-font:9.3pt;--p-head:10.4pt;--p-when:9.6pt;--p-box:3.6mm;--p-pad:0.5mm;--p-blank:6.5mm;--p-memo:15mm}
   html,body{background:#fff !important}
-  body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;font-size:8.6pt;line-height:1.3;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;font-size:var(--p-font);line-height:1.3;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .wrap{max-width:none;padding:0}
   main{padding:0}
   .top,.back,.post-tag,.post-meta,.post-lead,.progress,.cl-actions,.cl-count,.note,.more-posts,footer,.post-cta,.share-row{display:none !important}
@@ -91,25 +92,24 @@
   .cl-group{margin:0;padding:2mm 3mm;border:0.7pt solid #d8c3b8;border-radius:2.5mm;break-inside:avoid}
   .cl-head{display:block;padding:0 0 1.6mm;margin:0 0 1.8mm;border-bottom:0.6pt dashed #d8c3b8}
   .cl-head>div{display:flex;align-items:baseline;gap:1.8mm;flex-wrap:wrap}
-  .step-when{background:none !important;color:#a3265c !important;padding:0;border-radius:0;font-size:9pt;font-weight:900;margin:0}
-  .cl-head h2{font-size:9.8pt;font-weight:700;margin:0;line-height:1.25}
+  .step-when{background:none !important;color:#a3265c !important;padding:0;border-radius:0;font-size:var(--p-when);font-weight:900;margin:0}
+  .cl-head h2{font-size:var(--p-head);font-weight:700;margin:0;line-height:1.25}
   .post .cl,.post .blank{margin:0}
   .post .cl li{margin:0;line-height:1.2}
   .post .blank li{margin:0}
-  .cl label{padding:0.35mm 0;gap:1.8mm;border-radius:0;align-items:center}
-  .cl input{width:3.2mm;height:3.2mm;margin:0}
+  .cl label{padding:var(--p-pad) 0;gap:1.8mm;border-radius:0;align-items:center}
+  .cl input{width:var(--p-box);height:var(--p-box);margin:0}
   .cl .t{line-height:1.2}
   .cl .t small{display:none}
   .cl input:checked + .t{color:#777}
-  /* 나만의 체크리스트 + 메모 */
+  /* 나만의 체크리스트(네모 6개) + 메모 (줄 없이 빈 칸) */
   .print-only{display:block}
-  .extra{margin:3.5mm 0 0;break-inside:avoid}
-  .extra-box{border:0.7pt solid #d8c3b8;border-radius:2.5mm;padding:2.2mm 3mm 2.6mm}
-  .extra-box + .extra-box{margin-top:2.6mm}
-  .extra-box h2{font-size:9.8pt;font-weight:700;margin:0 0 1.8mm;padding:0 0 1.6mm;border-bottom:0.6pt dashed #d8c3b8;line-height:1.25}
+  .extra{margin:3mm 0 0;break-inside:avoid}
+  .extra-box{border:0.7pt solid #d8c3b8;border-radius:2.5mm;padding:2.2mm 3mm 2.4mm}
+  .extra-box + .extra-box{margin-top:2.4mm}
+  .extra-box h2{font-size:var(--p-head);font-weight:700;margin:0 0 1.8mm;padding:0 0 1.6mm;border-bottom:0.6pt dashed #d8c3b8;line-height:1.25}
   .blank{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0 6mm}
-  .blank li{display:flex;align-items:flex-end;gap:2mm;height:6.3mm}
-  .blank .sq{flex:none;width:3.3mm;height:3.3mm;border:0.8pt solid #555;border-radius:0.6mm;margin-bottom:0.8mm}
-  .ln{display:block;flex:1;border-bottom:0.6pt solid #bbb}
-  .lines .ln{height:6.3mm}
+  .blank li{display:flex;align-items:center;height:var(--p-blank)}
+  .blank .sq{flex:none;width:var(--p-box);height:var(--p-box);border:0.8pt solid #555;border-radius:0.6mm}
+  .memo-space{height:var(--p-memo)}
 }
