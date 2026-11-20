@@ -63,11 +63,11 @@
 .cl-group{margin:26px 0 0}
 .cl-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .cl-head h2{margin:0}
-.cl-count{font-size:.86rem;color:var(--ink-soft)}
-.cl-group.is-done .cl-count{color:var(--green);font-weight:700}
-.cl{list-style:none;margin:10px 0 0;padding:0}
+/* 단계별 완료 개수(0 / 6)는 화면·인쇄 모두 표시하지 않아요 */
+.cl-count{display:none}
+.cl,.post .cl{list-style:none;margin:10px 0 0;padding:0}
 .cl li{margin:0}
-.cl label{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer}
+.cl label{display:flex;align-items:flex-start;gap:12px;padding:10px 8px;margin:0 -8px;border-radius:12px;cursor:pointer}
 .cl label:hover{background:#fff}
 .cl input{flex:none;width:22px;height:22px;margin:3px 0 0;accent-color:var(--accent)}
 .cl .t{line-height:1.6}
