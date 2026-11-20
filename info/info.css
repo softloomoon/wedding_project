@@ -209,3 +209,4 @@
   .extra-box.memo h2{border-bottom:0;padding-bottom:0;margin-bottom:0}
   .memo-space{height:var(--p-memo)}
 }
+.b-table thead small{font-weight:400}
