@@ -102,6 +102,16 @@
 .b-line{margin:10px 0 0;text-align:right;font-size:.92rem;color:var(--ink-soft)}
 .b-line b{color:var(--ink)}
 .b-line b.minus{color:var(--red)}
+.b-fund small{font-weight:400;color:var(--ink-soft)}
+.b-totalline{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0 0;padding:10px 0 0;border-top:2px dashed var(--line)}
+.b-totalline span{font-weight:700}
+.b-totalline b{font-size:1.3rem;color:var(--accent)}
+.b-addrow td{padding:6px 10px 10px !important;border-top:0 !important}
+.b-add{font:inherit;font-size:.86rem;font-weight:700;padding:5px 14px;border:1.5px dashed var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
+.b-add:hover{background:var(--pink)}
+.b-cname{display:flex;align-items:center;gap:4px}
+.b-del{flex:none;width:30px;height:30px;border:0;border-radius:50%;background:none;color:var(--ink-soft);font-size:1.2rem;line-height:1;cursor:pointer}
+.b-del:hover{background:var(--pink);color:var(--red)}
 .b-total{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .b-total span{font-weight:700}
 .budget .b-total input{width:min(200px,42vw);font-size:1.15rem;font-weight:700;padding:8px 12px}
@@ -131,7 +141,7 @@
 .b-table tr.b-mealrow td{width:auto;padding:0 10px 8px;border-top:0 !important}
 .b-meal input{width:64px !important;padding:3px 6px !important;font-size:.84rem !important}
 .b-calc{font:inherit;font-size:.78rem;padding:3px 10px;border:1.5px solid var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
-@media (max-width:560px){.b-table td{width:30%}.b-summary b{font-size:.92rem}.b-fund input{width:96px}}
+@media (max-width:560px){.b-table td{width:25%}.b-del{width:24px;height:24px}.b-summary b{font-size:.92rem}.b-fund input{width:96px}}
 
 /* 화면에서는 숨기고 인쇄할 때만 보이는 칸 */
 .print-only{display:none}
@@ -181,6 +191,9 @@
   .b-fund span{font-size:8.6pt}
   .b-fund input{width:24mm !important;text-align:right}
   .b-custom::placeholder{color:transparent}
+  .b-addrow,.b-del{display:none !important}
+  .b-totalline{margin:1.5mm 0 0;padding:1.5mm 0 0;border-top:0.6pt dashed #d8c3b8}
+  .b-totalline b{font-size:11pt}
   .budget input::-webkit-outer-spin-button,.budget input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .b-summary b{font-size:10pt}
   .b-line{margin:1mm 0 0;font-size:8.6pt}

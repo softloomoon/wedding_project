@@ -77,7 +77,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       <section class="sec" id="b3" aria-labelledby="b3-t">
         <h2 class="sec-title" id="b3-t"><span class="sec-no" aria-hidden="true">3</span><span>예산 짜는 5단계</span></h2>
         <h3>1. 쓸 수 있는 돈부터 확인해요</h3>
-        <p>각자 모은 돈, 양가 지원(받는다면 금액과 조건), 예상 축의금을 따져 보고 <b>결혼에 쓸 총 예산</b>을 정해요. 축의금은 예상보다 적을 수 있으니 보수적으로 잡는 게 안전해요. 정한 금액은 아래 예산표의 <b>'총 예산'</b> 칸에 적어요.</p>
+        <p>각자 모은 돈, 양가 지원(받는다면 금액과 조건), 예상 축의금을 따져 보고 <b>결혼에 쓸 총 예산</b>을 정해요. 축의금은 예상보다 적을 수 있으니 보수적으로 잡는 게 안전해요. 아래 예산표에 <b>두 사람이 모은 돈</b>과 <b>부모님 지원</b>(받는다면)을 적으면 <b>총 예산</b>이 자동으로 계산돼요.</p>
         <h3>2. 둘의 우선순위를 정해요</h3>
         <p>"사진은 꼭 남기고 싶다", "예식은 작게, 신혼여행은 길게"처럼 각자 중요한 것 3가지를 적고 맞춰 봐요. 우선순위가 높은 곳에 예산을 더 주고, 낮은 곳은 줄이거나 생략해요.</p>
         <h3>3. 항목별로 나눠요</h3>
@@ -85,7 +85,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
         <h3>4. 예비비를 남겨요</h3>
         <p>추가금, 예상 못 한 지출이 꼭 생겨요. 전체의 10% 정도를 예비비로 따로 잡아 두면 마음이 편해요.</p>
         <h3>5. 계약할 때마다 실제 금액을 적어요</h3>
-        <p>예산표의 '실제' 칸에 계약 금액을 적으면 남은 예산이 바로 보여요. 견적서와 계약서는 한곳에 모아 두세요.</p>
+        <p>예산표의 <b>'실제 쓴 돈'</b> 칸에 계약하거나 낸 금액을 적으면 남은 예산이 바로 보여요. 견적서와 계약서는 한곳에 모아 두세요.</p>
       </section>
       <section class="sec" id="b4" aria-labelledby="b4-t">
         <h2 class="sec-title" id="b4-t"><span class="sec-no" aria-hidden="true">4</span><span>예산을 아끼는 방법</span></h2>
@@ -98,18 +98,22 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       </section>
       <section class="sec" id="b5" aria-labelledby="b5-t">
         <h2 class="sec-title" id="b5-t"><span class="sec-no" aria-hidden="true">5</span><span>예산표 바로 쓰기</span></h2>
-        <p>금액은 <b>만 원 단위</b>로 적어요. 적은 내용은 이 기기(브라우저)에만 저장되고 다른 곳에 보내지 않아요.</p>
+        <p>금액은 <b>만 원 단위</b>로 적어요. '계획'과 '실제 쓴 돈' 중 하나만 써도 계산돼요. 필요한 항목은 분류마다 <b>'+ 항목 추가'</b>로 넣을 수 있어요. 적은 내용은 이 기기(브라우저)에만 저장되고 다른 곳에 보내지 않아요.</p>
         <div class="budget" id="budget">
           <div class="b-box">
             <h3>결혼 예산표</h3>
-            <label class="b-total"><span>총 예산</span><input type="number" inputmode="decimal" min="0" step="any" data-k="total" aria-label="총 예산(만 원)" placeholder="예: 5000"><em>만 원</em></label>
+            <div class="b-funds">
+              <label class="b-fund"><span>두 사람이 모은 돈</span><input type="number" inputmode="decimal" min="0" step="any" data-k="saved" aria-label="두 사람이 모은 돈(만 원)"><em>만 원</em></label>
+              <label class="b-fund"><span>부모님 지원 <small>(선택)</small></span><input type="number" inputmode="decimal" min="0" step="any" data-k="support" aria-label="부모님 지원(만 원)"><em>만 원</em></label>
+            </div>
+            <p class="b-totalline"><span>총 예산</span><b id="total-view">0만 원</b></p>
           </div>
           <div class="b-summary" role="status" aria-live="polite">
             <div><span>총 예산</span><b id="sum-t">0만 원</b></div>
-            <div><span>실제 지출</span><b id="sum-a">0만 원</b></div>
+            <div><span>실제 쓴 돈</span><b id="sum-a">0만 원</b></div>
             <div class="b-left"><span id="left-label">남은 예산</span><b id="left">0만 원</b></div>
           </div>
-          <div class="b-tablewrap"><table class="b-table"><thead><tr><th scope="col">항목</th><th scope="col">예산</th><th scope="col">실제</th></tr></thead><tbody class="b-group" data-group="wed"><tr class="b-ghead"><th scope="rowgroup" colspan="3">예식 <span class="b-sub" data-sub="wed"></span></th></tr><tr data-g="wed"><th scope="row"><span class="b-name">예식장 대관료</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hall_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hall_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">식대 (보증 인원 × 1인 식대)</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meal_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meal_a" aria-label="실제 지출"></td></tr><tr class="b-mealrow"><td colspan="3"><div class="b-meal">보증 인원 <input type="number" inputmode="numeric" min="0" data-k="meal_n" aria-label="보증 인원" placeholder="200">명 × 1인 <input type="number" inputmode="decimal" min="0" step="0.1" data-k="meal_p" aria-label="1인 식대(만 원)" placeholder="6">만 원 <button type="button" class="b-calc" id="meal-calc">계산해서 넣기</button></div></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">꽃장식·연출</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flower_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flower_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">스튜디오 촬영</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="studio_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="studio_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">드레스</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="dress_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="dress_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">메이크업</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="makeup_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="makeup_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">본식 스냅·영상</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="snap_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="snap_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">신랑 예복</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="suit_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="suit_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">혼주 한복·메이크업</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="parents_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="parents_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">청첩장</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="invite_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="invite_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">사회·축가 사례</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="host_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="host_a" aria-label="실제 지출"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">부케·웨딩카 등</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="bouquet_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="bouquet_a" aria-label="실제 지출"></td></tr></tbody><tbody class="b-group" data-group="gift"><tr class="b-ghead"><th scope="rowgroup" colspan="3">예물·예단 <span class="b-sub" data-sub="gift"></span></th></tr><tr data-g="gift"><th scope="row"><span class="b-name">결혼반지</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="ring_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="ring_a" aria-label="실제 지출"></td></tr><tr data-g="gift"><th scope="row"><span class="b-name">예물</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="jewel_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="jewel_a" aria-label="실제 지출"></td></tr><tr data-g="gift"><th scope="row"><span class="b-name">예단·이바지</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="yedan_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="yedan_a" aria-label="실제 지출"></td></tr></tbody><tbody class="b-group" data-group="trip"><tr class="b-ghead"><th scope="rowgroup" colspan="3">신혼여행 <span class="b-sub" data-sub="trip"></span></th></tr><tr data-g="trip"><th scope="row"><span class="b-name">항공권</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flight_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flight_a" aria-label="실제 지출"></td></tr><tr data-g="trip"><th scope="row"><span class="b-name">숙소</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hotel_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hotel_a" aria-label="실제 지출"></td></tr><tr data-g="trip"><th scope="row"><span class="b-name">여행 경비</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="tripetc_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="tripetc_a" aria-label="실제 지출"></td></tr></tbody><tbody class="b-group" data-group="home"><tr class="b-ghead"><th scope="rowgroup" colspan="3">혼수 <span class="b-sub" data-sub="home"></span></th></tr><tr data-g="home"><th scope="row"><span class="b-name">가전</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="appliance_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="appliance_a" aria-label="실제 지출"></td></tr><tr data-g="home"><th scope="row"><span class="b-name">가구</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="furniture_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="furniture_a" aria-label="실제 지출"></td></tr><tr data-g="home"><th scope="row"><span class="b-name">생활용품·침구</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="living_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="living_a" aria-label="실제 지출"></td></tr></tbody><tbody class="b-group" data-group="etc"><tr class="b-ghead"><th scope="rowgroup" colspan="3">기타 <span class="b-sub" data-sub="etc"></span></th></tr><tr data-g="etc"><th scope="row"><span class="b-name">상견례</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meet_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meet_a" aria-label="실제 지출"></td></tr><tr data-g="etc"><th scope="row"><span class="b-name">감사 인사·답례품</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="thanks_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="thanks_a" aria-label="실제 지출"></td></tr><tr data-g="etc"><th scope="row"><span class="b-name">예비비</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="reserve_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="reserve_a" aria-label="실제 지출"></td></tr><tr data-g="etc"><th scope="row"><input class="b-custom" data-name="c1" maxlength="20" placeholder="직접 입력" aria-label="직접 입력 항목 이름"></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="c1_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="c1_a" aria-label="실제 지출"></td></tr><tr data-g="etc"><th scope="row"><input class="b-custom" data-name="c2" maxlength="20" placeholder="직접 입력" aria-label="직접 입력 항목 이름"></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="c2_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="c2_a" aria-label="실제 지출"></td></tr><tr data-g="etc"><th scope="row"><input class="b-custom" data-name="c3" maxlength="20" placeholder="직접 입력" aria-label="직접 입력 항목 이름"></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="c3_b" aria-label="예산"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="c3_a" aria-label="실제 지출"></td></tr></tbody><tfoot><tr><th scope="row">합계</th><td id="sum-b">0만 원</td><td id="sum-a2">0만 원</td></tr></tfoot></table></div>
+          <div class="b-tablewrap"><table class="b-table"><thead><tr><th scope="col">항목</th><th scope="col">계획</th><th scope="col">실제 쓴 돈</th></tr></thead><tbody class="b-group" data-group="wed" data-name="예식"><tr class="b-ghead"><th scope="rowgroup" colspan="3">예식 <span class="b-sub" data-sub="wed"></span></th></tr><tr data-g="wed"><th scope="row"><span class="b-name">예식장 대관료</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hall_b" aria-label="예식장 대관료 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hall_a" aria-label="예식장 대관료 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">식대 (보증 인원 × 1인 식대)</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meal_b" aria-label="식대 (보증 인원 × 1인 식대) 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meal_a" aria-label="식대 (보증 인원 × 1인 식대) 실제 쓴 돈"></td></tr><tr class="b-mealrow"><td colspan="3"><div class="b-meal">보증 인원 <input type="number" inputmode="numeric" min="0" data-k="meal_n" aria-label="보증 인원" placeholder="200">명 × 1인 <input type="number" inputmode="decimal" min="0" step="0.1" data-k="meal_p" aria-label="1인 식대(만 원)" placeholder="6">만 원 <button type="button" class="b-calc" id="meal-calc">계산해서 넣기</button></div></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">꽃장식·연출</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flower_b" aria-label="꽃장식·연출 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flower_a" aria-label="꽃장식·연출 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">스튜디오 촬영</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="studio_b" aria-label="스튜디오 촬영 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="studio_a" aria-label="스튜디오 촬영 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">드레스</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="dress_b" aria-label="드레스 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="dress_a" aria-label="드레스 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">메이크업</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="makeup_b" aria-label="메이크업 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="makeup_a" aria-label="메이크업 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">본식 스냅·영상</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="snap_b" aria-label="본식 스냅·영상 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="snap_a" aria-label="본식 스냅·영상 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">신랑 예복</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="suit_b" aria-label="신랑 예복 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="suit_a" aria-label="신랑 예복 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">혼주 한복·메이크업</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="parents_b" aria-label="혼주 한복·메이크업 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="parents_a" aria-label="혼주 한복·메이크업 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">청첩장</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="invite_b" aria-label="청첩장 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="invite_a" aria-label="청첩장 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">사회·축가 사례</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="host_b" aria-label="사회·축가 사례 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="host_a" aria-label="사회·축가 사례 실제 쓴 돈"></td></tr><tr data-g="wed"><th scope="row"><span class="b-name">부케·웨딩카 등</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="bouquet_b" aria-label="부케·웨딩카 등 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="bouquet_a" aria-label="부케·웨딩카 등 실제 쓴 돈"></td></tr><tr class="b-addrow"><td colspan="3"><button type="button" class="b-add" data-add="wed">+ 항목 추가</button></td></tr></tbody><tbody class="b-group" data-group="gift" data-name="예물·예단"><tr class="b-ghead"><th scope="rowgroup" colspan="3">예물·예단 <span class="b-sub" data-sub="gift"></span></th></tr><tr data-g="gift"><th scope="row"><span class="b-name">결혼반지</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="ring_b" aria-label="결혼반지 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="ring_a" aria-label="결혼반지 실제 쓴 돈"></td></tr><tr data-g="gift"><th scope="row"><span class="b-name">예물</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="jewel_b" aria-label="예물 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="jewel_a" aria-label="예물 실제 쓴 돈"></td></tr><tr data-g="gift"><th scope="row"><span class="b-name">예단·이바지</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="yedan_b" aria-label="예단·이바지 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="yedan_a" aria-label="예단·이바지 실제 쓴 돈"></td></tr><tr class="b-addrow"><td colspan="3"><button type="button" class="b-add" data-add="gift">+ 항목 추가</button></td></tr></tbody><tbody class="b-group" data-group="trip" data-name="신혼여행"><tr class="b-ghead"><th scope="rowgroup" colspan="3">신혼여행 <span class="b-sub" data-sub="trip"></span></th></tr><tr data-g="trip"><th scope="row"><span class="b-name">항공권</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flight_b" aria-label="항공권 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="flight_a" aria-label="항공권 실제 쓴 돈"></td></tr><tr data-g="trip"><th scope="row"><span class="b-name">숙소</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hotel_b" aria-label="숙소 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="hotel_a" aria-label="숙소 실제 쓴 돈"></td></tr><tr data-g="trip"><th scope="row"><span class="b-name">여행 경비</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="tripetc_b" aria-label="여행 경비 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="tripetc_a" aria-label="여행 경비 실제 쓴 돈"></td></tr><tr class="b-addrow"><td colspan="3"><button type="button" class="b-add" data-add="trip">+ 항목 추가</button></td></tr></tbody><tbody class="b-group" data-group="home" data-name="혼수"><tr class="b-ghead"><th scope="rowgroup" colspan="3">혼수 <span class="b-sub" data-sub="home"></span></th></tr><tr data-g="home"><th scope="row"><span class="b-name">가전</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="appliance_b" aria-label="가전 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="appliance_a" aria-label="가전 실제 쓴 돈"></td></tr><tr data-g="home"><th scope="row"><span class="b-name">가구</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="furniture_b" aria-label="가구 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="furniture_a" aria-label="가구 실제 쓴 돈"></td></tr><tr data-g="home"><th scope="row"><span class="b-name">생활용품·침구</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="living_b" aria-label="생활용품·침구 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="living_a" aria-label="생활용품·침구 실제 쓴 돈"></td></tr><tr class="b-addrow"><td colspan="3"><button type="button" class="b-add" data-add="home">+ 항목 추가</button></td></tr></tbody><tbody class="b-group" data-group="etc" data-name="기타"><tr class="b-ghead"><th scope="rowgroup" colspan="3">기타 <span class="b-sub" data-sub="etc"></span></th></tr><tr data-g="etc"><th scope="row"><span class="b-name">상견례</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meet_b" aria-label="상견례 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="meet_a" aria-label="상견례 실제 쓴 돈"></td></tr><tr data-g="etc"><th scope="row"><span class="b-name">감사 인사·답례품</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="thanks_b" aria-label="감사 인사·답례품 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="thanks_a" aria-label="감사 인사·답례품 실제 쓴 돈"></td></tr><tr data-g="etc"><th scope="row"><span class="b-name">예비비</span></th><td><input type="number" inputmode="decimal" min="0" step="any" data-k="reserve_b" aria-label="예비비 계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" data-k="reserve_a" aria-label="예비비 실제 쓴 돈"></td></tr><tr class="b-addrow"><td colspan="3"><button type="button" class="b-add" data-add="etc">+ 항목 추가</button></td></tr></tbody><tfoot><tr><th scope="row">합계</th><td id="sum-b">0만 원</td><td id="sum-a2">0만 원</td></tr></tfoot></table></div>
           <p class="b-line" id="alloc"></p>
           <div class="cl-actions">
             <button type="button" class="btn" id="b-xlsx">엑셀로 받기</button>
@@ -138,12 +142,23 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 <script>
 WPInfoList(document.getElementById("more-list"), { current: "budget" });
 (() => {
-  const KEY = "wp-budget-v1"; let S = {};
-  try { S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  const KEY = "wp-budget-v2";
+  let S = null;
+  try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+  if (!S) {
+    /* 예전 예산표(v1)에 적은 내용 옮겨오기 */
+    S = { v: {}, custom: {} };
+    try {
+      const old = JSON.parse(localStorage.getItem("wp-budget-v1") || "{}") || {};
+      Object.keys(old).forEach(k => { if (!/^name_|^c[0-9]_/.test(k)) S.v[k] = old[k]; });
+      if (old.total && !old.saved) { S.v.saved = old.total; delete S.v.total; }
+      ["c1","c2","c3"].forEach(c => { if (old["name_" + c] || old[c + "_b"] || old[c + "_a"]) (S.custom.etc = S.custom.etc || []).push({ id: c, n: old["name_" + c] || "", b: old[c + "_b"] || "", a: old[c + "_a"] || "" }); });
+    } catch (e) {}
+  }
+  S.v = S.v || {}; S.custom = S.custom || {};
   const root = document.getElementById("budget");
-  const nums = [...root.querySelectorAll("input[data-k]")], names = [...root.querySelectorAll("input[data-name]")];
-  nums.forEach(i => { if (S[i.dataset.k] != null) i.value = S[i.dataset.k]; });
-  names.forEach(i => { if (S["name_" + i.dataset.name]) i.value = S["name_" + i.dataset.name]; });
+  const fixed = () => [...root.querySelectorAll("input[data-k]")];
+  fixed().forEach(i => { if (S.v[i.dataset.k] != null) i.value = S.v[i.dataset.k]; });
   const v = k => { const x = parseFloat((root.querySelector('[data-k="' + k + '"]') || {}).value); return isNaN(x) ? 0 : x; };
   const fmt = n => {
     n = Math.round(n * 10) / 10; const neg = n < 0; n = Math.abs(n);
@@ -151,8 +166,29 @@ WPInfoList(document.getElementById("more-list"), { current: "budget" });
     const s = (eok ? eok.toLocaleString("ko-KR") + "억 " : "") + (man || !eok ? man.toLocaleString("ko-KR") + "만" : "") + " 원";
     return (neg ? "-" : "") + s.replace("  ", " ");
   };
+
+  /* 직접 추가한 항목 */
+  let seq = Date.now() % 100000;
+  function addRow(gid, item, focus){
+    const g = root.querySelector('.b-group[data-group="' + gid + '"]'), addTr = g.querySelector(".b-addrow");
+    const tr = document.createElement("tr");
+    tr.dataset.g = gid; tr.dataset.custom = item.id || ("x" + (seq++));
+    tr.innerHTML = '<th scope="row"><div class="b-cname"><input class="b-custom" maxlength="20" placeholder="항목 이름" aria-label="추가한 항목 이름"><button type="button" class="b-del" aria-label="이 항목 지우기">×</button></div></th>' +
+      '<td><input type="number" inputmode="decimal" min="0" step="any" class="c-b" aria-label="계획"></td><td><input type="number" inputmode="decimal" min="0" step="any" class="c-a" aria-label="실제 쓴 돈"></td>';
+    tr.querySelector(".b-custom").value = item.n || ""; tr.querySelector(".c-b").value = item.b || ""; tr.querySelector(".c-a").value = item.a || "";
+    g.insertBefore(tr, addTr);
+    if (focus) tr.querySelector(".b-custom").focus();
+  }
+  Object.keys(S.custom).forEach(gid => (S.custom[gid] || []).forEach(it => { if (root.querySelector('.b-group[data-group="' + gid + '"]')) addRow(gid, it); }));
+  root.addEventListener("click", e => {
+    const add = e.target.closest(".b-add");
+    if (add){ addRow(add.dataset.add, {}, true); save(); calc(); return; }
+    const del = e.target.closest(".b-del");
+    if (del){ del.closest("tr").remove(); save(); calc(); }
+  });
+
   function calc(){
-    const total = v("total");
+    const total = v("saved") + v("support");
     let sb = 0, sa = 0;
     root.querySelectorAll(".b-group").forEach(g => {
       let gb = 0, ga = 0;
@@ -160,8 +196,9 @@ WPInfoList(document.getElementById("more-list"), { current: "budget" });
         const ins = tr.querySelectorAll("td input"); gb += parseFloat(ins[0].value) || 0; ga += parseFloat(ins[1].value) || 0;
       });
       sb += gb; sa += ga;
-      g.querySelector(".b-sub").textContent = gb || ga ? "예산 " + fmt(gb) + (ga ? " · 실제 " + fmt(ga) : "") : "";
+      g.querySelector(".b-sub").textContent = gb || ga ? "계획 " + fmt(gb) + (ga ? " · 실제 " + fmt(ga) : "") : "";
     });
+    document.getElementById("total-view").textContent = fmt(total);
     document.getElementById("sum-t").textContent = fmt(total);
     document.getElementById("sum-b").textContent = fmt(sb);
     document.getElementById("sum-a").textContent = fmt(sa);
@@ -172,12 +209,15 @@ WPInfoList(document.getElementById("more-list"), { current: "budget" });
     root.querySelector(".b-left").classList.toggle("is-minus", left < 0);
     const al = document.getElementById("alloc");
     if (!total && !sb) al.textContent = "";
-    else if (!total) al.textContent = "항목 예산 합계 " + fmt(sb) + " · 위에 총 예산을 적으면 남은 금액을 알려 드려요.";
-    else al.innerHTML = "항목 예산 합계 <b>" + fmt(sb) + "</b> · " + (total - sb >= 0 ? "총 예산에서 <b>" + fmt(total - sb) + "</b> 남아요." : '총 예산보다 <b class="minus">' + fmt(sb - total) + "</b> 많아요.");
+    else if (!total) al.textContent = "계획 합계 " + fmt(sb) + " · 위에 모은 돈을 적으면 남은 금액을 알려 드려요.";
+    else al.innerHTML = "계획 합계 <b>" + fmt(sb) + "</b> · " + (total - sb >= 0 ? "총 예산에서 <b>" + fmt(total - sb) + "</b> 남아요." : '총 예산보다 <b class="minus">' + fmt(sb - total) + "</b> 많아요.");
   }
   function save(){
-    const o = {}; nums.forEach(i => { if (i.value !== "") o[i.dataset.k] = i.value; });
-    names.forEach(i => { if (i.value) o["name_" + i.dataset.name] = i.value; });
+    const o = { v: {}, custom: {} };
+    fixed().forEach(i => { if (i.value !== "") o.v[i.dataset.k] = i.value; });
+    root.querySelectorAll("tr[data-custom]").forEach(tr => {
+      (o.custom[tr.dataset.g] = o.custom[tr.dataset.g] || []).push({ id: tr.dataset.custom, n: tr.querySelector(".b-custom").value, b: tr.querySelector(".c-b").value, a: tr.querySelector(".c-a").value });
+    });
     try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
   }
   root.addEventListener("input", () => { calc(); save(); });
@@ -190,13 +230,13 @@ WPInfoList(document.getElementById("more-list"), { current: "budget" });
   document.getElementById("b-print").onclick = () => window.print();
   document.getElementById("b-xlsx").onclick = () => {
     const groups = [...root.querySelectorAll(".b-group")].map(g => ({
-      name: g.querySelector(".b-ghead th").firstChild.textContent.trim(),
+      name: g.dataset.name,
       rows: [...g.querySelectorAll("tr[data-g]")].map(tr => {
         const nm = tr.querySelector(".b-name"), cu = tr.querySelector(".b-custom"), ins = tr.querySelectorAll("td input");
-        return { name: nm ? nm.textContent : (cu.value.trim() || "기타 (직접 입력)"), b: parseFloat(ins[0].value) || null, a: parseFloat(ins[1].value) || null };
+        return { name: nm ? nm.textContent : (cu.value.trim() || "추가 항목"), b: parseFloat(ins[0].value) || null, a: parseFloat(ins[1].value) || null };
       })
     }));
-    const blob = window.WPBudgetXlsx({ total: v("total") || null, mealN: v("meal_n") || null, mealP: v("meal_p") || null, groups });
+    const blob = window.WPBudgetXlsx({ saved: v("saved") || null, support: v("support") || null, mealN: v("meal_n") || null, mealP: v("meal_p") || null, groups });
     const url = URL.createObjectURL(blob), link = document.createElement("a");
     link.href = url; link.download = "결혼예산표.xlsx"; document.body.appendChild(link); link.click();
     setTimeout(() => { URL.revokeObjectURL(url); link.remove(); }, 1000);
@@ -204,7 +244,10 @@ WPInfoList(document.getElementById("more-list"), { current: "budget" });
   const rc = document.getElementById("b-reset-confirm"), rb = document.getElementById("b-reset");
   rb.onclick = () => { rc.hidden = false; rb.hidden = true; };
   document.getElementById("b-reset-no").onclick = () => { rc.hidden = true; rb.hidden = false; };
-  document.getElementById("b-reset-yes").onclick = () => { nums.forEach(i => i.value = ""); names.forEach(i => i.value = ""); save(); calc(); rc.hidden = true; rb.hidden = false; };
+  document.getElementById("b-reset-yes").onclick = () => {
+    fixed().forEach(i => i.value = ""); root.querySelectorAll("tr[data-custom]").forEach(tr => tr.remove());
+    save(); calc(); rc.hidden = true; rb.hidden = false;
+  };
 })();
 </script>
 </body>
