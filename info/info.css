@@ -30,6 +30,11 @@
 .post ul{margin:0 0 12px;padding-left:1.2em}
 .post li+li{margin-top:4px}
 .post a{color:var(--accent);font-weight:700}
+/* 번호 붙은 소제목 (웨딩 박람회 글 등) */
+.sec{margin:40px 0 0}
+.sec-title{display:flex;align-items:center;gap:12px;margin:0 0 14px !important;padding:0 0 10px;border-bottom:3px solid var(--pink)}
+.sec-no{flex:none;display:grid;place-items:center;width:1.55em;height:1.55em;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--body);font-size:.7em;font-weight:900;line-height:1}
+.sec h3{color:var(--accent)}
 .toc{margin:0 0 8px;padding:16px 20px;border-radius:18px;background:#fff;border:2px solid var(--line)}
 .toc b{display:block;margin:0 0 6px}
 .toc ol{margin:0;padding-left:1.3em}
@@ -78,7 +83,7 @@
 /* 인쇄: 제목 + 체크리스트 8칸(왼쪽 4·오른쪽 4, 같은 크기) + 나만의 체크리스트 + 메모, 고딕체, A4 1장 */
 @page{size:A4;margin:7mm 10mm}
 @media print{
-  :root{--p-font:9.3pt;--p-head:10.4pt;--p-when:9.6pt;--p-box:3.6mm;--p-pad:0.5mm;--p-blank:6.5mm;--p-memo:15mm}
+  :root{--p-font:9.3pt;--p-head:10.4pt;--p-when:9.6pt;--p-box:3.6mm;--p-pad:0.5mm;--p-blank:6.5mm;--p-memo:17mm}
   html,body{background:#fff !important}
   body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;font-size:var(--p-font);line-height:1.3;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .wrap{max-width:none;padding:0}
@@ -111,5 +116,6 @@
   .blank{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0 6mm}
   .blank li{display:flex;align-items:center;height:var(--p-blank)}
   .blank .sq{flex:none;width:var(--p-box);height:var(--p-box);border:0.8pt solid #555;border-radius:0.6mm}
+  .extra-box.memo h2{border-bottom:0;padding-bottom:0;margin-bottom:0}
   .memo-space{height:var(--p-memo)}
 }
