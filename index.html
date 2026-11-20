@@ -159,6 +159,22 @@ body.playing .test-frame{margin-top:6px;border:0;border-radius:0;background:tran
 .more-btn:hover{transform:translateY(-2px)}
 .more-btn.wide{width:100%}
 @media (prefers-reduced-motion:reduce){.more-btn{transition:none}.more-btn:hover{transform:none}}
+/* 3. 연인 대화 질문: 랜덤 질문 카드 */
+.tk-card{background:var(--card-bg);border:2px dashed var(--accent);border-radius:24px;padding:clamp(20px,4vw,32px)}
+.tk-card-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tk-chip{font-size:.78rem;font-weight:700;padding:2px 12px;border-radius:999px;background:var(--accent);color:#fff}
+.tk-card .tk-topic{font-size:.88rem;font-weight:700;color:var(--accent);text-decoration:none}
+.tk-card .tk-topic:hover{text-decoration:underline}
+.tk-q{margin:16px 0 22px;font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,4.2vw,2.1rem);line-height:1.4;min-height:2.8em}
+.tk-q::before{content:"Q. ";color:var(--accent)}
+.tk-actions{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap}
+.tk-shuffle{min-height:46px;padding:8px 22px;border-radius:999px;border:2px solid var(--accent);background:#fff;color:var(--accent);font-family:var(--display);font-weight:700;font-size:1.15rem}
+.tk-shuffle:hover{background:var(--accent);color:#fff}
+.tk-card .tk-link{font-size:.92rem;font-weight:700;color:var(--ink-soft);text-decoration:none}
+.tk-card .tk-link:hover{color:var(--accent)}
+.tk-pop .tk-q{animation:tkpop .35s ease}
+@keyframes tkpop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tk-pop .tk-q{animation:none}}
 /* 4. 익명 질문방 (스타일은 qna/qna.css) */
 #cat-4 .qn-card{max-width:none}
 
@@ -187,7 +203,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     <nav class="nav" aria-label="카테고리">
       <button type="button" data-go="cat-test"><span class="l">테스트 &amp; 밸런스 게임</span><span class="s">테스트·게임</span></button>
       <button type="button" data-go="cat-2">결혼 준비 정보</button>
-      <button type="button" data-go="cat-3" data-soon>연인 대화 질문</button>
+      <button type="button" data-go="cat-3">연인 대화 질문</button>
       <button type="button" data-go="cat-4">질문하기</button>
     </nav>
   </header>
@@ -224,7 +240,15 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 
     <section class="cat" id="cat-3" aria-labelledby="cat-3-title">
       <div class="cat-head"><div><h2 class="cat-title" id="cat-3-title"><span class="cat-no">3</span>연인이 나누면 좋을 대화 질문</h2><p class="cat-sub">결혼 전에 서로 꼭 한 번 물어보면 좋은 질문들이에요.</p></div></div>
-      <div class="empty"><span class="dot" style="background:var(--green)"></span>준비 중이에요. 곧 대화 질문이 올라올 예정이에요.</div>
+      <div class="tk-card" id="talk-card" aria-live="polite">
+        <div class="tk-card-head"><span class="tk-chip">오늘의 대화 질문</span><a class="tk-topic" href="/talk/"></a></div>
+        <p class="tk-q"></p>
+        <div class="tk-actions">
+          <button type="button" class="tk-shuffle">🔀 다른 질문 보기</button>
+          <a class="tk-link" href="/talk/">이 주제 질문 모두 보기 →</a>
+        </div>
+      </div>
+      <p class="more-row"><a class="more-btn wide" href="/talk/">대화 질문 더 보러 가기 →</a></p>
     </section>
 
     <section class="cat" id="cat-4" aria-labelledby="cat-4-title">
@@ -257,6 +281,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 <script src="tests-data.js"></script>
 <script src="qna/qna.js"></script>
 <script src="info/posts.js"></script>
+<script src="talk/topics.js"></script>
 <script>
 /* 테스트 목록: 여기에 항목을 추가하면 배너에 자동으로 들어갑니다. img 는 카드 그림, src 는 테스트 페이지 파일입니다. */
 /* 1번 카테고리(테스트 & 밸런스 게임) 목록. game:true 인 항목은 버튼이 '게임 하기'로 나옵니다. */
@@ -440,6 +465,7 @@ document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", 
 
 /* 2. 결혼 준비 정보: 글 목록은 info/posts.js 에서 관리해요 */
 WPInfoList(document.getElementById("info-list"), { limit: 3 });
+WPTalkRandom(document.getElementById("talk-card"));
 
 /* 4. 익명 질문방 미리보기: 인기 질문 3개 + '질문 더 보러 가기'. 질문 작성은 질문방(qna/)에서 합니다. (qna/qna.js, worker.js) */
 (() => {
