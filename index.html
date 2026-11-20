@@ -71,8 +71,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   .nav .l{display:none}.nav .s{display:inline}
   .nav button{padding:6px 8px;font-size:1.05rem}
 }
-@media (max-width:480px){.nav{gap:0}.nav button{padding:6px 4px;font-size:.95rem}}
-@media (max-width:360px){.nav button{padding:6px 2px;font-size:.86rem}}
+@media (max-width:480px){.nav{gap:0}.nav button{padding:6px 2px;font-size:min(1rem,3.45vw)}}
 
 /* 메인 */
 .hero{text-align:center;padding:clamp(36px,7vw,88px) 0 clamp(40px,7vw,88px)}
@@ -187,8 +186,8 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     </a>
     <nav class="nav" aria-label="카테고리">
       <button type="button" data-go="cat-test"><span class="l">테스트 &amp; 밸런스 게임</span><span class="s">테스트·게임</span></button>
-      <button type="button" data-go="cat-2"><span class="l">결혼 준비 정보</span><span class="s">준비 정보</span></button>
-      <button type="button" data-go="cat-3" data-soon><span class="l">연인 대화 질문</span><span class="s">대화 질문</span></button>
+      <button type="button" data-go="cat-2">결혼 준비 정보</button>
+      <button type="button" data-go="cat-3" data-soon>연인 대화 질문</button>
       <button type="button" data-go="cat-4">질문하기</button>
     </nav>
   </header>
