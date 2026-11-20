@@ -21,6 +21,16 @@ window.WP_POSTS = [
     date: "2026.11.21",
     read: "체크하며 보기",
   },
+  {
+    id: "fair",
+    path: "/info/fair/",
+    tag: "웨딩 박람회",
+    icon: "🎪",
+    title: "웨딩 박람회, 꼭 가야 할까? 가는 이유와 전국 일정 확인법",
+    desc: "박람회에 가면 좋은 점, 가기 전 준비, 현장 계약 주의사항, 지역별 일정 확인하는 곳까지 정리했어요.",
+    date: "2026.11.21",
+    read: "약 5분",
+  },
 ];
 
 /* 목록 그리기: current 를 주면 그 글은 '지금 보는 글'로 표시해요 */
@@ -45,3 +55,28 @@ window.WPInfoList = function (el, opts) {
     el.appendChild(a);
   });
 };
+
+/* 공유하기: 휴대폰은 공유 창, 안 되면 링크 복사 */
+(function () {
+  function init() {
+    document.querySelectorAll("[data-share]").forEach(function (btn) {
+      var msg = btn.parentNode.querySelector(".share-msg");
+      btn.addEventListener("click", function () {
+        var url = location.origin + location.pathname;
+        var t = document.querySelector('meta[property="og:title"]');
+        var d = document.querySelector('meta[property="og:description"]');
+        var data = { title: t ? t.content : document.title, text: d ? d.content : "", url: url };
+        var say = function (x) { if (msg) msg.textContent = x; };
+        var copy = function () {
+          try {
+            navigator.clipboard.writeText(url).then(function () { say("링크를 복사했어요. 원하는 곳에 붙여 넣어 주세요."); }, function () { say("복사가 안 되면 이 주소를 길게 눌러 복사해 주세요: " + url); });
+          } catch (e) { say("복사가 안 되면 이 주소를 길게 눌러 복사해 주세요: " + url); }
+        };
+        if (navigator.share) {
+          navigator.share(data).catch(function (e) { if (!e || e.name !== "AbortError") copy(); });
+        } else copy();
+      });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();

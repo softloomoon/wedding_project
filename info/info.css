@@ -18,7 +18,11 @@
 .post{background:var(--card-bg);border:2px dashed var(--line);border-radius:24px;padding:clamp(20px,5vw,40px)}
 .post-tag{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 12px;border-radius:999px;background:#fdf3ea;color:var(--accent)}
 .post h1{font-family:var(--display);font-weight:700;font-size:clamp(2rem,6vw,2.8rem);line-height:1.2;margin:12px 0 8px}
-.post-meta{margin:0 0 22px;font-size:.86rem;color:var(--ink-soft)}
+.post-meta{margin:0 0 10px;font-size:.86rem;color:var(--ink-soft)}
+.share-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 22px}
+.btn.sm{min-height:38px;padding:4px 16px;font-size:1rem}
+.share-msg{font-size:.86rem;color:var(--green);word-break:break-all}
+.share-row.end{margin:22px 0 0}
 .post-lead{margin:0 0 24px;font-size:1.05rem;line-height:1.8}
 .post h2{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,4.4vw,1.9rem);line-height:1.3;margin:34px 0 10px}
 .post h3{font-size:1.05rem;margin:18px 0 6px}
@@ -68,4 +72,27 @@
 .cl-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:24px 0 0}
 .cl-actions .confirm{font-size:.9rem;color:var(--red)}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
-@media print{.top,.progress,.cl-actions,.more-posts,footer,.post-cta{display:none !important}.post{border:0;padding:0}}
+/* 인쇄: 제목과 체크리스트만, 고딕체, 왼쪽·오른쪽 2단으로 A4 1장 */
+@page{size:A4;margin:9mm 9mm}
+@media print{
+  html,body{background:#fff !important}
+  body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;font-size:9.1pt;line-height:1.32;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding:0}
+  main{padding:0}
+  .top,.back,.post-tag,.post-meta,.post-lead,.progress,.cl-actions,.cl-count,.note,.more-posts,footer,.post-cta,.share-row{display:none !important}
+  .post{border:0;padding:0;background:none;border-radius:0;column-count:2;column-gap:7mm;column-fill:balance}
+  .post h1,.post h2,.step-when{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important}
+  .post h1{column-span:all;font-size:15pt;font-weight:900;margin:0 0 3mm;padding:0 0 2mm;border-bottom:1.2pt solid #a3265c}
+  .cl-group{break-inside:avoid;page-break-inside:avoid;margin:0 0 2.6mm;padding:1.8mm 2.6mm;border:0.7pt solid #d8c3b8;border-radius:2.5mm}
+  .cl-head{display:block}
+  .cl-head>div{display:flex;align-items:baseline;gap:1.8mm;flex-wrap:wrap}
+  .step-when{background:none !important;color:#a3265c !important;padding:0;border-radius:0;font-size:9.4pt;font-weight:900;margin:0}
+  .cl-head h2{font-size:10.2pt;font-weight:700;margin:0;line-height:1.25}
+  .cl{margin:0.8mm 0 0}
+  .cl label{padding:0.55mm 0;gap:1.6mm;border-radius:0}
+  .cl input{width:3.4mm;height:3.4mm;margin:0.25mm 0 0}
+  .cl .t{line-height:1.28}
+  .cl .t small{display:inline;font-size:7.6pt;color:#8a7075;margin-left:1.2mm}
+  .cl .t small::before{content:"· "}
+  .cl input:checked + .t{color:#777}
+}
