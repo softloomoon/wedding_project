@@ -99,7 +99,15 @@
 .b-fund span{flex:1;font-size:.92rem}
 .b-fund input{width:110px}
 .b-fund em{font-style:normal;font-size:.84rem;color:var(--ink-soft)}
-.b-line{margin:10px 0 0;text-align:right}
+.b-line{margin:10px 0 0;text-align:right;font-size:.92rem;color:var(--ink-soft)}
+.b-line b{color:var(--ink)}
+.b-line b.minus{color:var(--red)}
+.b-total{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.b-total span{font-weight:700}
+.budget .b-total input{width:min(200px,42vw);font-size:1.15rem;font-weight:700;padding:8px 12px}
+.b-total em{font-style:normal;color:var(--ink-soft)}
+.b-table tfoot th,.b-table tfoot td{border-top:2px solid var(--accent) !important;font-weight:700;padding:10px;text-align:right;background:#fdf3ea}
+.b-table tfoot th{text-align:left}
 .budget input[type=number]{font:inherit;font-size:.95rem;padding:6px 8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-align:right;min-width:0}
 .budget input:focus{border-color:var(--accent);outline:none}
 .b-summary{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;padding:10px;border-radius:16px;background:var(--card-bg);border:2px solid var(--accent);box-shadow:0 6px 16px -12px rgba(58,36,48,.4)}
@@ -175,7 +183,9 @@
   .b-custom::placeholder{color:transparent}
   .budget input::-webkit-outer-spin-button,.budget input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .b-summary b{font-size:10pt}
-  .b-line{margin:1mm 0 0}
+  .b-line{margin:1mm 0 0;font-size:8.6pt}
+  .budget .b-total input{font-size:11pt !important;width:40mm !important;text-align:left}
+  .b-table tfoot th,.b-table tfoot td{padding:1mm 2mm}
   .extra{margin:3mm 0 0;break-inside:avoid}
   .extra-box{border:0.7pt solid #d8c3b8;border-radius:2.5mm;padding:2.2mm 3mm 2.4mm}
   .extra-box + .extra-box{margin-top:2.4mm}

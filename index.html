@@ -142,8 +142,13 @@ body.playing .test-frame{margin-top:6px;border:0;border-radius:0;background:tran
 .test-info p{margin:0 0 18px;color:var(--ink-soft);max-width:28em}
 .notice{display:inline-block;padding:10px 16px;border-radius:14px;background:var(--pink);border:2px dashed var(--accent);color:var(--ink);font-size:.95rem}
 
-.info-more{font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--accent);text-decoration:none}
-.info-more:hover{text-decoration:underline}
+/* 더 보기 버튼 (1번 게임, 2번 결혼 준비 정보) */
+.more-row{margin:20px 0 0}
+.more-row.center{text-align:center}
+.more-btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:10px 28px;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--display);font-weight:700;font-size:1.25rem;text-decoration:none;box-shadow:0 8px 18px -12px rgba(163,38,92,.8);transition:transform .15s}
+.more-btn:hover{transform:translateY(-2px)}
+.more-btn.wide{width:100%}
+@media (prefers-reduced-motion:reduce){.more-btn{transition:none}.more-btn:hover{transform:none}}
 /* 4. 익명 질문방 (스타일은 qna/qna.css) */
 #cat-4 .qn-card{max-width:760px}
 
@@ -200,12 +205,13 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
         </div>
         <button type="button" class="arrow next" id="next" aria-label="다음 테스트"><svg viewBox="0 0 22 26" aria-hidden="true"><path d="M3 3v20l16-10z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg></button>
       </div>
+      <p class="more-row center"><a class="more-btn" href="/games/">게임 더 보러 가기 →</a></p>
     </section>
 
     <section class="cat" id="cat-2" aria-labelledby="cat-2-title">
-      <div class="cat-head"><div><h2 class="cat-title" id="cat-2-title"><span class="cat-no">2</span>결혼 준비 정보</h2><p class="cat-sub">결혼 준비 순서와 체크리스트를 정리했어요.</p></div></div>
+      <div class="cat-head"><div><h2 class="cat-title" id="cat-2-title"><span class="cat-no">2</span>결혼 준비 정보</h2><p class="cat-sub">결혼 준비에 꼭 필요한 정보를 정리했어요.</p></div></div>
       <div class="ip-list" id="info-list" style="max-width:760px"></div>
-      <p style="margin:16px 0 0"><a class="info-more" href="/info/">결혼 준비 정보 더 보기 →</a></p>
+      <p class="more-row" style="max-width:760px"><a class="more-btn wide" href="/info/">결혼 준비 정보 더 보기 →</a></p>
     </section>
 
     <section class="cat" id="cat-3" aria-labelledby="cat-3-title">
@@ -240,17 +246,13 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
   <footer>Wedding Project</footer>
 </div>
 
+<script src="tests-data.js"></script>
 <script src="qna/qna.js"></script>
 <script src="info/posts.js"></script>
 <script>
 /* 테스트 목록: 여기에 항목을 추가하면 배너에 자동으로 들어갑니다. img 는 카드 그림, src 는 테스트 페이지 파일입니다. */
 /* 1번 카테고리(테스트 & 밸런스 게임) 목록. game:true 인 항목은 버튼이 '게임 하기'로 나옵니다. */
-const TESTS = [
-  /* done: 결과 화면이 나왔는지 알아보는 표시(이게 보이면 아래에 다른 게임 추천이 나와요) */
-  { id:"majinoseon", title:"나의 결혼 마지노선 테스트", desc:"배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?", img:"test3/card.svg", src:"test3/", tone:"#ffffff", fit:true, done:"#screen-result.active" },
-  { id:"values", title:"결혼 가치관 맞춰보기", desc:"우리, 결혼에 대해 같은 그림을 그리고 있을까?", img:"values/hero.jpg", src:"values/", tone:"#fffaf2", done:"#rs, #cp" },
-  { id:"balance", title:"신혼생활 밸런스 게임", desc:"정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.", img:"balance/img/cover.png", src:"balance/", tone:"#ffffff", fit:true, game:true, done:"#resTitle, #retryBtn" }
-];
+const TESTS = window.WP_TESTS;
 const INTERVAL = 2000;
 
 const artSvg = t => '<img src="' + t.img + '" alt="">';

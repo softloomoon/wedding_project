@@ -17,7 +17,7 @@ window.WP_POSTS = [
     tag: "예산",
     icon: "💰",
     title: "결혼 예산 짜는 법 (예산표 포함)",
-    desc: "쓸 수 있는 돈 확인부터 항목별 배분, 예비비까지. 평균 결혼 비용과 바로 쓸 수 있는 예산표를 담았어요.",
+    desc: "총 예산 정하기부터 항목별 배분, 예비비까지. 평균 결혼 비용과 엑셀로 받을 수 있는 예산표를 담았어요.",
     date: "2026.11.21",
     read: "약 7분 · 예산표",
   },
@@ -66,7 +66,7 @@ window.WPInfoList = function (el, opts) {
       '<span class="ip-icon" aria-hidden="true"></span>' +
       '<span class="ip-main"><span class="ip-tag"></span><span class="ip-title"></span><span class="ip-desc"></span>' +
       '<span class="ip-meta"></span></span>' +
-      '<span class="ip-go" aria-hidden="true">' + (p.id === opts.current ? "지금 보는 글" : "읽기 →") + "</span>";
+      (p.id === opts.current ? '<span class="ip-go" aria-hidden="true">지금 보는 글</span>' : "");
     a.querySelector(".ip-icon").textContent = p.icon;
     a.querySelector(".ip-tag").textContent = p.tag;
     a.querySelector(".ip-title").textContent = p.title;

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>테스트 & 밸런스 게임 모아보기 | 웨딩 프로젝트</title>
+<meta name="description" content="결혼 가치관 맞춰보기, 결혼 마지노선 테스트, 신혼생활 밸런스 게임까지. 둘이 함께 해보는 결혼 테스트를 한곳에 모았어요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="웨딩 프로젝트">
+<meta property="og:title" content="테스트 & 밸런스 게임 모아보기 | 웨딩 프로젝트">
+<meta property="og:description" content="결혼 가치관 맞춰보기, 결혼 마지노선 테스트, 신혼생활 밸런스 게임까지. 둘이 함께 해보는 결혼 테스트를 한곳에 모았어요.">
+<meta property="og:image" content="https://wedding-project.softloomon.workers.dev/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://wedding-project.softloomon.workers.dev/games/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#f8efe2;--ink:#3a2430;--ink-soft:#9a7d83;--pink:#f3d6e2;--line:#ecd9ce;--card-bg:#fffaf2;--accent:#a3265c;
+  --display:"Gaegu",cursive;--body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;--gutter:clamp(16px,4vw,48px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.65;word-break:keep-all}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 var(--gutter)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0 12px;border-bottom:3px dashed var(--line)}
+.brand{font-family:var(--display);font-weight:700;font-size:1.8rem;text-decoration:none;color:var(--accent);line-height:1.1}
+.top a.home{font-family:var(--display);font-size:1.1rem;text-decoration:none;color:var(--ink-soft)}
+.top a.home:hover{color:var(--accent)}
+main{padding:28px 0 64px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3rem);line-height:1.2;margin:0 0 6px}
+.lead{margin:0 0 26px;color:var(--ink-soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.card{display:flex;flex-direction:column;text-decoration:none;border:2px dashed var(--line);border-radius:22px;overflow:hidden;background:var(--card-bg);transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.card-art{aspect-ratio:4/3;display:grid;place-items:center;background:var(--tone);overflow:hidden}
+.card-art img{width:100%;height:100%;object-fit:cover;display:block}
+.card-art.fit img{object-fit:contain}
+.card-body{display:flex;flex-direction:column;gap:6px;padding:16px 18px 18px;border-top:2px dashed var(--line);flex:1}
+.card-title{font-family:var(--display);font-size:1.45rem;line-height:1.3;margin:0}
+.card-desc{margin:0;font-size:.92rem;color:var(--ink-soft);line-height:1.5}
+.pill{align-self:flex-start;margin-top:auto;font-family:var(--display);font-weight:700;font-size:.95rem;padding:3px 14px;border-radius:999px;background:var(--accent);color:#fff}
+footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-soft);font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">Wedding Project</a>
+    <a class="home" href="/">← 메인으로</a>
+  </header>
+  <main>
+    <h1>테스트 &amp; 밸런스 게임</h1>
+    <p class="lead">둘이 함께 해 보면 서로의 결혼 생각을 알 수 있어요. 마음에 드는 것부터 골라 보세요.</p>
+    <div class="grid" id="grid"></div>
+  </main>
+  <footer>Wedding Project · 테스트 답변은 어디에도 저장되지 않아요.</footer>
+</div>
+<script src="/tests-data.js"></script>
+<script>
+(window.WP_TESTS || []).forEach(t => {
+  const a = document.createElement("a");
+  a.className = "card"; a.href = "/" + t.src;
+  a.style.setProperty("--tone", t.tone);
+  a.innerHTML = '<div class="card-art' + (t.fit ? ' fit' : '') + '"><img alt=""></div><div class="card-body"><h2 class="card-title"></h2><p class="card-desc"></p><span class="pill"></span></div>';
+  a.querySelector("img").src = "/" + t.img;
+  a.querySelector(".card-title").textContent = t.title;
+  a.querySelector(".card-desc").textContent = t.desc;
+  a.querySelector(".pill").textContent = t.game ? "게임 하기" : "테스트 하기";
+  document.getElementById("grid").appendChild(a);
+});
+</script>
+</body>
+</html>
