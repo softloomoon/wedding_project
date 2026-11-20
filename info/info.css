@@ -77,6 +77,54 @@
 .cl-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:24px 0 0}
 .cl-actions .confirm{font-size:.9rem;color:var(--red)}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+/* 용어 정리 */
+.terms{margin:0;display:grid;gap:10px}
+.terms>div{padding:12px 16px;border-radius:14px;background:#fff;border:1.5px solid var(--line)}
+.terms dt{font-weight:700;color:var(--accent)}
+.terms dd{margin:2px 0 0;line-height:1.7}
+#ask-list{margin-top:6px}
+
+/* 숫자 카드 */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.fact{padding:14px 16px;border-radius:16px;background:#fff;border:1.5px solid var(--line)}
+.fact b{display:block;font-size:1.35rem;font-weight:900;color:var(--accent);line-height:1.3}
+.fact span{display:block;margin-top:4px;font-size:.86rem;color:var(--ink-soft);line-height:1.55}
+
+/* 예산표 */
+.budget{margin:14px 0 0}
+.b-box{padding:14px 16px;border-radius:16px;background:#fff;border:1.5px solid var(--line)}
+.b-box h3{margin:0 0 8px}
+.b-funds{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 14px}
+.b-fund{display:flex;align-items:center;gap:8px}
+.b-fund span{flex:1;font-size:.92rem}
+.b-fund input{width:110px}
+.b-fund em{font-style:normal;font-size:.84rem;color:var(--ink-soft)}
+.b-line{margin:10px 0 0;text-align:right}
+.budget input[type=number]{font:inherit;font-size:.95rem;padding:6px 8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-align:right;min-width:0}
+.budget input:focus{border-color:var(--accent);outline:none}
+.b-summary{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;padding:10px;border-radius:16px;background:var(--card-bg);border:2px solid var(--accent);box-shadow:0 6px 16px -12px rgba(58,36,48,.4)}
+.b-summary div{display:flex;flex-direction:column;align-items:center;text-align:center}
+.b-summary span{font-size:.8rem;color:var(--ink-soft)}
+.b-summary b{font-size:1.02rem}
+.b-left b{color:var(--green)}
+.b-left.is-minus b{color:var(--red)}
+.b-tablewrap{overflow-x:auto;border-radius:16px;border:1.5px solid var(--line);background:#fff}
+.b-table{width:100%;border-collapse:collapse;font-size:.94rem}
+.b-table thead th{position:sticky;top:0;background:#fdf3ea;font-size:.84rem;color:var(--ink-soft);padding:8px 10px;text-align:right}
+.b-table thead th:first-child{text-align:left}
+.b-table th[scope=row]{font-weight:500;text-align:left;padding:6px 10px;vertical-align:middle}
+.b-table td{padding:5px 8px;width:28%}
+.b-table td input{width:100%}
+.b-table tr+tr th,.b-table tr+tr td{border-top:1px solid var(--line)}
+.b-ghead th{padding:10px 10px 6px !important;background:#fffaf2;font-weight:700 !important;color:var(--accent);text-align:left !important}
+.b-sub{float:right;font-size:.78rem;font-weight:500;color:var(--ink-soft)}
+.b-custom{font:inherit;font-size:.92rem;width:100%;padding:5px 8px;border:1.5px dashed var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.b-meal{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0;font-size:.84rem;color:var(--ink-soft)}
+.b-table tr.b-mealrow td{width:auto;padding:0 10px 8px;border-top:0 !important}
+.b-meal input{width:64px !important;padding:3px 6px !important;font-size:.84rem !important}
+.b-calc{font:inherit;font-size:.78rem;padding:3px 10px;border:1.5px solid var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
+@media (max-width:560px){.b-table td{width:30%}.b-summary b{font-size:.92rem}.b-fund input{width:96px}}
+
 /* 화면에서는 숨기고 인쇄할 때만 보이는 칸 */
 .print-only{display:none}
 
@@ -109,6 +157,25 @@
   .cl input:checked + .t{color:#777}
   /* 나만의 체크리스트(네모 6개) + 메모 (줄 없이 빈 칸) */
   .print-only{display:block}
+  /* 예산 글: 글 내용은 숨기고 예산표만 */
+  .post:has(#budget) > :not(h1):not(.sec#b5){display:none !important}
+  .post:has(#budget) .sec#b5 > :not(.budget){display:none !important}
+  .budget input[type=number],.b-custom{border:0 !important;padding:0 !important;background:none !important;font-size:8.6pt !important}
+  .b-meal button,.b-calc{display:none !important}
+  .b-summary{position:static;box-shadow:none;border:0.8pt solid #a3265c;padding:2mm;margin:2mm 0}
+  .b-box,.b-tablewrap{border:0.7pt solid #d8c3b8;border-radius:2mm}
+  .b-box{padding:2mm 3mm}
+  .b-table{font-size:8.4pt}
+  .b-table th[scope=row],.b-table td{padding:0.6mm 2mm}
+  .b-table thead th{position:static;padding:1mm 2mm}
+  .b-ghead th{padding:1.2mm 2mm 0.6mm !important}
+  .b-funds{grid-template-columns:1fr 1fr;gap:1mm 6mm}
+  .b-fund span{font-size:8.6pt}
+  .b-fund input{width:24mm !important;text-align:right}
+  .b-custom::placeholder{color:transparent}
+  .budget input::-webkit-outer-spin-button,.budget input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .b-summary b{font-size:10pt}
+  .b-line{margin:1mm 0 0}
   .extra{margin:3mm 0 0;break-inside:avoid}
   .extra-box{border:0.7pt solid #d8c3b8;border-radius:2.5mm;padding:2.2mm 3mm 2.4mm}
   .extra-box + .extra-box{margin-top:2.4mm}
