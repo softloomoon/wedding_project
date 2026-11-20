@@ -44,6 +44,7 @@ button.ok{background:var(--green)}
   <form class="card" id="login">
     <label for="key">관리자 비밀번호 (Cloudflare 의 ADMIN_KEY)</label>
     <div class="row" style="margin-top:6px"><input type="password" id="key" autocomplete="current-password"><button type="submit">들어가기</button></div>
+    <p class="mute" style="margin:6px 0 0">이 기기에서 로그인 상태가 유지되고, 질문방에서 <b>운영자로 의견</b>을 남길 수 있어요. 공용 컴퓨터에서는 다 쓰고 '나가기'를 눌러 주세요.</p>
     <p class="msg warn" id="lmsg"></p>
   </form>
 
@@ -63,7 +64,7 @@ button.ok{background:var(--green)}
 <script>
 (() => {
   let KEY = "";
-  try { KEY = sessionStorage.getItem("wp-admin-key") || ""; } catch (e) {}
+  try { KEY = localStorage.getItem("wp-admin-key") || ""; } catch (e) {}
   const view = document.getElementById("view"), panel = document.getElementById("panel"), login = document.getElementById("login");
   const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
   const date = ts => new Date(ts).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
@@ -79,11 +80,11 @@ button.ok{background:var(--green)}
     if (r.status === 401){ document.getElementById("lmsg").textContent = "비밀번호가 맞지 않아요."; return false; }
     if (r.status === 503){ document.getElementById("lmsg").textContent = "Cloudflare 에 ADMIN_KEY 시크릿이 아직 없어요. README 의 설정 방법을 확인해 주세요."; return false; }
     if (!r.items){ document.getElementById("lmsg").textContent = "서버에 연결하지 못했어요."; return false; }
-    try { sessionStorage.setItem("wp-admin-key", KEY); } catch (e) {}
+    try { localStorage.setItem("wp-admin-key", KEY); } catch (e) {}
     login.hidden = true; panel.hidden = false; show(); return true;
   }
   login.addEventListener("submit", e => { e.preventDefault(); KEY = document.getElementById("key").value; enter(); });
-  document.getElementById("logout").onclick = () => { try { sessionStorage.removeItem("wp-admin-key"); } catch (e) {} KEY = ""; panel.hidden = true; login.hidden = false; };
+  document.getElementById("logout").onclick = () => { try { localStorage.removeItem("wp-admin-key"); } catch (e) {} KEY = ""; panel.hidden = true; login.hidden = false; };
   document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { tab = b.dataset.tab; document.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-pressed", x === b)); show(); });
 
   async function show(){
@@ -122,7 +123,7 @@ button.ok{background:var(--green)}
       view.innerHTML = r.items.length ? "" : '<p class="mute">아직 의견이 없어요.</p>';
       r.items.forEach(c => {
         const d = document.createElement("div"); d.className = "item";
-        d.innerHTML = '<div class="meta"><span class="pill p-' + c.status + '">' + (c.status === "public" ? "공개" : "숨김") + '</span><span>의견 #' + c.id + '</span><a href="./?id=' + c.question_id + '" target="_blank">질문 #' + c.question_id + '</a><span>' + date(c.created_at) + '</span><span>공감 ' + c.likes + '</span>' + (c.report_count ? '<span class="warn">신고 ' + c.report_count + '</span>' : '') + '</div>' +
+        d.innerHTML = '<div class="meta"><span class="pill p-' + c.status + '">' + (c.status === "public" ? "공개" : "숨김") + '</span>' + (c.is_admin ? '<span class="pill">운영자 의견</span>' : '') + '<span>의견 #' + c.id + '</span><a href="./?id=' + c.question_id + '" target="_blank">질문 #' + c.question_id + '</a><span>' + date(c.created_at) + '</span><span>공감 ' + c.likes + '</span>' + (c.report_count ? '<span class="warn">신고 ' + c.report_count + '</span>' : '') + '</div>' +
           '<p class="body"></p><p class="mute" style="margin:0 0 6px">질문: <span class="qq"></span></p><div class="acts"></div>';
         d.querySelector(".body").textContent = c.body;
         d.querySelector(".qq").textContent = c.question.slice(0, 60);

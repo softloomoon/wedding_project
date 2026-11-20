@@ -145,8 +145,9 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       '<ul class="qn-comments" id="comments"></ul>' +
       '<form class="qn-cform" id="cform" novalidate><h3>나의 의견 남기기</h3>' + PUBLIC_NOTE.replace('class="qn-public"', 'class="qn-public" style="margin:0 0 14px"') +
       '<label class="qn-label" for="cbody">회원가입 없이 익명으로 의견을 남길 수 있어요.</label>' +
-      '<textarea id="cbody" maxlength="500" placeholder="경험이나 생각을 편하게 나눠 주세요."></textarea>' +
-      '<p class="qn-hint"><span>실명, 전화번호 같은 개인정보는 적지 말아 주세요.</span><span class="qn-count" id="ccnt">0/500</span></p>' +
+      (Q.adminKey() ? '<label class="qn-check" style="margin:0 0 8px"><input type="checkbox" id="casadmin" checked><span><span class="qn-badge qn-admin">운영자</span>로 의견 남기기 (관리자 로그인된 기기에서만 보여요)</span></label>' : '') +
+      '<textarea id="cbody" maxlength="' + (Q.adminKey() ? 2000 : 500) + '" placeholder="경험이나 생각을 편하게 나눠 주세요."></textarea>' +
+      '<p class="qn-hint"><span>실명, 전화번호 같은 개인정보는 적지 말아 주세요.</span><span class="qn-count" id="ccnt"></span></p>' +
       '<div class="qn-hp" aria-hidden="true"><label>웹사이트<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' +
       '<div class="qn-ts" id="cts"></div>' +
       '<label class="qn-check qn-agree"><input type="checkbox" id="cagree"><span>내 의견은 <b>누구나 볼 수 있게 공개</b>된다는 점에 동의해요.</span></label>' +
@@ -159,13 +160,15 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     const ul = document.getElementById("comments");
     let n = 0;
     const liked = Q.store.get("wp-liked");
+    let anon = 0;
     function addComment(c, fresh){
       n++;
+      if (!c.is_admin) anon++;
       const li = document.createElement("li");
-      li.className = "qn-c";
-      li.innerHTML = '<p class="qn-c-head"><b>익명 ' + n + '</b><span>' + Q.ago(c.created_at) + '</span></p><p class="qn-c-body"></p>' +
+      li.className = "qn-c" + (c.is_admin ? " is-admin" : "");
+      li.innerHTML = '<p class="qn-c-head">' + (c.is_admin ? '<span class="qn-badge qn-admin">운영자</span> <b>웨딩 프로젝트</b>' : '<b>익명 ' + anon + '</b>') + '<span>' + Q.ago(c.created_at) + '</span></p><p class="qn-c-body"></p>' +
         '<div class="qn-c-actions"><button type="button" class="qn-mini" data-like="' + c.id + '" aria-label="공감">♥ 공감 <span>' + (c.likes || 0) + '</span></button>' +
-        '<button type="button" class="qn-mini" data-report="c" data-id="' + c.id + '">🚩 신고</button></div><div class="rbox"></div>';
+        (c.is_admin ? '' : '<button type="button" class="qn-mini" data-report="c" data-id="' + c.id + '">🚩 신고</button>') + '</div><div class="rbox"></div>';
       li.querySelector(".qn-c-body").textContent = c.body;
       const lb = li.querySelector("[data-like]");
       if (liked.includes(c.id)){ lb.classList.add("on"); lb.setAttribute("aria-pressed", "true"); }
@@ -207,7 +210,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     /* 의견 작성 */
     const cf = document.getElementById("cform"), cb = document.getElementById("cbody"), ca = document.getElementById("cagree"), cs = document.getElementById("csend"), cm = document.getElementById("cmsg"), cc = document.getElementById("ccnt");
     const say = (t, cls) => { cm.textContent = t; cm.className = "qn-msg" + (cls ? " " + cls : ""); };
-    const upd = () => { cc.textContent = cb.value.length + "/500"; cs.disabled = !cb.value.trim() || !ca.checked; };
+    const upd = () => { cc.textContent = cb.value.length + "/" + cb.maxLength; cs.disabled = !cb.value.trim() || !ca.checked; };
     cb.addEventListener("input", upd); ca.addEventListener("change", upd); upd();
     let guard = null; Q.spamGuard(document.getElementById("cts")).then(g => (guard = g));
     let busy = false;
@@ -217,8 +220,10 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       const text = cb.value.trim();
       if (text.length < 2){ say("의견을 2자 이상 적어 주세요.", "err"); return; }
       busy = true; cs.disabled = true; cs.textContent = "등록하는 중…"; say("");
-      const res = await Q.api("/questions/" + id + "/comments", { method: "POST", body: {
+      const asAdmin = !!(document.getElementById("casadmin") && document.getElementById("casadmin").checked);
+      const res = await Q.api("/questions/" + id + "/comments", { method: "POST", headers: asAdmin ? { "X-Admin-Key": Q.adminKey() } : undefined, body: {
         body: text, website: cf.website.value, elapsed: guard ? Date.now() - guard.openedAt : 0, turnstile: guard ? guard.token() : "" } });
+      if (!res.ok && res.reason === "unauthorized"){ busy = false; cs.textContent = "의견 등록하기"; say("관리자 비밀번호가 바뀌었어요. 관리자 페이지에서 다시 로그인해 주세요.", "err"); upd(); return; }
       busy = false; cs.textContent = "의견 등록하기";
       if (guard) guard.reset();
       if (!res.ok){ say(Q.msgFor(res.reason), "err"); upd(); return; }
