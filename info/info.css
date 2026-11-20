@@ -103,6 +103,14 @@
 .b-line b{color:var(--ink)}
 .b-line b.minus{color:var(--red)}
 .b-fund small{font-weight:400;color:var(--ink-soft)}
+.b-result{margin:12px 0 0;border-radius:16px;border:1.5px solid var(--line);background:#fff;overflow:hidden}
+.b-res{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;padding:12px 14px;font-size:.94rem}
+.b-res+.b-res{border-top:1px solid var(--line)}
+.b-res b{color:var(--ink)}
+.b-res b.minus{color:var(--red)}
+.b-res-lab{flex:none;min-width:5.6em;text-align:center;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:999px;background:#fdf3ea;color:var(--accent)}
+.b-res-lab.is-actual{background:var(--accent);color:#fff}
+.b-res-arrow{color:var(--ink-soft)}
 .b-totalline{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0 0;padding:10px 0 0;border-top:2px dashed var(--line)}
 .b-totalline span{font-weight:700}
 .b-totalline b{font-size:1.3rem;color:var(--accent)}
@@ -118,6 +126,7 @@
 .b-total em{font-style:normal;color:var(--ink-soft)}
 .b-table tfoot th,.b-table tfoot td{border-top:2px solid var(--accent) !important;font-weight:700;padding:10px;text-align:right;background:#fdf3ea}
 .b-table tfoot th{text-align:left}
+.b-table tfoot td{white-space:nowrap}
 .budget input[type=number]{font:inherit;font-size:.95rem;padding:6px 8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-align:right;min-width:0}
 .budget input:focus{border-color:var(--accent);outline:none}
 .b-summary{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;padding:10px;border-radius:16px;background:var(--card-bg);border:2px solid var(--accent);box-shadow:0 6px 16px -12px rgba(58,36,48,.4)}
@@ -141,7 +150,7 @@
 .b-table tr.b-mealrow td{width:auto;padding:0 10px 8px;border-top:0 !important}
 .b-meal input{width:64px !important;padding:3px 6px !important;font-size:.84rem !important}
 .b-calc{font:inherit;font-size:.78rem;padding:3px 10px;border:1.5px solid var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
-@media (max-width:560px){.b-table td{width:25%}.b-del{width:24px;height:24px}.b-summary b{font-size:.92rem}.b-fund input{width:96px}}
+@media (max-width:560px){.b-table tfoot td{font-size:.84rem;padding:10px 6px}.b-table td{width:25%}.b-del{width:24px;height:24px}.b-summary b{font-size:.92rem}.b-fund input{width:96px}}
 
 /* 화면에서는 숨기고 인쇄할 때만 보이는 칸 */
 .print-only{display:none}
@@ -194,6 +203,9 @@
   .b-addrow,.b-del{display:none !important}
   .b-totalline{margin:1.5mm 0 0;padding:1.5mm 0 0;border-top:0.6pt dashed #d8c3b8}
   .b-totalline b{font-size:11pt}
+  .b-result{border:0.7pt solid #d8c3b8;border-radius:2mm;margin:2mm 0 0}
+  .b-res{padding:1.2mm 3mm;font-size:8.8pt}
+  .b-res-lab{font-size:7.6pt;padding:0.3mm 2mm}
   .budget input::-webkit-outer-spin-button,.budget input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .b-summary b{font-size:10pt}
   .b-line{margin:1mm 0 0;font-size:8.6pt}
