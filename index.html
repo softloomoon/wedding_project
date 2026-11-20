@@ -53,15 +53,26 @@ button{font:inherit;color:inherit;cursor:pointer}
 .wrap{max-width:1080px;margin:0 auto;padding:0 var(--gutter)}
 
 /* 상단 */
-.top{position:sticky;top:0;z-index:10;background:var(--paper);display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:0 calc(var(--gutter) * -1);padding:14px var(--gutter) 10px;border-bottom:3px dashed var(--line)}
-.nav{margin-left:-16px}
-.cat{scroll-margin-top:150px}
-.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:1.9rem;text-decoration:none;line-height:1.1;color:var(--accent)}
+/* 상단: 로고와 카테고리를 한 줄에. 좁은 화면에서는 로고를 숨기고 짧은 이름으로 한 줄 유지 */
+.top{position:sticky;top:0;z-index:10;background:var(--paper);display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 calc(var(--gutter) * -1);padding:12px var(--gutter);border-bottom:3px dashed var(--line)}
+.cat{scroll-margin-top:90px}
+.brand{display:flex;align-items:center;gap:8px;flex:none;font-family:var(--display);font-weight:700;font-size:1.7rem;text-decoration:none;line-height:1.1;color:var(--accent);white-space:nowrap}
 .brand svg{width:26px;height:26px;flex:none}
-.nav{display:flex;gap:8px;flex-wrap:wrap}
-.nav button{background:none;border:2px dashed transparent;border-radius:999px;padding:6px 16px;font-family:var(--display);font-size:1.1rem}
+.nav{display:flex;gap:4px;flex-wrap:nowrap;min-width:0;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{flex:none;white-space:nowrap;background:none;border:2px dashed transparent;border-radius:999px;padding:6px 14px;font-family:var(--display);font-size:1.1rem}
 .nav button:hover{border-color:var(--accent)}
 .nav button[data-soon]{color:var(--ink-soft)}
+.nav .s{display:none}
+@media (max-width:940px){
+  .brand{display:none}
+  .top{justify-content:center;padding:10px var(--gutter)}
+  .nav{width:100%;justify-content:space-between}
+  .nav .l{display:none}.nav .s{display:inline}
+  .nav button{padding:6px 8px;font-size:1.05rem}
+}
+@media (max-width:480px){.nav{gap:0}.nav button{padding:6px 4px;font-size:.95rem}}
+@media (max-width:360px){.nav button{padding:6px 2px;font-size:.86rem}}
 
 /* 메인 */
 .hero{text-align:center;padding:clamp(36px,7vw,88px) 0 clamp(40px,7vw,88px)}
@@ -175,9 +186,9 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       Wedding Project
     </a>
     <nav class="nav" aria-label="카테고리">
-      <button type="button" data-go="cat-test">테스트 &amp; 밸런스 게임</button>
-      <button type="button" data-go="cat-2">결혼 준비 정보</button>
-      <button type="button" data-go="cat-3" data-soon>연인 대화 질문</button>
+      <button type="button" data-go="cat-test"><span class="l">테스트 &amp; 밸런스 게임</span><span class="s">테스트·게임</span></button>
+      <button type="button" data-go="cat-2"><span class="l">결혼 준비 정보</span><span class="s">준비 정보</span></button>
+      <button type="button" data-go="cat-3" data-soon><span class="l">연인 대화 질문</span><span class="s">대화 질문</span></button>
       <button type="button" data-go="cat-4">질문하기</button>
     </nav>
   </header>
