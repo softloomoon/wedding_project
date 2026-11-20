@@ -42,6 +42,18 @@
 
 Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 도메인을 연결할 수 있어요. 도메인은 가비아, 후이즈, Namecheap, Google Domains 같은 곳에서 구매하면 됩니다.
 
+## 링크 공유 미리보기 (네이버·카카오톡 등)
+
+- 테스트마다 자기 주소가 있어요. 블로그나 메신저에는 이 주소를 붙여 넣으세요.
+  - 결혼 가치관 맞춰보기: `https://wedding-project.softloomon.workers.dev/values/`
+  - 나의 결혼 마지노선 테스트: `https://wedding-project.softloomon.workers.dev/test3/`
+  - 신혼생활 밸런스 게임: `https://wedding-project.softloomon.workers.dev/balance/`
+  - 익명 질문방: `https://wedding-project.softloomon.workers.dev/qna/`
+  - 사이트 첫 화면: `https://wedding-project.softloomon.workers.dev/`
+- 주소마다 제목, 설명, 카드 이미지(`og/*.png`, 1200×630)가 따로 나와요. 테스트별 문구는 `worker.js`의 `PAGES`, 첫 화면 문구는 `index.html`의 `<!--og-->` 부분에서 바꿀 수 있어요.
+- 이 주소로 들어오면 사이트 화면 안에서 그 테스트가 바로 열려요. 예전 주소(`/#values`)는 자동으로 새 주소로 바뀌어요.
+- 예전 미리보기가 남아 있으면 주소 끝에 `?v=2`를 붙여 다시 넣어 보세요.
+
 ## 익명 질문방 (4번 카테고리)
 
 - 메인 4번 칸: 인기 질문 3개 + **익명으로 질문하기** 버튼(눌러야 작성 폼이 열림) + 전체 보기 링크
