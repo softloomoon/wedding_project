@@ -52,26 +52,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* PC에서 사이트 최대 너비: 1080px (모니터가 더 넓어도 늘어나지 않고 가운데에 놓여요) */
 .wrap{max-width:1080px;margin:0 auto;padding:0 var(--gutter)}
 
-/* 상단 */
-/* 상단: 로고와 카테고리를 한 줄에. 좁은 화면에서는 로고를 숨기고 짧은 이름으로 한 줄 유지 */
-.top{position:sticky;top:0;z-index:10;background:var(--paper);display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 calc(var(--gutter) * -1);padding:12px var(--gutter);border-bottom:3px dashed var(--line)}
+/* 상단 바는 /nav.css (모든 페이지 공통) */
 .cat{scroll-margin-top:90px}
-.brand{display:flex;align-items:center;gap:8px;flex:none;font-family:var(--display);font-weight:700;font-size:1.7rem;text-decoration:none;line-height:1.1;color:var(--accent);white-space:nowrap}
-.brand svg{width:26px;height:26px;flex:none}
-.nav{display:flex;gap:4px;flex-wrap:nowrap;min-width:0;overflow-x:auto;scrollbar-width:none}
-.nav::-webkit-scrollbar{display:none}
-.nav button{flex:none;white-space:nowrap;background:none;border:2px dashed transparent;border-radius:999px;padding:6px 14px;font-family:var(--body);font-weight:500;font-size:1rem}
-.nav button:hover{border-color:var(--accent)}
-.nav button[data-soon]{color:var(--ink-soft)}
-.nav .s{display:none}
-@media (max-width:940px){
-  .brand{display:none}
-  .top{justify-content:center;padding:10px var(--gutter)}
-  .nav{width:100%;justify-content:space-between}
-  .nav .l{display:none}.nav .s{display:inline}
-  .nav button{padding:6px 8px;font-size:.95rem}
-}
-@media (max-width:480px){.nav{gap:0}.nav button{padding:6px 2px;font-size:min(.95rem,3.35vw)}}
 
 /* 메인 */
 .hero{text-align:center;padding:clamp(36px,7vw,88px) 0 clamp(40px,7vw,88px)}
@@ -124,7 +106,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .test-art svg{width:86%;height:auto}
 .test-frame{display:block;width:100%;height:760px;margin-top:20px;border:2px dashed var(--line);border-radius:22px;background:var(--card-bg);overflow:hidden}
 /* 테스트·게임을 하는 동안: 상단 카테고리 바와 바깥 여백·테두리를 없애고 게임 화면만 보여 줍니다 */
-body.playing .top,body.playing footer{display:none}
+body.playing .site-top,body.playing footer{display:none}
 body.playing .wrap{max-width:1080px;padding:0}
 body.playing .test{border-top:0;padding:10px 0 0}
 body.playing .back{margin-left:12px;padding:6px 14px;font-size:.95rem}
@@ -192,22 +174,13 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 </style>
 <link rel="stylesheet" href="qna/qna.css">
 <link rel="stylesheet" href="info/info.css">
+<link rel="stylesheet" href="/nav.css">
 </head>
 <body>
+<header class="site-top"><div class="site-top-in"><a class="brand" href="/" aria-label="Wedding Project 처음으로">Wedding Project</a><nav class="nav" aria-label="카테고리"><a href="/games/"><span class="l">테스트 &amp; 밸런스 게임</span><span class="s">테스트·게임</span></a><a href="/info/">결혼 준비 정보</a><a href="/talk/">연인 대화 질문</a><a href="/qna/">질문하기</a></nav></div></header>
 
 
 <div class="wrap">
-  <header class="top">
-    <a class="brand" href="/" aria-label="Wedding Project 처음으로">
-      Wedding Project
-    </a>
-    <nav class="nav" aria-label="카테고리">
-      <button type="button" data-go="cat-test"><span class="l">테스트 &amp; 밸런스 게임</span><span class="s">테스트·게임</span></button>
-      <button type="button" data-go="cat-2">결혼 준비 정보</button>
-      <button type="button" data-go="cat-3">연인 대화 질문</button>
-      <button type="button" data-go="cat-4">질문하기</button>
-    </nav>
-  </header>
 
   <main id="view-home">
     <section class="hero">
@@ -458,12 +431,6 @@ document.querySelector(".brand").addEventListener("click", e => {
   go("/");
   window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
 });
-document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
-  if (viewHome.hidden) go("/");
-  const el = document.getElementById(b.dataset.go);
-  if (el) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-}));
-
 /* 2. 결혼 준비 정보: 글 목록은 info/posts.js 에서 관리해요 */
 WPInfoList(document.getElementById("info-list"), { limit: 3 });
 WPTalkRandom(document.getElementById("talk-card"));
