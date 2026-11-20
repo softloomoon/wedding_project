@@ -58,6 +58,7 @@ export class QuestionBoard extends DurableObject {
         comment_count INTEGER NOT NULL DEFAULT 0,
         last_activity INTEGER NOT NULL,
         is_notice INTEGER NOT NULL DEFAULT 0,
+        is_admin INTEGER NOT NULL DEFAULT 0,
         manage_hash TEXT,
         report_count INTEGER NOT NULL DEFAULT 0
       )`,
@@ -80,6 +81,8 @@ export class QuestionBoard extends DurableObject {
     for (const q of schema) this.sql.exec(q);
     /* 제목 칸이 생기기 전에 만든 저장소에는 title 칸을 추가합니다 (이미 있으면 그냥 넘어가요) */
     try { this.sql.exec("ALTER TABLE qna_questions ADD COLUMN title TEXT NOT NULL DEFAULT ''"); } catch (e) {}
+    /* 운영자 질문 표시 칸 (예전 저장소에는 추가) */
+    try { this.sql.exec("ALTER TABLE qna_questions ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0"); } catch (e) {}
   }
 
   rows(q, ...b) { return this.sql.exec(q, ...b).toArray(); }
@@ -105,7 +108,7 @@ export class QuestionBoard extends DurableObject {
       : "id DESC";
     const args = sort === "popular" ? [Date.now() - 30 * DAY] : [];
     const items = this.rows(
-      `SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count FROM qna_questions WHERE status = 'public' AND is_notice = 0 ORDER BY ${order} LIMIT ? OFFSET ?`,
+      `SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count, is_admin FROM qna_questions WHERE status = 'public' AND is_notice = 0 ORDER BY ${order} LIMIT ? OFFSET ?`,
       ...args, limit, offset
     );
     const total = this.first("SELECT COUNT(*) AS n FROM qna_questions WHERE status = 'public' AND is_notice = 0").n;
@@ -114,7 +117,7 @@ export class QuestionBoard extends DurableObject {
   }
 
   getQuestion(id) {
-    const q = this.first("SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count, is_notice FROM qna_questions WHERE id = ? AND status = 'public'", id);
+    const q = this.first("SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count, is_notice, is_admin FROM qna_questions WHERE id = ? AND status = 'public'", id);
     if (!q) return null;
     const comments = this.rows("SELECT id, created_at, body, likes FROM qna_comments WHERE question_id = ? AND status = 'public' ORDER BY id ASC", id);
     return { question: q, comments };
@@ -228,6 +231,12 @@ export class QuestionBoard extends DurableObject {
     return this.first("INSERT INTO qna_questions (created_at, topic, title, body, status, last_activity, is_notice, notify) VALUES (?, '공지', ?, ?, 'public', ?, 1, 0) RETURNING id", now, title, body, now);
   }
 
+  /* 운영자가 직접 올리는 질문: 승인 없이 바로 공개되고 '운영자 질문'으로 표시돼요 */
+  addAdminQuestion(topic, title, body) {
+    const now = Date.now();
+    return this.first("INSERT INTO qna_questions (created_at, topic, title, body, status, last_activity, is_admin, notify) VALUES (?, ?, ?, ?, 'public', ?, 1, 0) RETURNING id", now, topic, title, body, now);
+  }
+
   /* 운영자 기능 */
   setStatus(kind, id, status) {
     if (!["public", "hidden", "pending"].includes(status)) return { ok: false };
@@ -251,7 +260,7 @@ export class QuestionBoard extends DurableObject {
 
   adminList(status, limit, offset) {
     const items = this.rows(
-      `SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, status, views, comment_count, report_count, is_notice, (email IS NOT NULL) AS has_email FROM qna_questions ${status === "all" ? "" : "WHERE status = ?"} ORDER BY id DESC LIMIT ? OFFSET ?`,
+      `SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, status, views, comment_count, report_count, is_notice, is_admin, (email IS NOT NULL) AS has_email FROM qna_questions ${status === "all" ? "" : "WHERE status = ?"} ORDER BY id DESC LIMIT ? OFFSET ?`,
       ...(status === "all" ? [] : [status]), limit, offset
     );
     return { items };
@@ -568,6 +577,14 @@ export default {
         if (d.kind === "q") { await board.deleteQuestion(Number(d.id)); return json({ ok: true }); }
         const r = await board.deleteComment(Number(d.id));
         return json(r, r.ok ? 200 : 404);
+      }
+      if (path === "/api/admin/question" && method === "POST") {
+        const d = await readJson(request);
+        const title = clean(d && d.title).replace(/\s+/g, " "), body = clean(d && d.body);
+        const topic = TOPICS.includes(d && d.topic) ? d.topic : TOPICS[3];
+        if (title.length < 2 || title.length > 60 || body.length < 2 || body.length > 2000) return json({ ok: false, reason: "length" }, 400);
+        const r = await board.addAdminQuestion(topic, title, body);
+        return json({ ok: true, id: r.id }, 201);
       }
       if (path === "/api/admin/notice" && method === "POST") {
         const d = await readJson(request);
