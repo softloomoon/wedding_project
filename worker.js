@@ -385,12 +385,63 @@ async function readJson(request) {
   try { return await request.json(); } catch (e) { return null; }
 }
 
+/* ───────── 테스트별 공유 미리보기 ─────────
+   /values/, /test3/, /balance/ 로 들어오면 메인 화면(index.html)을 보내되, 링크 미리보기(og 태그)는 그 테스트 것으로 바꿔요.
+   메인 화면이 주소를 보고 해당 테스트를 바로 열어요. 테스트 화면 자체는 ?embed=1 을 붙여 불러와요. */
+const PAGES = {
+  "/values/": {
+    title: "결혼 가치관 맞춰보기 | 웨딩 프로젝트",
+    desc: "우리, 결혼에 대해 같은 그림을 그리고 있을까? 둘이 각자 답하고 결혼 가치관을 비교해 보세요.",
+    image: "/og/values.png",
+  },
+  "/test3/": {
+    title: "나의 결혼 마지노선 테스트 | 웨딩 프로젝트",
+    desc: "배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요? 나의 결혼 마지노선을 알아보세요.",
+    image: "/og/test3.png",
+  },
+  "/balance/": {
+    title: "신혼생활 밸런스 게임 | 웨딩 프로젝트",
+    desc: "정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝나는 예비부부 밸런스 게임.",
+    image: "/og/balance.png",
+  },
+};
+function ogBlock(origin, path, pg) {
+  return `<!--og-->
+<meta name="description" content="${esc(pg.desc)}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="웨딩 프로젝트">
+<meta property="og:title" content="${esc(pg.title)}">
+<meta property="og:description" content="${esc(pg.desc)}">
+<meta property="og:image" content="${origin}${pg.image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="${origin}${path}">
+<meta name="twitter:card" content="summary_large_image">
+<!--/og-->`;
+}
+async function testPage(request, env, url) {
+  const path = url.pathname.endsWith("/") ? url.pathname : url.pathname + "/";
+  const pg = PAGES[path];
+  if (!pg || url.searchParams.has("embed") || request.method !== "GET") return null;
+  if (url.pathname !== path) return Response.redirect(url.origin + path + url.search, 301);
+  const res = await env.ASSETS.fetch(new Request(url.origin + "/"));
+  if (!res.ok) return res;
+  let page = await res.text();
+  const a = page.indexOf("<!--og-->"), b = page.indexOf("<!--/og-->");
+  if (a > -1 && b > a) page = page.slice(0, a) + ogBlock(url.origin, path, pg) + page.slice(b + "<!--/og-->".length);
+  page = page.replace(/<title>[^<]*<\/title>/, `<title>${esc(pg.title)}</title>`);
+  return new Response(page, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
+}
+
 /* ───────── 라우팅 ───────── */
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
-    if (!path.startsWith("/api/")) return env.ASSETS.fetch(request);
+    if (!path.startsWith("/api/")) {
+      const page = await testPage(request, env, url);
+      return page || env.ASSETS.fetch(request);
+    }
 
     const board = env.QUESTION_BOARD.get(env.QUESTION_BOARD.idFromName("main"));
     const origin = url.origin;
