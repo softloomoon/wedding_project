@@ -54,8 +54,8 @@
 
     put(1, [S("결혼 예산표", 2)]);
     put(2, [S("단위: 만 원 · 웨딩 프로젝트 wedding-project.softloomon.workers.dev/info/budget/", 3)]);
-    let r = 10;
-    put(r, [S("항목", 4), S("예산 (만 원)", 4), S("실제 (만 원)", 4), S("메모", 4)]);
+    let r = 12;
+    put(r, [S("항목", 4), S("계획 (만 원)", 4), S("실제 쓴 돈 (만 원)", 4), S("메모", 4)]);
     const subRows = [];
     let allB = 0, allA = 0;
     d.groups.forEach((g) => {
@@ -74,12 +74,14 @@
     r++; const totalRow = r;
     put(r, [S("합계", 4), F(subRows.map((x) => "B" + x).join("+"), allB, 8), F(subRows.map((x) => "C" + x).join("+"), allA, 8), S("", 9)]);
 
-    const T = d.total || 0;
-    put(4, [S("총 예산", 1), d.total == null ? S("", 9) : N(d.total, 7)]);
-    put(5, [S("실제 지출 합계", 9), F(`C${totalRow}`, allA, 6)]);
-    put(6, [S("남은 예산 (총 예산 − 실제 지출)", 1), F(`B4-B5`, T - allA, 8)]);
-    put(7, [S("항목 예산 합계", 9), F(`B${totalRow}`, allB, 6)]);
-    put(8, [S("배분하지 않은 예산 (총 예산 − 항목 예산)", 9), F(`B4-B7`, T - allB, 6)]);
+    const T = (d.saved || 0) + (d.support || 0);
+    put(4, [S("두 사람이 모은 돈", 9), d.saved == null ? S("", 9) : N(d.saved)]);
+    put(5, [S("부모님 지원", 9), d.support == null ? S("", 9) : N(d.support)]);
+    put(6, [S("총 예산 (모은 돈 + 부모님 지원)", 1), F(`B4+B5`, T, 7)]);
+    put(7, [S("실제 쓴 돈 합계", 9), F(`C${totalRow}`, allA, 6)]);
+    put(8, [S("남은 예산 (총 예산 − 실제 쓴 돈)", 1), F(`B6-B7`, T - allA, 8)]);
+    put(9, [S("계획 합계", 9), F(`B${totalRow}`, allB, 6)]);
+    put(10, [S("배분하지 않은 예산 (총 예산 − 계획 합계)", 9), F(`B6-B9`, T - allB, 6)]);
 
     const col = (i) => "ABCD"[i];
     let sheetRows = "";
@@ -94,7 +96,7 @@
     });
     const sheet = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-<sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="10" topLeftCell="A11" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
+<sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="12" topLeftCell="A13" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
 <cols><col min="1" max="1" width="40" customWidth="1"/><col min="2" max="3" width="16" customWidth="1"/><col min="4" max="4" width="34" customWidth="1"/></cols>
 <sheetData>${sheetRows}</sheetData>
 <pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>
