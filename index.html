@@ -60,7 +60,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .brand svg{width:26px;height:26px;flex:none}
 .nav{display:flex;gap:4px;flex-wrap:nowrap;min-width:0;overflow-x:auto;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
-.nav button{flex:none;white-space:nowrap;background:none;border:2px dashed transparent;border-radius:999px;padding:6px 14px;font-family:var(--display);font-size:1.1rem}
+.nav button{flex:none;white-space:nowrap;background:none;border:2px dashed transparent;border-radius:999px;padding:6px 14px;font-family:var(--body);font-weight:500;font-size:1rem}
 .nav button:hover{border-color:var(--accent)}
 .nav button[data-soon]{color:var(--ink-soft)}
 .nav .s{display:none}
@@ -69,9 +69,9 @@ button{font:inherit;color:inherit;cursor:pointer}
   .top{justify-content:center;padding:10px var(--gutter)}
   .nav{width:100%;justify-content:space-between}
   .nav .l{display:none}.nav .s{display:inline}
-  .nav button{padding:6px 8px;font-size:1.05rem}
+  .nav button{padding:6px 8px;font-size:.95rem}
 }
-@media (max-width:480px){.nav{gap:0}.nav button{padding:6px 2px;font-size:min(1rem,3.45vw)}}
+@media (max-width:480px){.nav{gap:0}.nav button{padding:6px 2px;font-size:min(.95rem,3.35vw)}}
 
 /* 메인 */
 .hero{text-align:center;padding:clamp(36px,7vw,88px) 0 clamp(40px,7vw,88px)}
@@ -161,9 +161,10 @@ body.playing .test-frame{margin-top:6px;border:0;border-radius:0;background:tran
 @media (prefers-reduced-motion:reduce){.more-btn{transition:none}.more-btn:hover{transform:none}}
 /* 3. 연인 대화 질문: 랜덤 질문 카드 */
 .tk-card{background:var(--card-bg);border:2px dashed var(--accent);border-radius:24px;padding:clamp(20px,4vw,32px)}
-.tk-card-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tk-card-head{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+.tk-chip{flex:none}
 .tk-chip{font-size:.78rem;font-weight:700;padding:2px 12px;border-radius:999px;background:var(--accent);color:#fff}
-.tk-card .tk-topic{font-size:.88rem;font-weight:700;color:var(--accent);text-decoration:none}
+.tk-card .tk-topic{min-width:0;font-size:.88rem;font-weight:700;line-height:1.4;color:var(--accent);text-decoration:none}
 .tk-card .tk-topic:hover{text-decoration:underline}
 .tk-q{margin:16px 0 22px;font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,4.2vw,2.1rem);line-height:1.4;min-height:2.8em}
 .tk-q::before{content:"Q. ";color:var(--accent)}
