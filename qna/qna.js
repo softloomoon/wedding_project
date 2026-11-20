@@ -93,9 +93,9 @@
     const a = document.createElement("a");
     a.href = qnaBase() + "?id=" + q.id;
     a.innerHTML =
-      '<p class="qn-q">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span> ') + '<span class="qn-text"></span></p>' +
+      '<p class="qn-q">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span> ') + (q.is_admin ? '<span class="qn-badge qn-admin">운영자 질문</span> ' : '') + '<span class="qn-text"></span></p>' +
       '<p class="qn-excerpt"></p>' +
-      '<p class="qn-meta">' + (q.is_notice ? "운영자" : "익명 질문자") + '<span>의견 ' + (q.comment_count || 0) + "개</span><span>조회 " + (q.views || 0) + "</span><span>" + ago(q.created_at) + "</span></p>";
+      '<p class="qn-meta">' + (q.is_notice || q.is_admin ? "운영자" : "익명 질문자") + '<span>의견 ' + (q.comment_count || 0) + "개</span><span>조회 " + (q.views || 0) + "</span><span>" + ago(q.created_at) + "</span></p>";
     a.querySelector(".qn-text").textContent = q.title || q.body;
     const ex = a.querySelector(".qn-excerpt");
     if (q.title && q.body && q.body.indexOf(q.title) !== 0) ex.textContent = q.body.replace(/\s+/g, " "); else ex.remove();

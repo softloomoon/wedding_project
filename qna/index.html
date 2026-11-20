@@ -30,6 +30,7 @@ main{padding:28px 0 64px}
 .more{display:block;width:100%;margin:6px 0 0;border:2px dashed var(--line);border-radius:999px;background:none;padding:10px;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--accent);cursor:pointer}
 .q-detail .qn-topic{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:999px;background:#fdf3ea;color:var(--accent);margin:0 0 10px}
 .q-body{margin:0 0 12px;font-size:1.2rem;font-weight:700;line-height:1.5;word-break:break-word}
+.admin-note{margin:0 0 10px;font-size:.86rem;color:var(--ink-soft)}
 .q-desc{margin:0 0 16px;white-space:pre-wrap;word-break:break-word;line-height:1.75}
 .q-body .qn-mark{margin-right:4px}
 .q-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
@@ -134,10 +135,11 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
       '<a class="back" href="./">← 질문 목록</a>' +
       '<article class="qn-card q-detail">' +
       '<span class="qn-topic"></span>' +
+      (q.is_admin ? '<p class="admin-note"><span class="qn-badge qn-admin">운영자 질문</span> 웨딩 프로젝트 운영자가 올린 질문이에요. 여러분의 경험과 생각을 나눠 주세요.</p>' : '') +
       '<h1 class="q-body">' + (q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span>') + '<span id="qtitle"></span></h1>' +
       '<p class="q-desc" id="qbody"></p>' +
-      '<div class="q-foot"><p class="qn-meta">' + (q.is_notice ? "운영자" : "익명 질문자") + "<span>" + Q.fmtDate(q.created_at) + "</span><span>조회 " + (q.views + (firstView ? 1 : 0)) + '</span></p>' +
-      (q.is_notice ? "" : '<button type="button" class="qn-mini" data-report="q" data-id="' + q.id + '">🚩 신고</button>') + '</div>' +
+      '<div class="q-foot"><p class="qn-meta">' + (q.is_notice || q.is_admin ? "운영자" : "익명 질문자") + "<span>" + Q.fmtDate(q.created_at) + "</span><span>조회 " + (q.views + (firstView ? 1 : 0)) + '</span></p>' +
+      (q.is_notice || q.is_admin ? "" : '<button type="button" class="qn-mini" data-report="q" data-id="' + q.id + '">🚩 신고</button>') + '</div>' +
       '<div id="qreport"></div></article>' +
       '<div class="c-title"><h2>의견 <span id="ccount">' + r.comments.length + '</span>개</h2></div>' +
       '<ul class="qn-comments" id="comments"></ul>' +
