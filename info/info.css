@@ -222,3 +222,17 @@
   .memo-space{height:var(--p-memo)}
 }
 .b-table thead small{font-weight:400}
+
+/* 휴대폰: 양옆 바깥 여백을 없애고 글 상자를 화면 끝까지 */
+@media screen and (max-width:560px){
+  .wrap{padding:0 !important}
+  .top{padding-left:16px !important;padding-right:16px !important}
+  main{padding-top:14px !important}
+  main > .back{margin-left:16px}
+  .post{border-left:0;border-right:0;border-radius:0;padding:22px 16px 26px}
+  header.post{margin-bottom:16px !important}
+  main > .ip-list{padding:0 12px}
+  main > .note{margin-left:12px;margin-right:12px}
+  .more-posts{padding:0 12px}
+  footer{padding-left:16px !important;padding-right:16px !important}
+}
