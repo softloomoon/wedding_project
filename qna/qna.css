@@ -68,6 +68,8 @@
 .qn-c{padding:16px 0;border-top:1px solid var(--line)}
 .qn-c-head{display:flex;gap:10px;align-items:baseline;font-size:.84rem;color:var(--ink-soft);margin:0 0 4px}
 .qn-c-head b{color:var(--ink)}
+.qn-c.is-admin{background:#f1f4fb;border-radius:14px;padding:16px 14px;border-top:0;margin:8px 0}
+.qn-c.is-admin + .qn-c{border-top:0}
 .qn-c-body{margin:0 0 8px;white-space:pre-wrap;word-break:break-word}
 .qn-c-actions{display:flex;gap:8px}
 .qn-mini{display:inline-flex;align-items:center;gap:4px;min-height:34px;padding:4px 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink-soft);font:inherit;font-size:.84rem;cursor:pointer}

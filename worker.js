@@ -69,7 +69,8 @@ export class QuestionBoard extends DurableObject {
         body TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'public',
         likes INTEGER NOT NULL DEFAULT 0,
-        report_count INTEGER NOT NULL DEFAULT 0
+        report_count INTEGER NOT NULL DEFAULT 0,
+        is_admin INTEGER NOT NULL DEFAULT 0
       )`,
       `CREATE INDEX IF NOT EXISTS qna_comments_q ON qna_comments(question_id, id)`,
       `CREATE TABLE IF NOT EXISTS qna_rate (key TEXT NOT NULL, kind TEXT NOT NULL, at INTEGER NOT NULL)`,
@@ -83,6 +84,7 @@ export class QuestionBoard extends DurableObject {
     try { this.sql.exec("ALTER TABLE qna_questions ADD COLUMN title TEXT NOT NULL DEFAULT ''"); } catch (e) {}
     /* 운영자 질문 표시 칸 (예전 저장소에는 추가) */
     try { this.sql.exec("ALTER TABLE qna_questions ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0"); } catch (e) {}
+    try { this.sql.exec("ALTER TABLE qna_comments ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0"); } catch (e) {}
   }
 
   rows(q, ...b) { return this.sql.exec(q, ...b).toArray(); }
@@ -119,7 +121,7 @@ export class QuestionBoard extends DurableObject {
   getQuestion(id) {
     const q = this.first("SELECT id, created_at, topic, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, body, views, comment_count, is_notice, is_admin FROM qna_questions WHERE id = ? AND status = 'public'", id);
     if (!q) return null;
-    const comments = this.rows("SELECT id, created_at, body, likes FROM qna_comments WHERE question_id = ? AND status = 'public' ORDER BY id ASC", id);
+    const comments = this.rows("SELECT id, created_at, body, likes, is_admin FROM qna_comments WHERE question_id = ? AND status = 'public' ORDER BY id ASC", id);
     return { question: q, comments };
   }
 
@@ -135,14 +137,16 @@ export class QuestionBoard extends DurableObject {
     return { ok: true, id: row.id, status: publish ? "public" : "pending" };
   }
 
-  addComment({ key, questionId, body }) {
+  addComment({ key, questionId, body, admin }) {
     const q = this.first("SELECT id, COALESCE(NULLIF(title, ''), substr(body, 1, 60)) AS title, email, notify FROM qna_questions WHERE id = ? AND status = 'public'", questionId);
     if (!q) return { ok: false, reason: "not_found" };
-    const why = this.checkRate(key, "comment", body);
-    if (why) return { ok: false, reason: why };
-    this.hit(key, "comment");
+    if (!admin) {
+      const why = this.checkRate(key, "comment", body);
+      if (why) return { ok: false, reason: why };
+      this.hit(key, "comment");
+    }
     const now = Date.now();
-    const c = this.first("INSERT INTO qna_comments (question_id, created_at, body) VALUES (?, ?, ?) RETURNING id, created_at, body, likes", questionId, now, body);
+    const c = this.first("INSERT INTO qna_comments (question_id, created_at, body, is_admin) VALUES (?, ?, ?, ?) RETURNING id, created_at, body, likes, is_admin", questionId, now, body, admin ? 1 : 0);
     this.recount(questionId, now);
     return { ok: true, comment: c, question: { id: q.id, title: q.title, email: q.notify ? q.email : null } };
   }
@@ -269,7 +273,7 @@ export class QuestionBoard extends DurableObject {
   adminComments(limit, offset) {
     return {
       items: this.rows(
-        "SELECT c.id, c.question_id, c.created_at, c.body, c.status, c.likes, c.report_count, COALESCE(NULLIF(q.title, ''), substr(q.body, 1, 60)) AS question FROM qna_comments c JOIN qna_questions q ON q.id = c.question_id ORDER BY c.id DESC LIMIT ? OFFSET ?",
+        "SELECT c.id, c.question_id, c.created_at, c.body, c.status, c.likes, c.report_count, c.is_admin, COALESCE(NULLIF(q.title, ''), substr(q.body, 1, 60)) AS question FROM qna_comments c JOIN qna_questions q ON q.id = c.question_id ORDER BY c.id DESC LIMIT ? OFFSET ?",
         limit, offset
       ),
     };
@@ -465,20 +469,26 @@ export default {
       const d = await readJson(request);
       if (!d) return json({ ok: false, reason: "bad_request" }, 400);
       const body = clean(d.body);
-      if (body.length < LIMITS.comment.min || body.length > LIMITS.comment.max) return json({ ok: false, reason: "length" }, 400);
-      const spam = await spamCheck(env, request, d, body);
-      if (spam) return json({ ok: false, reason: spam }, 400);
+      /* 운영자 의견: 관리자 비밀번호(X-Admin-Key)가 맞으면 '운영자'로 표시되고 스팸 검사·연속 등록 제한을 건너뜁니다 */
+      const adminHdr = request.headers.get("x-admin-key");
+      const admin = !!(adminHdr && env.ADMIN_KEY && same(adminHdr, env.ADMIN_KEY));
+      if (adminHdr && !admin) return json({ ok: false, reason: "unauthorized" }, 401);
+      if (body.length < LIMITS.comment.min || body.length > (admin ? 2000 : LIMITS.comment.max)) return json({ ok: false, reason: "length" }, 400);
+      if (!admin) {
+        const spam = await spamCheck(env, request, d, body);
+        if (spam) return json({ ok: false, reason: spam }, 400);
+      }
       const qid = Number(m[1]);
-      const res = await board.addComment({ key: await visitorKey(request, env), questionId: qid, body });
+      const res = await board.addComment({ key: await visitorKey(request, env), questionId: qid, body, admin });
       if (!res.ok) return json({ ok: false, reason: res.reason }, res.reason === "not_found" ? 404 : 429);
       ctx.waitUntil((async () => {
         const link = `${origin}/qna/?id=${qid}`;
         if (res.question.email) {
           const unsub = env.ADMIN_KEY ? `${origin}/api/unsub?id=${qid}&t=${await sign(env, `unsub|${qid}`)}` : "";
-          await sendMail(env, res.question.email, "[웨딩 프로젝트] 내 질문에 새로운 의견이 달렸어요",
-            mailWrap(`<p><b>남겨주신 질문에 새로운 의견이 달렸어요.</b></p><p style="color:#9a7d83">내 질문</p>${quote(res.question.title)}<p style="color:#9a7d83">새 의견</p>${quote(body)}<p><a href="${link}" style="font-weight:700">질문방에서 보기</a></p>${unsub ? `<p style="font-size:13px"><a href="${unsub}" style="color:#9a7d83">이 질문의 알림 그만 받기</a></p>` : ""}`));
+          await sendMail(env, res.question.email, admin ? "[웨딩 프로젝트] 내 질문에 운영자 답변이 달렸어요" : "[웨딩 프로젝트] 내 질문에 새로운 의견이 달렸어요",
+            mailWrap(`<p><b>남겨주신 질문에 ${admin ? "운영자 답변이" : "새로운 의견이"} 달렸어요.</b></p><p style="color:#9a7d83">내 질문</p>${quote(res.question.title)}<p style="color:#9a7d83">새 의견</p>${quote(body)}<p><a href="${link}" style="font-weight:700">질문방에서 보기</a></p>${unsub ? `<p style="font-size:13px"><a href="${unsub}" style="color:#9a7d83">이 질문의 알림 그만 받기</a></p>` : ""}`));
         }
-        if (env.ADMIN_EMAIL) {
+        if (env.ADMIN_EMAIL && !admin) {
           const hide = env.ADMIN_KEY ? `<p><a href="${await modLink(env, origin, "c", res.comment.id, "hide")}">이 의견 숨기기</a></p>` : "";
           await sendMail(env, env.ADMIN_EMAIL, `[웨딩 프로젝트] 질문 #${qid}에 새 의견`,
             mailWrap(`<p>질문 #${qid}에 새 의견이 달렸어요.</p>${quote(body)}<p><a href="${link}">질문 보기</a></p>${hide}`));

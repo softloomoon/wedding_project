@@ -28,6 +28,7 @@
     opts = opts || {};
     const init = { method: opts.method || "GET", headers: { Accept: "application/json" } };
     if (opts.body !== undefined) { init.headers["Content-Type"] = "application/json"; init.body = JSON.stringify(opts.body); }
+    if (opts.headers) Object.assign(init.headers, opts.headers);
     let res;
     try { res = await fetch(API + path, init); } catch (e) { return { ok: false, reason: "network" }; }
     let data = {};
@@ -84,6 +85,8 @@
     get(k) { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch (e) { return []; } },
     add(k, v) { try { const a = store.get(k); if (!a.includes(v)) { a.push(v); localStorage.setItem(k, JSON.stringify(a.slice(-500))); } } catch (e) {} },
   };
+  /* 관리자 페이지에 로그인한 기기에서만 저장돼 있어요 (운영자 의견용) */
+  const adminKey = () => { try { return localStorage.getItem("wp-admin-key") || ""; } catch (e) { return ""; } };
   const qnaBase = () => (location.pathname.indexOf("/qna/") > -1 ? "./" : "qna/");
 
   /* 질문 목록 한 줄 */
@@ -191,5 +194,5 @@
     root.prepend(box);
   }
 
-  window.WPQna = { api, config, spamGuard, esc, fmtDate, ago, store, msgFor, questionItem, mountAskForm, TOPICS };
+  window.WPQna = { adminKey, api, config, spamGuard, esc, fmtDate, ago, store, msgFor, questionItem, mountAskForm, TOPICS };
 })();
