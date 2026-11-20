@@ -23,23 +23,27 @@
 
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   /* 스타일 번호: 0 기본, 1 굵게, 2 제목, 3 회색 작은 글씨, 4 표 머리, 5 분류 줄, 6 숫자, 7 굵은 숫자, 8 굵은 숫자(색), 9 테두리 글자 */
+  /* 스타일 번호: 0 기본, 1 굵게, 2 제목, 3 회색 작은 글씨, 4 표 머리, 5 분류 줄, 6 숫자, 7 굵은 금액(만 원), 8 강조 금액(만 원), 9 테두리 글자, 10 금액(만 원)
+     색은 무난한 회색 계열이에요. 금액 칸은 '5,000만 원'처럼 보이지만 실제 값은 숫자라 계산에 그대로 쓸 수 있어요. */
   const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-<fonts count="5"><font><sz val="11"/><name val="맑은 고딕"/><family val="3"/></font><font><b/><sz val="11"/><name val="맑은 고딕"/><family val="3"/></font><font><b/><sz val="16"/><color rgb="FFA3265C"/><name val="맑은 고딕"/><family val="3"/></font><font><sz val="9"/><color rgb="FF9A7D83"/><name val="맑은 고딕"/><family val="3"/></font><font><b/><sz val="11"/><color rgb="FFA3265C"/><name val="맑은 고딕"/><family val="3"/></font></fonts>
-<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFDF3EA"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF3D6E2"/><bgColor indexed="64"/></patternFill></fill></fills>
-<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFECD9CE"/></left><right style="thin"><color rgb="FFECD9CE"/></right><top style="thin"><color rgb="FFECD9CE"/></top><bottom style="thin"><color rgb="FFECD9CE"/></bottom><diagonal/></border></borders>
+<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0&quot;만 원&quot;;-#,##0&quot;만 원&quot;;0&quot;만 원&quot;"/></numFmts>
+<fonts count="5"><font><sz val="11"/><color rgb="FF333333"/><name val="맑은 고딕"/><family val="3"/></font><font><b/><sz val="11"/><color rgb="FF333333"/><name val="맑은 고딕"/><family val="3"/></font><font><b/><sz val="16"/><color rgb="FF222222"/><name val="맑은 고딕"/><family val="3"/></font><font><sz val="9"/><color rgb="FF808080"/><name val="맑은 고딕"/><family val="3"/></font><font><b/><sz val="11"/><color rgb="FF404040"/><name val="맑은 고딕"/><family val="3"/></font></fonts>
+<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF5F5F5"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE7E6E6"/><bgColor indexed="64"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD9D9D9"/></left><right style="thin"><color rgb="FFD9D9D9"/></right><top style="thin"><color rgb="FFD9D9D9"/></top><bottom style="thin"><color rgb="FFD9D9D9"/></bottom><diagonal/></border></borders>
 <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-<cellXfs count="10">
+<cellXfs count="11">
 <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="0" fontId="1" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1"/>
 <xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>
 <xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>
 <xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/>
 <xf numFmtId="0" fontId="4" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/>
 <xf numFmtId="3" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
-<xf numFmtId="3" fontId="1" fillId="2" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
-<xf numFmtId="3" fontId="4" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="1" fillId="2" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="1" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
 <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
 </cellXfs>
 <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
 </styleSheet>`;
@@ -75,13 +79,13 @@
     put(r, [S("합계", 4), F(subRows.map((x) => "B" + x).join("+"), allB, 8), F(subRows.map((x) => "C" + x).join("+"), allA, 8), S("", 9)]);
 
     const T = (d.saved || 0) + (d.support || 0);
-    put(4, [S("두 사람이 모은 돈", 9), d.saved == null ? S("", 9) : N(d.saved)]);
-    put(5, [S("부모님 지원", 9), d.support == null ? S("", 9) : N(d.support)]);
+    put(4, [S("두 사람이 모은 돈", 9), N(d.saved || 0, 10)]);
+    put(5, [S("부모님 지원", 9), N(d.support || 0, 10)]);
     put(6, [S("총 예산 (모은 돈 + 부모님 지원)", 1), F(`B4+B5`, T, 7)]);
-    put(7, [S("실제 쓴 돈 합계", 9), F(`C${totalRow}`, allA, 6)]);
+    put(7, [S("실제 쓴 돈 합계", 9), F(`C${totalRow}`, allA, 10)]);
     put(8, [S("남은 예산 (총 예산 − 실제 쓴 돈)", 1), F(`B6-B7`, T - allA, 8)]);
-    put(9, [S("계획 합계", 9), F(`B${totalRow}`, allB, 6)]);
-    put(10, [S("배분하지 않은 예산 (총 예산 − 계획 합계)", 9), F(`B6-B9`, T - allB, 6)]);
+    put(9, [S("계획 합계", 9), F(`B${totalRow}`, allB, 10)]);
+    put(10, [S("배분하지 않은 예산 (총 예산 − 계획 합계)", 9), F(`B6-B9`, T - allB, 10)]);
 
     const col = (i) => "ABCD"[i];
     let sheetRows = "";
