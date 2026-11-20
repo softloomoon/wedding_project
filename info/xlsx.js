@@ -59,7 +59,7 @@
     put(1, [S("결혼 예산표", 2)]);
     put(2, [S("단위: 만 원 · 웨딩 프로젝트 wedding-project.softloomon.workers.dev/info/budget/", 3)]);
     let r = 12;
-    put(r, [S("항목", 4), S("계획 (만 원)", 4), S("실제 쓴 돈 (만 원)", 4), S("메모", 4)]);
+    put(r, [S("항목", 4), S("계획 (만 원)", 4), S("실제 쓴 돈 (만 원)", 4), S("메모 (자유롭게 적어요)", 4)]);
     const subRows = [];
     let allB = 0, allA = 0;
     d.groups.forEach((g) => {
@@ -68,7 +68,7 @@
       g.rows.forEach((x) => {
         r++;
         const memo = x.name.indexOf("식대") === 0 && d.mealN && d.mealP ? `보증 인원 ${d.mealN}명 × 1인 ${d.mealP}만 원` : "";
-        put(r, [S(x.name, 9), x.b == null ? S("", 9) : N(x.b), x.a == null ? S("", 9) : N(x.a), S(memo, 9)]);
+        put(r, [S(x.name, 9), x.b == null ? S("", 10) : N(x.b, 10), x.a == null ? S("", 10) : N(x.a, 10), S(memo, 9)]);
       });
       const last = r, gb = sum(g.rows.map((x) => x.b)), ga = sum(g.rows.map((x) => x.a));
       allB += gb; allA += ga;
@@ -100,8 +100,9 @@
     });
     const sheet = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>
 <sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="12" topLeftCell="A13" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
-<cols><col min="1" max="1" width="40" customWidth="1"/><col min="2" max="3" width="16" customWidth="1"/><col min="4" max="4" width="34" customWidth="1"/></cols>
+<cols><col min="1" max="1" width="36" customWidth="1"/><col min="2" max="3" width="15" customWidth="1"/><col min="4" max="4" width="30" customWidth="1"/></cols>
 <sheetData>${sheetRows}</sheetData>
 <pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>
 <pageSetup paperSize="9" orientation="portrait" fitToWidth="1" fitToHeight="0"/>
