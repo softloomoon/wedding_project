@@ -151,6 +151,8 @@ body.playing .test-frame{margin-top:6px;border:0;border-radius:0;background:tran
 .tk-q{margin:16px 0 22px;font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,4.2vw,2.1rem);line-height:1.4;min-height:2.8em}
 .tk-q::before{content:"Q. ";color:var(--accent)}
 .tk-actions{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap}
+@media (max-width:560px){.tk-actions{flex-wrap:nowrap;justify-content:space-between;gap:10px}.tk-actions .tk-shuffle{flex:none;min-height:40px;padding:6px 12px;font-size:min(1.05rem,4.1vw)}.tk-card .tk-actions .tk-link{white-space:nowrap;font-size:min(.86rem,3.5vw)}.tk-wide{display:none}}
+@media (max-width:360px){.tk-card{padding:18px 14px}.tk-actions{gap:6px}}
 .tk-shuffle{min-height:46px;padding:8px 22px;border-radius:999px;border:2px solid var(--accent);background:#fff;color:var(--accent);font-family:var(--display);font-weight:700;font-size:1.15rem}
 .tk-shuffle:hover{background:var(--accent);color:#fff}
 .tk-card .tk-link{font-size:.92rem;font-weight:700;color:var(--ink-soft);text-decoration:none}
@@ -220,7 +222,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
         <p class="tk-q"></p>
         <div class="tk-actions">
           <button type="button" class="tk-shuffle">🔀 다른 질문 보기</button>
-          <a class="tk-link" href="/talk/">이 주제 질문 모두 보기 →</a>
+          <a class="tk-link" href="/talk/">이 주제 <span class="tk-wide">질문 </span>모두 보기 →</a>
         </div>
       </div>
       <p class="more-row"><a class="more-btn wide" href="/talk/">대화 질문 더 보러 가기 →</a></p>
