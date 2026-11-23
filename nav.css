@@ -1,7 +1,9 @@
-/* 모든 페이지 공통 상단 바: 로고 + 카테고리 4개. 좁은 화면에서는 로고를 숨기고 한 줄 유지 */
+/* 모든 페이지 공통 상단 바: 집 모양 + 로고(누르면 메인) + 카테고리 4개. 좁은 화면에서는 로고 글자를 숨기고 집 모양 버튼만 남겨 한 줄 유지 */
 .site-top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:3px dashed var(--line)}
 .site-top-in{max-width:1080px;margin:0 auto;padding:12px var(--gutter);display:flex;align-items:center;justify-content:space-between;gap:16px}
 .site-top .brand{display:flex;align-items:center;gap:8px;flex:none;font-family:var(--display);font-weight:700;font-size:1.7rem;text-decoration:none;line-height:1.1;color:var(--accent);white-space:nowrap}
+.site-top .home-ico{width:26px;height:26px;flex:none}
+.site-top .brand:hover .brand-t{text-decoration:underline;text-underline-offset:4px}
 .site-top .nav{display:flex;gap:4px;flex-wrap:nowrap;min-width:0;overflow-x:auto;scrollbar-width:none}
 .site-top .nav::-webkit-scrollbar{display:none}
 .site-top .nav a{position:relative;flex:none;white-space:nowrap;border:0;border-radius:0;padding:8px 14px;font-family:var(--body);font-weight:500;font-size:1rem;line-height:1.5;color:var(--ink);text-decoration:none}
@@ -10,12 +12,15 @@
 .site-top .nav a[aria-current="page"]::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px;background:var(--accent)}
 .site-top .nav .s{display:none}
 @media (max-width:940px){
-  .site-top .brand{display:none}
-  .site-top-in{justify-content:center;padding:10px var(--gutter)}
-  .site-top .nav{width:100%;justify-content:space-between}
+  .site-top .brand-t{display:none}
+  .site-top .brand{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--line)}
+  .site-top .home-ico{width:20px;height:20px}
+  .site-top-in{gap:10px;padding:10px var(--gutter)}
+  .site-top .nav{flex:1;justify-content:flex-end;gap:8px}
   .site-top .nav .l{display:none}.site-top .nav .s{display:inline}
   .site-top .nav a{padding:8px 8px;font-size:.95rem}
   .site-top .nav a[aria-current="page"]::after{left:8px;right:8px}
 }
-@media (max-width:480px){.site-top-in{padding:10px 12px}.site-top .nav{gap:0}.site-top .nav a{padding:7px 3px;font-size:min(.95rem,3.35vw)}.site-top .nav a[aria-current="page"]::after{left:3px;right:3px}}
+@media (max-width:600px){.site-top .nav{justify-content:space-between;gap:0}}
+@media (max-width:480px){.site-top-in{padding:10px 12px;gap:6px}.site-top .brand{width:32px;height:32px}.site-top .home-ico{width:17px;height:17px}.site-top .nav{gap:0}.site-top .nav a{padding:7px 3px;font-size:min(.95rem,3.1vw)}.site-top .nav a[aria-current="page"]::after{left:3px;right:3px}}
 @media print{.site-top{display:none !important}}
