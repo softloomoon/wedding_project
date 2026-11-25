@@ -202,6 +202,10 @@ button.card:active { transform: translateY(1px); }
 .duel .vs { z-index: 1; top: 37%; border: 3px solid var(--bg); width: 50px; height: 50px; font-size: 1.125rem; }
 @media (prefers-reduced-motion: reduce) { .card { transition: none; } button.card:hover, button.card:active { transform: none; } }
 .art { display: block; width: 100%; max-width: 250px; height: auto; aspect-ratio: 1; border-radius: 12px; background: #fff; }
+.type-card{display:block;width:100%;max-width:380px;height:auto;margin:0 auto;border-radius:24px;box-shadow:0 14px 30px -20px rgba(58,36,48,.45)}
+.type-mini{display:flex;align-items:center;gap:14px}
+.type-mini img{flex:none;width:72px;height:auto;border-radius:12px}
+.type-mini .eyebrow{margin:0 0 2px}
 </style>
 <link rel="stylesheet" href="/mobile.css">
 </head>
@@ -259,10 +263,10 @@ const fmt = s => s.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 const plain = s => s.replace(/\*\*/g, "");
 const TIE = { s: Q.findIndex(q => q.x === "s"), e: Q.findIndex(q => q.x === "e") };
 const TYPES = {
-  ae: { name: "알콩달콩 이벤트형", line: "함께하는 시간도, 표현도 아낌없이", good: "매일이 연애처럼 활기차다", care: "혼자만의 시간이 부족해질 수 있다" },
-  ab: { name: "든든한 단짝형", line: "말은 적어도 늘 곁에 있는 가장 친한 친구", good: "함께하는 일상이 자연스럽고 편하다", care: "마음을 말로 전할 기회를 놓치기 쉽다" },
-  ye: { name: "둘만의 로맨스형", line: "각자의 시간은 지키고, 마음은 자주 전한다", good: "거리와 다정함의 균형이 좋다", care: "함께하는 활동이 줄어들 수 있다" },
-  yb: { name: "편안한 동반자형", line: "서로의 공간을 존중하는 잔잔한 사이", good: "간섭 없이 편안하고 안정적이다", care: "서로 무심하다고 느낄 수 있다" }
+  ae: { img: "img/type-ae.png", animal: "강아지", name: "알콩달콩 이벤트형", line: "함께하는 시간도, 표현도 아낌없이", good: "매일이 연애처럼 활기차다", care: "혼자만의 시간이 부족해질 수 있다" },
+  ab: { img: "img/type-ab.png", animal: "곰", name: "든든한 단짝형", line: "말은 적어도 늘 곁에 있는 가장 친한 친구", good: "함께하는 일상이 자연스럽고 편하다", care: "마음을 말로 전할 기회를 놓치기 쉽다" },
+  ye: { img: "img/type-ye.png", animal: "펭귄", name: "둘만의 로맨스형", line: "각자의 시간은 지키고, 마음은 자주 전한다", good: "거리와 다정함의 균형이 좋다", care: "함께하는 활동이 줄어들 수 있다" },
+  yb: { img: "img/type-yb.png", animal: "판다", name: "편안한 동반자형", line: "서로의 공간을 존중하는 잔잔한 사이", good: "간섭 없이 편안하고 안정적이다", care: "서로 무심하다고 느낄 수 있다" }
 };
 const TIERS = [
   { min: 18, title: "복사 붙여넣기 커플", text: "거의 한 사람이 두 번 풀었어요. 엇갈린 한두 문항이 오히려 궁금해지네요." },
@@ -396,8 +400,8 @@ function typeBlock(ans, who) {
   const sc = score(ans), t = TYPES[sc.key];
   return `
   <section class="panel stack">
-    <p class="eyebrow">${who}</p>
-    <h3 style="font-size:1.25rem">${t.name}</h3>
+    <div class="type-mini"><img src="${t.img}" alt="" width="800" height="1120"><div><p class="eyebrow">${who}</p>
+    <h3 style="font-size:1.25rem">${t.name}</h3></div></div>
     <p>${t.line}</p>
     ${meter("어울림", "여유", sc.r)}
     ${meter("표현", "담백", sc.l)}
@@ -409,6 +413,7 @@ function viewResult() {
   const sc = score(S.answers), t = TYPES[sc.key], code = encode(S.answers).toUpperCase();
   const msg = `신혼생활 밸런스 게임 했더니 나는 '${t.name}' 나왔어. 자기는 뭐 고를지 궁금한데, 초대 코드 ${code} 넣고 2분만 해 봐!`;
   return `
+  <img class="type-card" src="${t.img}" alt="나의 신혼 스타일 카드: ${t.animal}, ${t.name}" width="800" height="1120">
   <header class="stack">
     <p class="eyebrow">나의 신혼 스타일은</p>
     <h2 id="resTitle" tabindex="-1">${t.name}</h2>
