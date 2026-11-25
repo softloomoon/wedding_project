@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>결혼 마지노선 테스트</title>
+<title>나의 결혼 우선순위 테스트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
@@ -302,7 +302,7 @@
   <!-- intro -->
   <div class="screen active" id="screen-intro">
     <img class="hero-img" src="hero.png" alt="">
-    <h1>나의 결혼 마지노선 테스트</h1>
+    <h1>나의 결혼 우선순위 테스트</h1>
     <p class="desc">
       결혼생활에서 배우자의 어떤 행동만큼은 절대 받아들이기 어려울까요?<br><br>
       10가지 상황에 대한 질문에 답하면,<br>
@@ -327,7 +327,7 @@
     <div class="top-card" id="top-card" style="display:none;">
       <div class="top-card-imgs" id="top-card-imgs"></div>
     </div>
-    <div class="result-badge">나의 결혼 마지노선</div>
+    <div class="result-badge">나의 결혼 우선순위</div>
     <div class="result-title" id="result-title"></div>
     <div class="result-desc" id="result-desc"></div>
 
@@ -637,7 +637,7 @@ function mkImg(){
   c.save();c.shadowColor="rgba(58,36,48,.18)";c.shadowBlur=36;c.shadowOffsetY=16;rr(c,cx,cy0,cw,ch,40);c.fillStyle=CARD;c.fill();c.restore();
   c.save();c.setLineDash([12,10]);c.lineWidth=3;c.strokeStyle=ACC;rr(c,cx,cy0,cw,ch,40);c.stroke();c.restore();
   var py=cy0+58;
-  c.textBaseline="alphabetic";c.textAlign="center";c.fillStyle=ACC;c.font="700 34px "+GF;c.fillText("✦ 나의 결혼 마지노선 테스트 ✦",W/2,py);py+=46;
+  c.textBaseline="alphabetic";c.textAlign="center";c.fillStyle=ACC;c.font="700 34px "+GF;c.fillText("✦ 나의 결혼 우선순위 테스트 ✦",W/2,py);py+=46;
   /* 완성된 캐릭터 카드(이름/문구 포함)를 그대로 보여줌 - 1장 또는 동점이면 여러 장 */
   var n=loaded.length,gap=36,phW=Math.min(420,(cw-112-(n-1)*gap)/n),rowW=n*phW+(n-1)*gap,startX=W/2-rowW/2;
   loaded.forEach(function(img,i){
@@ -661,11 +661,11 @@ function mkImg(){
   c.fillStyle=ACC;c.font="700 30px "+GF;c.fillText("Wedding Project",W/2,py);
   cv.toBlob(function(b){done(b)},"image/png")})}).catch(function(){return new Promise(function(done){
   var W=1080,H=700,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
-  c.fillStyle="#f8efe2";c.fillRect(0,0,W,H);c.textAlign="center";c.fillStyle="#a3265c";c.font="700 56px "+GF;c.fillText("나의 결혼 마지노선 테스트",W/2,350);
+  c.fillStyle="#f8efe2";c.fillRect(0,0,W,H);c.textAlign="center";c.fillStyle="#a3265c";c.font="700 56px "+GF;c.fillText("나의 결혼 우선순위 테스트",W/2,350);
   cv.toBlob(function(b){done(b)},"image/png")})})
 }
 var FN='"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif';
-function sumTxt(){return "나의 결혼 마지노선 테스트 결과: " + LR.topTypes.map(function(t){return RESULTS[t].name}).join(" · ")}
+function sumTxt(){return "나의 결혼 우선순위 테스트 결과: " + LR.topTypes.map(function(t){return RESULTS[t].name}).join(" · ")}
 
 [1,2].forEach(function(n){
  var saveBtn=document.getElementById('sv'+n),shareBtn=document.getElementById('sh'+n);
@@ -678,14 +678,14 @@ function sumTxt(){return "나의 결혼 마지노선 테스트 결과: " + LR.to
  saveBtn.onclick=function(){st.textContent='사진을 만드는 중이에요.';
   mkImg().then(function(blob){
    var url=showPreview(blob);
-   try{var a=document.createElement('a');a.href=url;a.download='결혼마지노선-결과.png';document.body.appendChild(a);a.click();document.body.removeChild(a);
+   try{var a=document.createElement('a');a.href=url;a.download='결혼우선순위-결과.png';document.body.appendChild(a);a.click();document.body.removeChild(a);
     st.textContent='사진을 저장했어요. 저장되지 않았다면 아래 사진을 길게 눌러 저장해 주세요.'}
    catch(e){hint()}
   }).catch(function(){st.textContent='사진을 만들지 못했어요. 다시 시도해 주세요.'})};
  shareBtn.onclick=function(){
   function fb(){var s=sumTxt();try{navigator.clipboard.writeText(s).then(function(){st.textContent='공유 기능을 쓸 수 없어 결과 요약을 복사했어요. 사진으로 저장해서 함께 보내 주세요.'},function(){st.textContent='공유 기능을 쓸 수 없어요. 사진으로 저장해서 보내 주세요.'})}catch(e){st.textContent='공유 기능을 쓸 수 없어요. 사진으로 저장해서 보내 주세요.'}}
-  mkImg().then(function(blob){var f=new File([blob],'결혼마지노선-결과.png',{type:'image/png'});
-   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:'나의 결혼 마지노선 테스트',text:sumTxt()});
+  mkImg().then(function(blob){var f=new File([blob],'결혼우선순위-결과.png',{type:'image/png'});
+   if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:'나의 결혼 우선순위 테스트',text:sumTxt()});
    fb()}).catch(function(e){if(!e||e.name!=='AbortError')fb()})};
 });
 
