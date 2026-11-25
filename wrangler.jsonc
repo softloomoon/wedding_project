@@ -6,8 +6,8 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    // /api 와 테스트 주소는 Worker 가 먼저 받아요 (테스트 주소로 공유하면 그 테스트의 미리보기가 나오게)
-    "run_worker_first": ["/api/*", "/values", "/values/*", "/test3", "/test3/*", "/balance", "/balance/*"]
+    // /api, 테스트 주소, 메인·질문방(검색엔진용 HTML을 미리 채워 보내요), robots·sitemap·ads.txt 는 Worker 가 먼저 받아요
+    "run_worker_first": ["/", "/index.html", "/qna", "/qna/", "/qna/index.html", "/robots.txt", "/sitemap.xml", "/ads.txt", "/api/*", "/values", "/values/*", "/test3", "/test3/*", "/balance", "/balance/*"]
   },
   // 익명 질문방 저장소 (Durable Object, SQLite). 배포할 때 자동으로 만들어져서 대시보드에서 따로 만들 필요가 없어요.
   "durable_objects": {

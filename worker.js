@@ -433,17 +433,98 @@ async function testPage(request, env, url) {
   return new Response(page, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
 }
 
+/* ───────── 검색엔진용 미리 그린 HTML ─────────
+   메인(/)의 인기 질문과 질문방(/qna/, /qna/?id=번호)은 원래 자바스크립트로 불러와요.
+   자바스크립트를 실행하지 않는 크롤러도 내용을 볼 수 있게, 서버에서 같은 내용을 HTML로 먼저 넣어 보내요. 화면에서는 자바스크립트가 다시 그려요. */
+const ymd = (ts) => { const d = new Date(ts + 9 * 3600 * 1000); return `${d.getUTCFullYear()}.${String(d.getUTCMonth() + 1).padStart(2, "0")}.${String(d.getUTCDate()).padStart(2, "0")}`; };
+const para = (t) => esc(t).replace(/\r?\n/g, "<br>");
+function ssrItem(q) {
+  const ex = q.title && q.body && q.body.indexOf(q.title) !== 0 ? `<p class="qn-excerpt">${esc(clip(q.body.replace(/\s+/g, " "), 120))}</p>` : "";
+  return `<li class="qn-item${q.is_notice ? " is-notice" : ""}"><a href="/qna/?id=${q.id}"><p class="qn-q">${q.is_notice ? '<span class="qn-badge">공지</span> ' : '<span class="qn-mark">Q.</span> '}${q.is_admin ? '<span class="qn-badge qn-admin">운영자 질문</span> ' : ""}<span class="qn-text">${esc(q.title || q.body)}</span></p>${ex}<p class="qn-meta">${q.is_notice || q.is_admin ? "운영자" : "익명 질문자"}<span>의견 ${q.comment_count || 0}개</span><span>조회 ${q.views || 0}</span><span>${ymd(q.created_at)}</span></p></a></li>`;
+}
+const between = (page, name, html) => page.replace(new RegExp(`<!--ssr:${name}-->[\\s\\S]*?<!--/ssr:${name}-->`), `<!--ssr:${name}-->${html}<!--/ssr:${name}-->`);
+const htmlRes = (page) => new Response(page, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
+function setMeta(page, title, desc, url) {
+  return page
+    .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
+    .replace(/(<meta name="description" content=")[^"]*/, `$1${esc(desc)}`)
+    .replace(/(<meta property="og:title" content=")[^"]*/, `$1${esc(title)}`)
+    .replace(/(<meta property="og:description" content=")[^"]*/, `$1${esc(desc)}`)
+    .replace(/(<meta property="og:url" content=")[^"]*/, `$1${esc(url)}`);
+}
+async function homePage(env, url, board) {
+  const res = await env.ASSETS.fetch(new Request(url.origin + "/"));
+  if (!res.ok) return res;
+  let page = await res.text();
+  try {
+    const data = await board.listQuestions("popular", 3, 0);
+    if (data.items.length) {
+      page = between(page, "hot", data.items.map(ssrItem).join(""));
+      page = page.replace('<p class="qn-empty" id="hot-empty">', '<p class="qn-empty" id="hot-empty" hidden>');
+    }
+  } catch (e) {}
+  return htmlRes(page);
+}
+async function qnaPage(env, url, board) {
+  const res = await env.ASSETS.fetch(new Request(url.origin + "/qna/"));
+  if (!res.ok) return res;
+  let page = await res.text();
+  const id = Number(url.searchParams.get("id"));
+  if (url.searchParams.get("manage")) return htmlRes(page);
+  try {
+    if (id) {
+      const d = await board.getQuestion(id);
+      if (!d) return htmlRes(page);
+      const q = d.question;
+      const comments = d.comments.map((c) => `<li class="qn-comment"><p class="qn-meta">${c.is_admin ? '<span class="qn-badge qn-admin">운영자</span>' : "익명"}<span>${ymd(c.created_at)}</span></p><p>${para(c.body)}</p></li>`).join("");
+      const body = `<article class="qn-card"><p class="qn-meta">${esc(q.topic)}<span>${ymd(q.created_at)}</span><span>조회 ${q.views || 0}</span></p><h1 class="qn-title">${q.is_admin ? '<span class="qn-badge qn-admin">운영자 질문</span> ' : ""}${esc(q.title)}</h1><p>${para(q.body)}</p></article><section class="qn-card"><h2>의견 ${d.comments.length}개</h2>${comments ? `<ul class="qn-comments">${comments}</ul>` : "<p>아직 의견이 없어요. 첫 의견을 남겨 보세요.</p>"}</section><p><a href="/qna/">← 질문 목록으로</a> · <a href="/terms/">이용 규칙</a></p>`;
+      page = page.replace('<main id="main" aria-live="polite"></main>', `<main id="main" aria-live="polite">${body}</main>`);
+      page = setMeta(page, `${q.title} - 익명 질문방 | 웨딩 프로젝트`, clip(q.body.replace(/\s+/g, " "), 140), `${url.origin}/qna/?id=${q.id}`);
+    } else {
+      const data = await board.listQuestions("latest", 20, 0);
+      const list = [...(data.notices || []), ...data.items].map(ssrItem).join("");
+      const body = `<header class="qn-head" style="margin:0 0 4px"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></header><p class="qn-desc">결혼을 준비하며 생긴 고민, 궁금증, 다른 사람들의 생각이 궁금한 이야기를 나눠보세요.</p><p class="qn-public">💡 모든 질문과 의견은 공개돼요. 개인정보는 적지 말아 주세요. 비방·광고 글은 신고되면 숨겨지고, 운영자가 삭제할 수 있어요. <a href="/terms/">이용 규칙 보기</a></p><div class="qn-card"><ul class="qn-list" style="margin:0">${list}</ul></div>`;
+      page = page.replace('<main id="main" aria-live="polite"></main>', `<main id="main" aria-live="polite">${body}</main>`);
+    }
+  } catch (e) {}
+  return htmlRes(page);
+}
+const SITE_PAGES = ["/", "/games/", "/values/", "/test3/", "/balance/", "/info/", "/info/order/", "/info/budget/", "/info/checklist/", "/info/sdm/", "/info/fair/", "/talk/",
+  "/talk/01/", "/talk/02/", "/talk/03/", "/talk/04/", "/talk/05/", "/talk/06/", "/talk/07/", "/talk/08/", "/talk/09/", "/talk/10/", "/qna/", "/about/", "/privacy/", "/terms/", "/contact/"];
+async function sitemap(url, board) {
+  let qs = [];
+  try { qs = (await board.listQuestions("latest", 500, 0)).items; } catch (e) {}
+  const u = (loc, last) => `<url><loc>${url.origin}${loc}</loc>${last ? `<lastmod>${new Date(last).toISOString().slice(0, 10)}</lastmod>` : ""}</url>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${SITE_PAGES.map((p) => u(p)).join("\n")}\n${qs.map((q) => u(`/qna/?id=${q.id}`.replace("&", "&amp;"), q.created_at)).join("\n")}\n</urlset>\n`;
+  return new Response(xml, { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=3600" } });
+}
+const robots = (url) => new Response(`User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /qna/admin.html\n\nSitemap: ${url.origin}/sitemap.xml\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
+/* 애드센스 승인 후: Cloudflare 변수 ADSENSE_PUB_ID 에 "pub-1234567890123456" 형식으로 넣으면 /ads.txt 가 자동으로 생겨요 */
+const adsTxt = (env) => {
+  const id = String(env.ADSENSE_PUB_ID || "").trim().replace(/^ca-/, "");
+  if (!/^pub-\d{10,20}$/.test(id)) return new Response("ads.txt not configured\n", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
+  return new Response(`google.com, ${id}, DIRECT, f08c47fec0942fa0\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
+};
+
 /* ───────── 라우팅 ───────── */
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
+    const board = env.QUESTION_BOARD.get(env.QUESTION_BOARD.idFromName("main"));
     if (!path.startsWith("/api/")) {
+      if (request.method === "GET") {
+        if (path === "/robots.txt") return robots(url);
+        if (path === "/sitemap.xml") return sitemap(url, board);
+        if (path === "/ads.txt") return adsTxt(env);
+        if (path === "/" || path === "/index.html") return homePage(env, url, board);
+        if (path === "/qna") return Response.redirect(url.origin + "/qna/" + url.search, 301);
+        if (path === "/qna/" || path === "/qna/index.html") return qnaPage(env, url, board);
+      }
       const page = await testPage(request, env, url);
       return page || env.ASSETS.fetch(request);
     }
 
-    const board = env.QUESTION_BOARD.get(env.QUESTION_BOARD.idFromName("main"));
     const origin = url.origin;
     const method = request.method;
 
