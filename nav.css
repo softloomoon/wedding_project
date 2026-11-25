@@ -24,3 +24,8 @@
 @media (max-width:600px){.site-top .nav{justify-content:space-between;gap:0}}
 @media (max-width:480px){.site-top-in{padding:10px 12px;gap:6px}.site-top .home-ico{width:23px;height:23px}.site-top .nav{gap:0}.site-top .nav a{padding:7px 3px;font-size:min(.95rem,3.1vw)}.site-top .nav a[aria-current="page"]::after{left:3px;right:3px}}
 @media print{.site-top{display:none !important}}
+/* 모든 페이지 하단: 소개·정책·문의 링크 */
+.foot-links{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 8px}
+.foot-links a{color:var(--ink-soft);font-size:.86rem;text-decoration:none}
+.foot-links a:hover{color:var(--accent);text-decoration:underline}
+.foot-links a.strong{font-weight:700;color:var(--ink)}

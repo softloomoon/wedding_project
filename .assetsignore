@@ -8,3 +8,4 @@ vercel.json
 node_modules
 .wrangler
 apps-script
+tools

@@ -42,6 +42,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3rem);l
 .card-body{display:flex;flex-direction:column;gap:6px;padding:16px 18px 18px;border-top:2px dashed var(--line);flex:1}
 .card-title{font-family:var(--display);font-size:1.45rem;line-height:1.3;margin:0}
 .card-desc{margin:0;font-size:.92rem;color:var(--ink-soft);line-height:1.5}
+.card-about{margin:2px 0 4px;font-size:.88rem;color:var(--ink);line-height:1.65}
 .pill{align-self:flex-start;margin-top:auto;font-family:var(--display);font-weight:700;font-size:.95rem;padding:3px 14px;border-radius:999px;background:var(--accent);color:#fff}
 footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-soft);font-size:.9rem}
 @media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
@@ -55,20 +56,22 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
   <main>
     <h1>테스트 &amp; 밸런스 게임</h1>
     <p class="lead">둘이 함께 해 보면 서로의 결혼 생각을 알 수 있어요. 마음에 드는 것부터 골라 보세요.</p>
-    <div class="grid" id="grid"></div>
+    <div class="grid" id="grid"><!--pre:games--><a class="card" href="/test3/" style="--tone:#ffffff"><div class="card-art fit"><img src="/test3/card.svg" alt=""></div><div class="card-body"><h2 class="card-title">나의 결혼 우선순위 테스트</h2><p class="card-desc">안정, 자유, 가족, 성장 중 결혼에서 내가 가장 지키고 싶은 건?</p><p class="card-about">결혼생활에서 마주칠 수 있는 10가지 상황에 답하면 안정·자유·가족·성장 중 내가 결혼에서 가장 먼저 지키고 싶은 가치를 알려 줘요. 결과는 고슴도치·고양이·토끼·여우 유형 카드로 나오고, 사진으로 저장해 예비 배우자와 비교해 볼 수 있어요.</p><span class="pill">테스트 하기</span></div></a><a class="card" href="/values/" style="--tone:#fffaf2"><div class="card-art"><img src="/values/hero.jpg" alt=""></div><div class="card-body"><h2 class="card-title">결혼 가치관 맞춰보기</h2><p class="card-desc">우리, 결혼에 대해 같은 그림을 그리고 있을까?</p><p class="card-about">결혼, 돈, 결혼식에 대한 질문에 두 사람이 각자 답하고 결과를 나란히 비교해 보는 테스트예요. 맞고 틀린 답은 없고, 서로 생각이 다른 부분을 결혼 전에 미리 알고 이야기해 보는 것이 목적이에요.</p><span class="pill">테스트 하기</span></div></a><a class="card" href="/balance/" style="--tone:#ffffff"><div class="card-art fit"><img src="/balance/img/cover.png" alt=""></div><div class="card-body"><h2 class="card-title">신혼생활 밸런스 게임</h2><p class="card-desc">정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝.</p><p class="card-about">신혼생활에서 흔히 부딪히는 20가지 선택지 중 하나를 고르는 2분짜리 게임이에요. 결과로 알콩달콩 이벤트형·든든한 단짝형·둘만의 로맨스형·편안한 동반자형 중 나의 신혼 스타일이 나오고, 초대 코드로 예비 배우자와 일치율을 비교할 수 있어요.</p><span class="pill">게임 하기</span></div></a><!--/pre:games--></div>
   </main>
-  <footer>Wedding Project · 테스트 답변은 어디에도 저장되지 않아요.</footer>
+  <footer><nav class="foot-links" aria-label="사이트 정보"><a href="/about/">소개</a><a href="/privacy/" class="strong">개인정보처리방침</a><a href="/terms/">이용 규칙</a><a href="/contact/">문의</a></nav>Wedding Project · 테스트 답변은 어디에도 저장되지 않아요.</footer>
 </div>
 <script src="/tests-data.js"></script>
 <script>
+document.getElementById("grid").innerHTML = "";
 (window.WP_TESTS || []).forEach(t => {
   const a = document.createElement("a");
   a.className = "card"; a.href = "/" + t.src;
   a.style.setProperty("--tone", t.tone);
-  a.innerHTML = '<div class="card-art' + (t.fit ? ' fit' : '') + '"><img alt=""></div><div class="card-body"><h2 class="card-title"></h2><p class="card-desc"></p><span class="pill"></span></div>';
+  a.innerHTML = '<div class="card-art' + (t.fit ? ' fit' : '') + '"><img alt=""></div><div class="card-body"><h2 class="card-title"></h2><p class="card-desc"></p><p class="card-about"></p><span class="pill"></span></div>';
   a.querySelector("img").src = "/" + t.img;
   a.querySelector(".card-title").textContent = t.title;
   a.querySelector(".card-desc").textContent = t.desc;
+  a.querySelector(".card-about").textContent = t.about || "";
   a.querySelector(".pill").textContent = t.game ? "게임 하기" : "테스트 하기";
   document.getElementById("grid").appendChild(a);
 });
