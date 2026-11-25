@@ -6,7 +6,7 @@
 
 - `index.html` — Wedding Project 메인 페이지. 카테고리 4개: ① 테스트 & 밸런스 게임(카드 슬라이드) ② 결혼 준비 정보 ③ 연인이 나누면 좋을 대화 질문 ④ 궁금한 점 질문하기(질문 접수 폼)
 - `values/index.html` — 결혼 가치관 맞춰보기 테스트 (질문, 결과 화면, 이미지 저장/공유 기능 포함)
-- `test3/index.html` — 나의 결혼 마지노선 테스트
+- `test3/index.html` — 나의 결혼 우선순위 테스트
 - `balance/index.html` — 신혼생활 밸런스 게임 (그림은 `balance/img/`)
 - `qna/` — 익명 질문방 페이지(`index.html`), 관리자 페이지(`admin.html`), 공통 스크립트·스타일
 - `worker.js`, `wrangler.jsonc`, `.assetsignore` — Cloudflare Workers 설정과 익명 질문방 API
@@ -70,7 +70,7 @@ Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 
 
 - 테스트마다 자기 주소가 있어요. 블로그나 메신저에는 이 주소를 붙여 넣으세요.
   - 결혼 가치관 맞춰보기: `https://wedding-project.softloomon.workers.dev/values/`
-  - 나의 결혼 마지노선 테스트: `https://wedding-project.softloomon.workers.dev/test3/`
+  - 나의 결혼 우선순위 테스트: `https://wedding-project.softloomon.workers.dev/test3/`
   - 신혼생활 밸런스 게임: `https://wedding-project.softloomon.workers.dev/balance/`
   - 익명 질문방: `https://wedding-project.softloomon.workers.dev/qna/`
   - 결혼 준비 정보: `…/info/`, 준비 순서 `…/info/order/`, 체크리스트 `…/info/checklist/`, 웨딩 박람회 `…/info/fair/`
