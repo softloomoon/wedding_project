@@ -489,7 +489,7 @@ async function qnaPage(env, url, board) {
   } catch (e) {}
   return htmlRes(page);
 }
-const SITE_PAGES = ["/", "/games/", "/values/", "/test3/", "/balance/", "/info/", "/info/order/", "/info/budget/", "/info/checklist/", "/info/sdm/", "/info/fair/", "/talk/",
+const SITE_PAGES = ["/", "/games/", "/values/", "/test3/", "/balance/", "/info/", "/info/order/", "/info/budget/", "/info/checklist/", "/info/sdm/", "/info/fair/", "/info/meeting/", "/info/home/", "/info/invitation/", "/info/honeymoon/", "/info/registration/", "/talk/",
   "/talk/01/", "/talk/02/", "/talk/03/", "/talk/04/", "/talk/05/", "/talk/06/", "/talk/07/", "/talk/08/", "/talk/09/", "/talk/10/", "/qna/", "/about/", "/privacy/", "/terms/", "/contact/"];
 async function sitemap(url, board) {
   let qs = [];
