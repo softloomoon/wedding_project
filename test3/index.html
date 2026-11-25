@@ -638,16 +638,20 @@ function mkImg(){
  var R=LR,imgs=R.topTypes.map(function(t){return TYPE_CARD_IMG[t]});
  var BG="#f8efe2",CARD="#fffaf2",INK="#3a2430",MUTE="#9a7d83",LINE="#ecd9ce",ACC="#a3265c",GF='"Gaegu",cursive';
  return Promise.all([ld,Promise.all(imgs.map(loadImg))]).then(function(res){return new Promise(function(done){
-  var loaded=res[1],W=1080,H=1400,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
+  var loaded=res[1],W=1080,cx=56,cy0=56,cw=W-cx*2;
+  /* 카드 수(1~4장)에 따라 카드 크기가 달라지므로, 내용 높이를 먼저 계산해 이미지 높이를 맞춰요 (아래 빈 공간이 생기지 않게) */
+  var n=loaded.length,gap=36,phW=Math.min(420,(cw-112-(n-1)*gap)/n),rowW=n*phW+(n-1)*gap,startX=W/2-rowW/2;
+  var maxIh=Math.max.apply(null,loaded.map(function(img){return phW*(img.height/img.width)}));
+  var H=cy0+58+46+maxIh+104+72+R.bars.length*78+26+38+70+cy0;
+  var cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
   c.fillStyle=BG;c.fillRect(0,0,W,H);
-  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,1260,30);c.fill();c.restore();
-  var cx=56,cy0=56,cw=W-cx*2,ch=H-cy0*2;
+  c.save();c.globalAlpha=.55;c.fillStyle="#f3d6e2";heartPath(c,118,142,34);c.fill();heartPath(c,962,H-140,30);c.fill();c.restore();
+  var ch=H-cy0*2;
   c.save();c.shadowColor="rgba(58,36,48,.18)";c.shadowBlur=36;c.shadowOffsetY=16;rr(c,cx,cy0,cw,ch,40);c.fillStyle=CARD;c.fill();c.restore();
   c.save();c.setLineDash([12,10]);c.lineWidth=3;c.strokeStyle=ACC;rr(c,cx,cy0,cw,ch,40);c.stroke();c.restore();
   var py=cy0+58;
   c.textBaseline="alphabetic";c.textAlign="center";c.fillStyle=ACC;c.font="700 34px "+GF;c.fillText("✦ 나의 결혼 우선순위 테스트 ✦",W/2,py);py+=46;
   /* 완성된 캐릭터 카드(이름/문구 포함)를 그대로 보여줌 - 1장 또는 동점이면 여러 장 */
-  var n=loaded.length,gap=36,phW=Math.min(420,(cw-112-(n-1)*gap)/n),rowW=n*phW+(n-1)*gap,startX=W/2-rowW/2;
   loaded.forEach(function(img,i){
    var ih=phW*(img.height/img.width),x=startX+i*(phW+gap)+phW/2,rot=(n===1)?-0.02:0;
    c.save();c.translate(x,py+ih/2+16);c.rotate(rot);
@@ -655,7 +659,6 @@ function mkImg(){
    c.save();rr(c,-phW/2,-ih/2,phW,ih,8);c.clip();c.drawImage(img,-phW/2,-ih/2,phW,ih);c.restore();
    c.restore();
   });
-  var maxIh=Math.max.apply(null,loaded.map(function(img){return phW*(img.height/img.width)}));
   py+=maxIh+104;
   c.textAlign="left";c.fillStyle=INK;c.font="700 38px "+GF;c.fillText("가치관 비중",cx+56,py);py+=72;
   var pctColW=120,pctRight=cx+cw-56,barEnd=pctRight-pctColW,bx0=cx+330,bw0=barEnd-bx0,barH=20;
@@ -665,7 +668,7 @@ function mkImg(){
    rr(c,bx0,y,Math.max(bw0*g.pct/100,barH),barH,10);c.fillStyle=TYPE_HEX[g.t];c.fill();
    c.fillStyle=TYPE_HEX[g.t];c.textAlign="right";c.font="700 34px "+GF;c.fillText(g.pct+"%",pctRight,y+barH+2)});
   py+=R.bars.length*78+26;
-  c.textAlign="center";c.fillStyle=MUTE;c.font="400 26px "+FN;c.fillText("결혼 전에 꼭 이야기해 볼 질문도 앱에서 확인해보세요",W/2,py);py+=38;
+  c.textAlign="center";c.fillStyle=MUTE;c.font="400 26px "+FN;c.fillText("결혼 전에 꼭 이야기해 볼 질문도 웨딩 프로젝트에서 확인해 보세요",W/2,py);py+=38;
   c.fillStyle=ACC;c.font="700 30px "+GF;c.fillText("Wedding Project",W/2,py);
   cv.toBlob(function(b){done(b)},"image/png")})}).catch(function(){return new Promise(function(done){
   var W=1080,H=700,cv=document.createElement("canvas");cv.width=W;cv.height=H;var c=cv.getContext("2d");
