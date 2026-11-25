@@ -6,6 +6,12 @@ window.WP_TALK_STAGES = [
   { from: 4, to: 6, title: "다름과 갈등을 다루는 주제" },
   { from: 7, to: 10, title: "현실적인 미래를 이야기하는 주제" },
 ];
+/* 한 질문만 깊게 다루는 짧은 대화 가이드 (/talk/q/이름/). 우선순위 테스트 결과 화면의 질문이 여기로 연결돼요. */
+window.WP_TALK_GUIDES = [
+  { slug: "secrets", icon: "🔐", q: "서로에게 절대 숨기지 말아야 할 것은 무엇일까?" },
+  { slug: "my-space", icon: "🌿", q: "결혼 후에도 반드시 존중받고 싶은 나만의 영역은?" },
+  { slug: "non-negotiable", icon: "🧭", q: "우리가 서로에게 양보할 수 없는 기준은 무엇일까?" },
+];
 window.WP_TALK = [
   {
     no: "01", icon: "💌", tag: "애정 표현 · 연락",
