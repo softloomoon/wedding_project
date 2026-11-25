@@ -264,6 +264,9 @@
     color:var(--ink);
   }
   .discuss-list li{margin-bottom:8px;}
+  .discuss-list a{display:flex;flex-direction:column;gap:2px;color:inherit;text-decoration:none}
+  .discuss-list a:hover .dq{text-decoration:underline}
+  .discuss-list .dq-go{font-size:.85rem;font-weight:700;color:var(--accent, #a3265c)}
 
   /* 사진으로 저장 / 공유하기 */
   .action-row{display:flex;gap:10px;margin:0 0 12px;}
@@ -482,10 +485,11 @@ const TYPE_LABEL = {
   D: "꿈과 커리어의 성장"
 };
 
+/* 질문을 누르면 그 질문만 다루는 대화 가이드(/talk/q/…)로 가요 */
 const DISCUSS_QUESTIONS = [
-  "서로에게 절대 숨기지 말아야 할 것은 무엇일까?",
-  "결혼 후에도 반드시 존중받고 싶은 나만의 영역은?",
-  "우리가 서로에게 양보할 수 없는 기준은 무엇일까?"
+  { q: "서로에게 절대 숨기지 말아야 할 것은 무엇일까?", href: "/talk/q/secrets/" },
+  { q: "결혼 후에도 반드시 존중받고 싶은 나만의 영역은?", href: "/talk/q/my-space/" },
+  { q: "우리가 서로에게 양보할 수 없는 기준은 무엇일까?", href: "/talk/q/non-negotiable/" }
 ];
 
 let current = 0;
@@ -595,9 +599,13 @@ function showResult(){
 
   const discussEl = document.getElementById('discuss-list');
   discussEl.innerHTML = '';
-  DISCUSS_QUESTIONS.forEach(q => {
+  DISCUSS_QUESTIONS.forEach(d => {
     const li = document.createElement('li');
-    li.textContent = q;
+    const a = document.createElement('a');
+    a.href = d.href; a.target = '_top';
+    a.innerHTML = '<span class="dq"></span><span class="dq-go">이 질문으로 대화해 보기 →</span>';
+    a.querySelector('.dq').textContent = d.q;
+    li.appendChild(a);
     discussEl.appendChild(li);
   });
 
