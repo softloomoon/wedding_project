@@ -58,7 +58,7 @@ Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 
 
 - 정책 페이지: `/about/`(소개), `/privacy/`(개인정보처리방침, 쿠키·Google 광고 고지 포함), `/terms/`(이용 규칙·질문방 운영 정책), `/contact/`(문의). 모든 페이지 하단에 링크가 있어요.
 - `/robots.txt`, `/sitemap.xml`은 Worker가 만들어요. 사이트맵에는 모든 페이지와 공개된 질문방 질문이 자동으로 들어가요.
-- 방문자 통계: Cloudflare Web Analytics(wedding-project.com). 대시보드 → Web Analytics에서 방문 수를 봐요. 새 페이지를 만들면 `node tools/analytics.mjs cc7628f820fa412bbd2e5f752d9eadd1`를 한 번 실행해요.
+- 방문자 통계: Cloudflare Web Analytics의 자동 설정(Automatic setup)으로 wedding-project.com에 켜져 있어요. 코드를 따로 넣지 않아도 Cloudflare가 알아서 붙여요. 대시보드 → Web Analytics에서 방문 수를 봐요. (`tools/analytics.mjs`는 수동 설치가 필요할 때만 써요)
 - 애드센스 코드: 게시자 ID를 받으면 `node tools/adsense.mjs pub-1234567890123456`으로 모든 페이지 `<head>`에 한 번에 넣어요(`--remove`로 빼기).
 - 테스트 주소(`/values/`, `/test3/`, `/balance/`)는 Worker가 홈 화면 내용을 빼고 테스트 화면만 담아 보내요(숨긴 텍스트·중복 콘텐츠 방지). 홈 내용은 `index.html`의 `<!--home-->` … `<!--/home-->` 사이예요.
 - `/ads.txt`: 애드센스 계정의 게시자 ID를 Cloudflare 변수 `ADSENSE_PUB_ID`(예: `pub-1234567890123456`)에 넣으면 자동으로 생겨요. 넣기 전에는 404예요.
