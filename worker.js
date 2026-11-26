@@ -419,6 +419,7 @@ function ogBlock(origin, path, pg) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="${origin}${path}">
+<link rel="canonical" href="${origin}${path}">
 <meta name="twitter:card" content="summary_large_image">
 <!--/og-->`;
 }
@@ -459,7 +460,8 @@ function setMeta(page, title, desc, url) {
     .replace(/(<meta name="description" content=")[^"]*/, `$1${esc(desc)}`)
     .replace(/(<meta property="og:title" content=")[^"]*/, `$1${esc(title)}`)
     .replace(/(<meta property="og:description" content=")[^"]*/, `$1${esc(desc)}`)
-    .replace(/(<meta property="og:url" content=")[^"]*/, `$1${esc(url)}`);
+    .replace(/(<meta property="og:url" content=")[^"]*/, `$1${esc(url)}`)
+    .replace(/(<link rel="canonical" href=")[^"]*/, `$1${esc(url)}`);
 }
 async function homePage(env, url, board) {
   const res = await env.ASSETS.fetch(new Request(url.origin + "/"));
@@ -515,10 +517,23 @@ const adsTxt = (env) => {
   return new Response(`google.com, ${id}, DIRECT, f08c47fec0942fa0\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
 };
 
+/* ───────── 대표 주소 ─────────
+   www.wedding-project.com 과 예전 주소(wedding-project.softloomon.workers.dev)로 들어오면 wedding-project.com 으로 보내요 (301).
+   검색엔진이 같은 내용을 여러 주소의 중복 사이트로 보지 않게 하려는 거예요.
+   미리보기 주소(…-wedding-project.softloomon.workers.dev)와 POST 요청은 그대로 둬요. */
+const MAIN_HOST = "wedding-project.com";
+const REDIRECT_HOSTS = new Set(["www.wedding-project.com", "wedding-project.softloomon.workers.dev"]);
+
 /* ───────── 라우팅 ───────── */
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (REDIRECT_HOSTS.has(url.hostname) && (request.method === "GET" || request.method === "HEAD")) {
+      url.hostname = MAIN_HOST;
+      url.protocol = "https:";
+      url.port = "";
+      return Response.redirect(url.toString(), 301);
+    }
     const path = url.pathname;
     const board = env.QUESTION_BOARD.get(env.QUESTION_BOARD.idFromName("main"));
     if (!path.startsWith("/api/")) {

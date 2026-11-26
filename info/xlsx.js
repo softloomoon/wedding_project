@@ -57,7 +57,7 @@
     const sum = (a) => a.reduce((x, y) => x + (y || 0), 0);
 
     put(1, [S("결혼 예산표", 2)]);
-    put(2, [S("단위: 만 원 · 웨딩 프로젝트 wedding-project.softloomon.workers.dev/info/budget/", 3)]);
+    put(2, [S("단위: 만 원 · 웨딩 프로젝트 wedding-project.com/info/budget/", 3)]);
     let r = 12;
     put(r, [S("항목", 4), S("계획 (만 원)", 4), S("실제 쓴 돈 (만 원)", 4), S("메모 (자유롭게 적어요)", 4)]);
     const subRows = [];
