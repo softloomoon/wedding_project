@@ -69,6 +69,7 @@ th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;verti
 <main id="app"></main>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
+/* 질문: [분류, 질문, 선택지, 도움말, 숨길 선택지 번호(선택)]. 답은 선택지 번호로 저장돼서, 선택지를 없앨 때는 지우지 말고 5번째 칸에 번호를 넣어 숨겨요 (이미 저장된 답이 다른 선택지로 바뀌지 않게). */
 var Q=[
 ["결혼관","결혼은 언제쯤 하고 싶나요?",["1년 안에","2~3년 안에","3~5년 사이","서두르지 않고 때가 되면"],"결혼 시기에 대한 기대 차이는 준비 일정 전체에 영향을 줘요."],
 ["결혼관","자녀 계획은 어떤가요?",["꼭 갖고 싶다","1명 정도 원한다","2명 이상 원한다","아직 잘 모르겠다","갖지 않고 싶다"],"자녀 계획은 집, 직장, 생활비에 모두 연결돼요."],
@@ -82,7 +83,7 @@ var Q=[
 ["결혼식","웨딩 준비는 어떻게 하고 싶나요?",["스드메 패키지로 편하게","필요한 것만 골라서","셀프로 직접 준비","웨딩촬영 등은 생략"],"어디에 돈과 에너지를 쓰고 싶은지 각자 순위를 매겨 보세요."],
 ["결혼식","신혼여행은 어떻게 하고 싶나요?",["해외 장기 (7일 이상)","해외 단기","국내 여행","생략하거나 나중에"],"일정과 예산, 휴가 사용 계획까지 같이 확인해요."],
 ["가족","명절과 양가 방문은 어떻게 하고 싶나요?",["양가 번갈아 가며","양가 모두 당일에 방문","각자 본가에 따로","가끔은 여행으로 대체"],"서로의 가족에게 느끼는 부담이 다를 수 있어요."],
-["가족","신혼집은 어떻게 구하고 싶나요?",["둘만의 독립된 집","한쪽 부모님 집 가까이","직장 위치가 최우선","일정 기간 부모님과 함께"],"위치, 대출, 명의 문제까지 함께 이야기해 보세요."],
+["가족","신혼집은 어떻게 구하고 싶나요?",["둘만의 독립된 집","한쪽 부모님 집 가까이","직장 위치가 최우선","일정 기간 부모님과 함께"],"위치, 대출, 명의 문제까지 함께 이야기해 보세요.",[0]],
 ["생활","갈등이 생기면 어떻게 풀고 싶나요?",["그 자리에서 바로 대화","시간을 두고 나중에 대화","글로 정리해서 전달","제3자의 도움도 받는다"],"갈등 해결 방식이 다르면 같은 문제도 더 크게 느껴져요."],
 ["생활","쉬는 날은 어떻게 보내고 싶나요?",["늘 둘이 함께","반반 (함께 + 각자)","개인적인 시간이 있으면 좋겠다","가족·친구 모임은 보장받고 싶다"],"혼자만의 시간이 필요한 정도도 미리 나눠 보세요."],
 ["비용","신혼여행 예산은 어느 정도가 적당한가요? (항공·숙박·경비 포함)",["300만 원 이하","300~600만 원","600~1,000만 원","1,000만 원 이상"],"신혼여행 비용을 예식 예산과 같은 돈에서 쓸지, 따로 모을지도 정해 보세요."],
@@ -179,8 +180,8 @@ function quiz(k){
  '<div class="row" style="margin-top:12px"><button id="bk"'+(S.i?'':' class="hide"')+'>이전</button></div>';
  var o=document.getElementById("o");
  function sv(){if(pl.s)S.x[pl.s]=document.getElementById("pr").value;if(pl.f)S.x[pl.f]=document.getElementById("pt").value.trim()}
- q[2].forEach(function(t,j){var b=document.createElement("button");b.className="opt"+(S.mine[k]===j?" sel":"");b.textContent=t;
-  b.onclick=function(){S.mine[k]=j;if(pl){[].forEach.call(o.children,function(c,n){c.className="opt"+(n===j?" sel":"")})}else nav()};o.appendChild(b)});
+ q[2].forEach(function(t,j){if(q[4]&&q[4].indexOf(j)>-1)return;var b=document.createElement("button");b.className="opt"+(S.mine[k]===j?" sel":"");b.textContent=t;b.dataset.j=j;
+  b.onclick=function(){S.mine[k]=j;if(pl){[].forEach.call(o.children,function(c){c.className="opt"+(+c.dataset.j===j?" sel":"")})}else nav()};o.appendChild(b)});
  if(pl)document.getElementById("nx").onclick=function(){if(S.mine[k]===undefined){document.getElementById("er").textContent=pl.err;return}sv();nav()};
  document.getElementById("bk").onclick=function(){if(pl)sv();back()}
 }
