@@ -390,16 +390,19 @@ async function readJson(request) {
    메인 화면이 주소를 보고 해당 테스트를 바로 열어요. 테스트 화면 자체는 ?embed=1 을 붙여 불러와요. */
 const PAGES = {
   "/values/": {
+    id: "values",
     title: "결혼 가치관 맞춰보기 | 웨딩 프로젝트",
     desc: "우리, 결혼에 대해 같은 그림을 그리고 있을까? 둘이 각자 답하고 결혼 가치관을 비교해 보세요.",
     image: "/og/values.png",
   },
   "/test3/": {
+    id: "majinoseon",
     title: "나의 결혼 우선순위 테스트 | 웨딩 프로젝트",
     desc: "안정, 자유, 가족, 성장 중 결혼에서 내가 가장 지키고 싶은 건 무엇일까요? 10가지 상황으로 나의 결혼 우선순위를 알아보세요.",
     image: "/og/test3.png",
   },
   "/balance/": {
+    id: "balance",
     title: "신혼생활 밸런스 게임 | 웨딩 프로젝트",
     desc: "정답은 없어요. 다만 둘의 답이 다를 뿐! 20문항, 2분이면 끝나는 예비부부 밸런스 게임.",
     image: "/og/balance.png",
@@ -430,6 +433,12 @@ async function testPage(request, env, url) {
   const a = page.indexOf("<!--og-->"), b = page.indexOf("<!--/og-->");
   if (a > -1 && b > a) page = page.slice(0, a) + ogBlock(url.origin, path, pg) + page.slice(b + "<!--/og-->".length);
   page = page.replace(/<title>[^<]*<\/title>/, `<title>${esc(pg.title)}</title>`);
+  /* 테스트 주소에서는 홈 화면 내용을 빼서 보내요 (숨긴 텍스트·중복 콘텐츠가 되지 않게). 테스트 화면을 바로 보이게 하고 테스트 틀도 미리 채워요. */
+  const h1 = page.indexOf("<!--home-->"), h2 = page.indexOf("<!--/home-->");
+  if (h1 > -1 && h2 > h1) page = page.slice(0, h1) + '<main id="view-home" hidden></main>' + page.slice(h2 + "<!--/home-->".length);
+  page = page.replace('<body class="is-home">', '<body class="playing">')
+    .replace('<main id="view-test" class="test" hidden>', '<main id="view-test" class="test">')
+    .replace('<iframe class="test-frame" id="test-frame" title="테스트" scrolling="no"></iframe>', `<iframe class="test-frame" id="test-frame" title="${esc(pg.title.split(" | ")[0])}" scrolling="no" src="${path}?embed=1" data-preloaded="${pg.id}"></iframe>`);
   return new Response(page, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
 }
 
