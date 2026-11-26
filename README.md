@@ -79,12 +79,12 @@ Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 
 ## 링크 공유 미리보기 (네이버·카카오톡 등)
 
 - 테스트마다 자기 주소가 있어요. 블로그나 메신저에는 이 주소를 붙여 넣으세요.
-  - 결혼 가치관 맞춰보기: `https://wedding-project.softloomon.workers.dev/values/`
-  - 나의 결혼 우선순위 테스트: `https://wedding-project.softloomon.workers.dev/test3/`
-  - 신혼생활 밸런스 게임: `https://wedding-project.softloomon.workers.dev/balance/`
-  - 익명 질문방: `https://wedding-project.softloomon.workers.dev/qna/`
+  - 결혼 가치관 맞춰보기: `https://wedding-project.com/values/`
+  - 나의 결혼 우선순위 테스트: `https://wedding-project.com/test3/`
+  - 신혼생활 밸런스 게임: `https://wedding-project.com/balance/`
+  - 익명 질문방: `https://wedding-project.com/qna/`
   - 결혼 준비 정보: `…/info/`, 준비 순서 `…/info/order/`, 체크리스트 `…/info/checklist/`, 웨딩 박람회 `…/info/fair/`
-  - 사이트 첫 화면: `https://wedding-project.softloomon.workers.dev/`
+  - 사이트 첫 화면: `https://wedding-project.com/`
 - 주소마다 제목, 설명, 카드 이미지(`og/*.png`, 1200×630)가 따로 나와요. 테스트별 문구는 `worker.js`의 `PAGES`, 첫 화면 문구는 `index.html`의 `<!--og-->` 부분에서 바꿀 수 있어요.
 - 이 주소로 들어오면 사이트 화면 안에서 그 테스트가 바로 열려요. 예전 주소(`/#values`)는 자동으로 새 주소로 바뀌어요.
 - 예전 미리보기가 남아 있으면 주소 끝에 `?v=2`를 붙여 다시 넣어 보세요.
