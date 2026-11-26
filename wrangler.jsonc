@@ -23,7 +23,9 @@
     // Cloudflare Turnstile 을 쓰려면 사이트 키를 넣고 TURNSTILE_SECRET 시크릿을 추가하세요. (선택)
     "TURNSTILE_SITE_KEY": "",
     // 쉼표로 구분한 추가 금칙어 (선택)
-    "BANNED_WORDS": ""
+    "BANNED_WORDS": "",
+    // 애드센스 게시자 ID. /ads.txt 가 이 값으로 만들어져요.
+    "ADSENSE_PUB_ID": "pub-5575656851182618"
   },
   // 미리보기(Preview) 배포용 설정. 브랜치나 PR 을 올리면 Cloudflare 가 미리보기 주소를 만드는데, 그때 이 값을 씁니다.
   // 미리보기마다 Durable Object 저장소가 따로 생겨서 실제 사이트의 질문·의견과 섞이지 않아요.
