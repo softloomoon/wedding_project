@@ -468,6 +468,19 @@ async function homePage(env, url, board) {
   if (!res.ok) return res;
   let page = await res.text();
   try {
+    /* 오늘의 대화 질문: 새로 고침할 때마다 서버에서 무작위로 골라 넣어요 (화면에서 다시 바꾸지 않아 밀림이 없어요) */
+    const qr = await env.ASSETS.fetch(new Request(url.origin + "/talk/questions.json"));
+    if (qr.ok) {
+      const all = await qr.json();
+      const i = Math.floor(Math.random() * all.length), x = all[i];
+      if (x) {
+        page = page.replace(/<!--pre:talkhead-->[\s\S]*?<!--\/pre:talkhead-->/, `<!--pre:talkhead--><a class="tk-topic" href="/talk/${esc(x.no)}/">${esc(x.icon)} ${esc(x.no)}. ${esc(x.title)}</a><!--/pre:talkhead-->`)
+          .replace(/<!--pre:talkq-->[\s\S]*?<!--\/pre:talkq-->/, `<!--pre:talkq--><p class="tk-q" data-i="${i}">${esc(x.q)}</p><!--/pre:talkq-->`)
+          .replace('<a class="tk-link" href="/talk/">', `<a class="tk-link" href="/talk/${esc(x.no)}/">`);
+      }
+    }
+  } catch (e) {}
+  try {
     const data = await board.listQuestions("popular", 3, 0);
     if (data.items.length) {
       page = between(page, "hot", data.items.map(ssrItem).join(""));
@@ -488,13 +501,15 @@ async function qnaPage(env, url, board) {
       if (!d) return htmlRes(page);
       const q = d.question;
       const comments = d.comments.map((c) => `<li class="qn-comment"><p class="qn-meta">${c.is_admin ? '<span class="qn-badge qn-admin">운영자</span>' : "익명"}<span>${ymd(c.created_at)}</span></p><p>${para(c.body)}</p></li>`).join("");
-      const body = `<article class="qn-card"><p class="qn-meta">${esc(q.topic)}<span>${ymd(q.created_at)}</span><span>조회 ${q.views || 0}</span></p><h1 class="qn-title">${q.is_admin ? '<span class="qn-badge qn-admin">운영자 질문</span> ' : ""}${esc(q.title)}</h1><p>${para(q.body)}</p></article><section class="qn-card"><h2>의견 ${d.comments.length}개</h2>${comments ? `<ul class="qn-comments">${comments}</ul>` : "<p>아직 의견이 없어요. 첫 의견을 남겨 보세요.</p>"}</section><p><a href="/qna/">← 질문 목록으로</a> · <a href="/terms/">이용 규칙</a></p>`;
+      const body = `<a class="back" href="./">← 질문 목록</a><article class="qn-card q-detail"><p class="qn-meta">${esc(q.topic)}<span>${ymd(q.created_at)}</span><span>조회 ${q.views || 0}</span></p><h1 class="qn-title">${q.is_admin ? '<span class="qn-badge qn-admin">운영자 질문</span> ' : ""}${esc(q.title)}</h1><p>${para(q.body)}</p></article><section class="qn-card"><h2>의견 ${d.comments.length}개</h2>${comments ? `<ul class="qn-comments">${comments}</ul>` : "<p>아직 의견이 없어요. 첫 의견을 남겨 보세요.</p>"}</section><p><a href="/terms/">이용 규칙</a></p>`;
       page = page.replace('<main id="main" aria-live="polite"></main>', `<main id="main" aria-live="polite">${body}</main>`);
       page = setMeta(page, `${q.title} - 익명 질문방 | 웨딩 프로젝트`, clip(q.body.replace(/\s+/g, " "), 140), `${url.origin}/qna/?id=${q.id}`);
     } else {
       const data = await board.listQuestions("latest", 20, 0);
       const list = [...(data.notices || []), ...data.items].map(ssrItem).join("");
-      const body = `<header class="qn-head" style="margin:0 0 4px"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></header><p class="qn-desc">결혼을 준비하며 생긴 고민, 궁금증, 다른 사람들의 생각이 궁금한 이야기를 나눠보세요.</p><p class="qn-public">💡 모든 질문과 의견은 공개돼요. 개인정보는 적지 말아 주세요. 비방·광고 글은 신고되면 숨겨지고, 운영자가 삭제할 수 있어요. <a href="/terms/">이용 규칙 보기</a></p><div class="qn-card"><ul class="qn-list" style="margin:0">${list}</ul></div>`;
+      /* 화면의 자바스크립트가 그리는 모양과 똑같이 맞춰야 다시 그릴 때 화면이 밀리지 않아요 (qna/index.html 의 listView) */
+      const notices = (data.notices || []).map(ssrItem).join(""), items = data.items.slice(0, 10).map(ssrItem).join("");
+      const body = `<header class="qn-head" style="margin:0 0 4px"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></header><p class="qn-desc">결혼을 준비하며 생긴 고민, 궁금증, 다른 사람들의 생각이 궁금한 이야기를 나눠보세요.</p><section><ul class="qn-list" id="notices" style="margin:0">${notices}</ul><div class="tabs" role="group" aria-label="정렬"><button type="button" data-sort="latest" aria-pressed="true">최신 질문</button><button type="button" data-sort="popular" aria-pressed="false">인기 질문</button></div><div class="qn-card" style="padding-top:8px;padding-bottom:8px"><ul class="qn-list" id="list" style="margin:0">${items}</ul><p class="qn-empty" id="empty" hidden style="margin:12px 0"></p></div><button type="button" class="more" id="more"${data.total > 10 ? "" : " hidden"}>더 보기</button></section><section class="qn-card" id="ask-area" style="margin-top:28px"><div class="qn-head"><h3>✏️ 익명으로 질문하기</h3></div><p class="qn-desc">닉네임이나 회원가입 없이 궁금한 점을 남겨 보세요. 다른 방문자들이 의견을 나눠 줄 거예요. <a href="/terms/">이용 규칙</a></p><button type="button" class="qn-btn qn-wide" id="open" aria-expanded="false" aria-controls="ask">익명으로 질문하기</button><div id="ask" hidden></div></section>`;
       page = page.replace('<main id="main" aria-live="polite"></main>', `<main id="main" aria-live="polite">${body}</main>`);
     }
   } catch (e) {}

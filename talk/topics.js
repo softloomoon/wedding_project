@@ -195,5 +195,7 @@ window.WPTalkRandom = function (root) {
     root.classList.remove("tk-pop"); void root.offsetWidth; root.classList.add("tk-pop");
   }
   btn.addEventListener("click", show);
-  show();
+  /* 서버가 이미 무작위 질문을 넣어 보냈으면(data-i) 그대로 두어요. 다시 바꾸면 카드 높이가 달라져 화면이 밀려요. */
+  var pre = q.getAttribute("data-i");
+  if (pre !== null && all[+pre] && all[+pre].q === q.textContent) last = +pre; else show();
 };

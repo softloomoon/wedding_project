@@ -63,6 +63,7 @@ Vercel이나 Netlify 둘 다 대시보드의 **Domains** 메뉴에서 구매한 
 - 테스트 주소(`/values/`, `/test3/`, `/balance/`)는 Worker가 홈 화면 내용을 빼고 테스트 화면만 담아 보내요(숨긴 텍스트·중복 콘텐츠 방지). 홈 내용은 `index.html`의 `<!--home-->` … `<!--/home-->` 사이예요.
 - `/ads.txt`: 애드센스 계정의 게시자 ID를 Cloudflare 변수 `ADSENSE_PUB_ID`(예: `pub-1234567890123456`)에 넣으면 자동으로 생겨요. 넣기 전에는 404예요.
 - 자바스크립트로 그리는 목록(메인 카드·정보 목록·게임 목록·오늘의 대화 질문)은 `node tools/prerender.mjs`로 HTML에 미리 써 넣어요. `tests-data.js`, `info/posts.js`, `talk/topics.js`를 고친 뒤 한 번 실행해 주세요.
+- 메인의 '오늘의 대화 질문'은 Worker가 `talk/questions.json`(prerender가 만들어요)에서 무작위로 골라 넣어요. 화면에서 다시 바꾸지 않아 밀림이 없어요.
 - 메인의 인기 질문과 질문방 목록·질문 상세는 Worker가 서버에서 HTML로 채워 보내요(질문 상세는 제목·설명 태그도 그 질문 것으로 바뀌어요).
 
 ## 상단 카테고리 바 (모든 페이지 공통)
