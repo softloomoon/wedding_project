@@ -18,6 +18,10 @@ const mainCard = (t) => `<a class="card" href="/${t.src}" data-test="${t.id}" st
 const gameCard = (t) => `<a class="card" href="/${t.src}" style="--tone:${t.tone}"><div class="card-art${t.fit ? " fit" : ""}"><img src="/${t.img}" alt=""></div><div class="card-body"><h2 class="card-title">${esc(t.title)}</h2><p class="card-desc">${esc(t.desc)}</p><p class="card-about">${esc(t.about || "")}</p><span class="pill">${t.game ? "게임 하기" : "테스트 하기"}</span></div></a>`;
 const infoItem = (p, cur) => `<a class="ip-item${p.id === cur ? " is-current" : ""}" href="${p.path}"${p.id === cur ? ' aria-current="page"' : ""}><span class="ip-icon" aria-hidden="true">${p.icon}</span><span class="ip-main"><span class="ip-tag">${esc(p.tag)}</span><span class="ip-title">${esc(p.title)}</span><span class="ip-desc">${esc(p.desc)}</span><span class="ip-meta">${esc(p.date + " · " + p.read)}</span></span>${p.id === cur ? '<span class="ip-go" aria-hidden="true">지금 보는 글</span>' : ""}</a>`;
 const t0 = TALK[0];
+/* 메인 '오늘의 대화 질문'을 서버(Worker)가 무작위로 골라 넣을 수 있게 질문 목록을 따로 저장해요 (순서는 talk/topics.js 와 같아요) */
+const flat = [];
+TALK.forEach((t) => t.qs.forEach((q) => flat.push({ no: t.no, icon: t.icon, title: t.title, q })));
+fs.writeFileSync(path.join(ROOT, "talk/questions.json"), JSON.stringify(flat));
 
 function fill(file, blocks) {
   const f = path.join(ROOT, file);

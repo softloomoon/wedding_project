@@ -56,6 +56,8 @@ main{padding:28px 0 64px}
 .st-public{background:#e3f0e4;color:var(--green)}.st-pending{background:#fdf3ea;color:#b5651d}.st-hidden{background:#eee;color:#666}
 footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-soft);font-size:.9rem}
 [hidden]{display:none !important}
+/* 내용이 불러와지며 길이가 바뀌어도 아래 바닥글이 화면 안에서 들썩이지 않게 */
+#main{min-height:calc(100vh - 140px)}
 </style>
 <link rel="stylesheet" href="qna.css">
 <link rel="stylesheet" href="/nav.css">
@@ -81,6 +83,9 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
   /* ───── 목록 ───── */
   function listView(){
     document.title = "익명 질문방 · 웨딩 프로젝트";
+    /* 서버가 미리 넣어 보낸 목록은 데이터가 올 때까지 그대로 보여 줘요 (빈 목록으로 바뀌었다 다시 차면 화면이 밀려요) */
+    const preNotices = main.querySelector("#notices") ? main.querySelector("#notices").innerHTML : "";
+    const preItems = main.querySelector("#list") ? main.querySelector("#list").innerHTML : "";
     main.innerHTML =
       '<header class="qn-head" style="margin:0 0 4px"><h1>💌 익명 질문방</h1><span class="qn-chip">커뮤니티</span></header>' +
       '<p class="qn-desc">결혼을 준비하며 생긴 고민, 궁금증, 다른 사람들의 생각이 궁금한 이야기를 나눠보세요.</p>' +
@@ -105,6 +110,7 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
     if (location.hash === "#ask") setTimeout(() => { open.click(); document.getElementById("ask-area").scrollIntoView({ block: "start" }); }, 0);
     let sort = "latest", shown = 0, total = 0;
     const list = document.getElementById("list"), more = document.getElementById("more"), empty = document.getElementById("empty");
+    if (preItems){ list.innerHTML = preItems; document.getElementById("notices").innerHTML = preNotices; }
     async function load(reset){
       if (reset){ shown = 0; }
       const r = await Q.api("/questions?sort=" + sort + "&limit=10&offset=" + shown);
@@ -131,7 +137,8 @@ footer{border-top:3px dashed var(--line);padding:22px 0 36px;color:var(--ink-sof
 
   /* ───── 질문 상세 + 의견 ───── */
   async function detailView(id){
-    main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">불러오는 중이에요…</p>';
+    /* 서버가 질문 내용을 미리 넣어 보냈으면 불러오는 동안 그대로 둬요 */
+    if (!main.querySelector("article")) main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">불러오는 중이에요…</p>';
     const r = await Q.api("/questions/" + id);
     if (!r.ok){
       main.innerHTML = '<a class="back" href="./">← 질문 목록</a><p class="qn-empty">' + Q.msgFor(r.reason) + "</p>";
